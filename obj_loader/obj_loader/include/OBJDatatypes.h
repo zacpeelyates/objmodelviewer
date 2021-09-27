@@ -43,7 +43,7 @@ enum OBJSTATEMENT
     STECH, //surface subdivision
     COMMENT,
     UNKNOWN
-};
+}; //this isnt actually used yet
 #endif // !OBJ_STATMENTS_ENUMS
 
 
@@ -55,6 +55,16 @@ struct vec4 { float x, y, z, w; };
 struct OBJVerticies { vec4 vertex, normal; vec2 uvCoord; };
 struct OBJFace { OBJVerticies first, second, third, quad; }; //face may be triangle or quad
 struct OBJLine { std::vector<OBJVerticies> segments; };
+
+struct OBJMaterial {
+    std::string name;
+    //TODO: add other material stuff
+};
+
+struct OBJGroup {
+    std::string name;
+    //TODO: add other group stuff
+};
 
 
 
