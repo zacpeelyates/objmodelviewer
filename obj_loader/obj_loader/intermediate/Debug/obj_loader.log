@@ -1,7 +1,0 @@
-﻿  main.cpp
-C:\Users\Zac\Documents\UoG\Level\5\Projects\SEM1\Low\ct5036-assessment-rendering-framework-ramkhisthrowing\obj_loader\obj_loader\src\main.cpp(31,38): warning C4244: '/=': conversion from 'float' to 'std::streamsize', possible loss of data
-C:\Users\Zac\Documents\UoG\Level\5\Projects\SEM1\Low\ct5036-assessment-rendering-framework-ramkhisthrowing\obj_loader\obj_loader\src\main.cpp(117,43): warning C4018: '<': signed/unsigned mismatch
-C:\Users\Zac\Documents\UoG\Level\5\Projects\SEM1\Low\ct5036-assessment-rendering-framework-ramkhisthrowing\obj_loader\obj_loader\src\main.cpp(150,56): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-C:\Users\Zac\Documents\UoG\Level\5\Projects\SEM1\Low\ct5036-assessment-rendering-framework-ramkhisthrowing\obj_loader\obj_loader\src\main.cpp(177,23): warning C4018: '<': signed/unsigned mismatch
-C:\Users\Zac\Documents\UoG\Level\5\Projects\SEM1\Low\ct5036-assessment-rendering-framework-ramkhisthrowing\obj_loader\obj_loader\src\main.cpp(186,23): warning C4018: '<': signed/unsigned mismatch
-  obj_loader.vcxproj -> C:\Users\Zac\Documents\UoG\Level\5\Projects\SEM1\Low\ct5036-assessment-rendering-framework-ramkhisthrowing\obj_loader\build\Debug\obj_loader.exe
