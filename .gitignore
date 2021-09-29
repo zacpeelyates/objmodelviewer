@@ -428,3 +428,8 @@ FodyWeavers.xsd
 # Additional files built by Visual Studio
 
 # End of https://www.toptal.com/developers/gitignore/api/c++,visualstudio
+model_loader/.vs/model_loader/v16/.suo
+model_loader/.vs/model_loader/v16/.suo
+model_loader/.vs/model_loader/v16/Browse.VC.db
+model_loader/.vs/model_loader/v16/.suo
+model_loader/Debug/model_loader.ilk
