@@ -107,6 +107,7 @@ struct OBJVertex
 {
 	Vec3 pos,normal;
 	Vec2 uvCoord;
+	uint32_t smoothingGroupIndex;
 
 	OBJVertex()	{	}
 
@@ -209,7 +210,7 @@ struct OBJData
 	void Print()
 	{
 
-		std::cout << "\nSize (Memory):\t" << (mesh.verts.size() * sizeof(OBJVertex)) / 1024 << std::endl;
+		std::cout << "\nSize (Memory):\t" << (mesh.verts.size() * sizeof(OBJVertex)) / 1024 << "KB" << std::endl;
 		if (positionVec.size() != 0)
 		{
 			std::cout << "Position Verticies:\t" << positionVec.size() << std::endl;
@@ -355,18 +356,22 @@ class OBJLoader
 
 				if (OBJGetKeyValuePair(line, objStatement, value))
 				{
-					if (objStatement[0] == '#') //comment, dont this way bc some files dont put a space after # in comment
+					if (objStatement[0] == '#') //comment, done this way bc some files dont put a space after # in comment
 					{
 						if (printComments)
 						{
 							std::cout << value << std::endl;
 						}
 					}
-					else if (objStatement == "g") //group
+					else if (objStatement == "g" || objStatement == "o") //group or object, blender counts them as the same so i will too 
 					{
 						OBJGroup g;
 						g.name = value;
 						LoadedData.groups.push_back(g);
+					}
+					else if (objStatement == "s")
+					{
+						LoadedData.mesh.verts.back().smoothingGroupIndex = std::stoi(value);
 					}
 					else if (objStatement == "v") //positional data
 					{			
