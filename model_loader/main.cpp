@@ -119,8 +119,9 @@ struct OBJVertex
 };
 struct OBJColor
 {
-	Vec3 ambience,diffuse,specular;
-	float specularExponent = 0,opticalDensity = 0,dissolve = 0,illumination = 0; 
+	Vec3 ambience,diffuse,specular,specHighlight,emissive,transmission;
+	float specularExponent = 0,dissolve = 0, refract = 0; 
+	int illumination = 0;
 
 	void Print()
 	{
@@ -129,7 +130,7 @@ struct OBJColor
 };
 struct OBJTexture
 {
-	std::string ambience, diffuse, specular, alpha, bump;
+	std::string ambience, diffuse, specular, alpha, bump, dissolve;
 
 	void Print()
 	{
@@ -190,6 +191,7 @@ struct OBJData
 	std::vector<Vec3> normalVec;
 	std::vector<Vec2> textureVec;
 	std::vector<OBJGroup> groups;
+	std::vector<std::string> objectNames;
 	std::map<std::string, OBJMaterial> materials;
 	OBJMesh mesh; //can an obj file have more than one mesh?
 	uint32_t faces = 0;
@@ -247,6 +249,12 @@ struct OBJData
 			kvp.second.Print();
 		}
 
+		std::cout << "\nObjects:\t" << objectNames.size() << std::endl;
+		for (std::string o : objectNames)
+		{
+			std::cout << o << std::endl;
+		}
+
 
 	}
 
@@ -275,17 +283,17 @@ class FileManager
 		{
 			file.ignore(std::numeric_limits<std::streamsize>::max());
 			bytes = file.gcount();
-		if (bytes == 0)
-		{
-			std::cout << "File is empty. Closing." << std::endl;
-			file.close();
-		}
-		else
-		{
-			file.seekg(0, std::ios_base::beg);
-			initialized = true;
-			std::cout << "File initialized" << std::endl;
-		}
+			if (bytes == 0)
+			{
+				std::cout << "File is empty. Closing." << std::endl;
+				file.close();
+			}
+			else
+			{
+				file.seekg(0, std::ios_base::beg);
+				initialized = true;
+				std::cout << "File initialized" << std::endl;
+			}
 		}
 		else
 		{
@@ -293,14 +301,19 @@ class FileManager
 		}
 	}
 
-	std::string GetName()
+	const std::string GetName()
 	{
 		return path.substr(path.rfind('/')+1, path.rfind('.'));
 	}
 
-	std::string GetType()
+	const std::string GetType()
 	{
 		return path.substr(path.rfind('.')+1);
+	}
+
+	const std::string GetDirectory()
+	{
+		return path.substr(0, path.rfind('/') + 1);
 	}
 
 	long GetTime()
@@ -327,7 +340,7 @@ class FileManager
 class OBJLoader
 {
 	public:
-	bool Load(FileManager fm, bool printComments)
+	bool OBJLoad(FileManager fm, bool printComments)
 	{
 		OBJData LoadedData;	
 		std::map<std::string, int32_t> faceIndexMap;
@@ -416,6 +429,10 @@ class OBJLoader
 						}
 						LoadedData.mesh.activeMaterial = m;
 					}
+					else if (objStatement == "mtllib")
+					{
+						OBJLoadMaterials(fm.GetDirectory()+value,LoadedData,printComments);
+					}
 					else
 					{
 						std::cout << "Unhandled statement: " << objStatement << std::endl;
@@ -432,6 +449,113 @@ class OBJLoader
 		return true;
 	}
 
+	bool OBJLoadMaterials(const std::string&path, OBJData &data, const bool &showComments)
+	{
+		std::fstream file;
+		FileManager fm(path,file);
+		if (fm.initialized) 
+		{
+			std::cout << path << " Loaded!" << std::endl;
+			while (!fm.file.eof()) {
+				std::string line;
+				while (std::getline(fm.file, line))
+				{
+					std::string mtlStatement;
+					std::string value;
+					OBJMaterial current;
+					if (OBJGetKeyValuePair(line, mtlStatement, value))
+					{
+
+						if (mtlStatement[0] == '#') //comment
+						{
+							if (showComments)
+							{
+								std::cout << value << std::endl;
+							}
+						}
+						else if (mtlStatement == "newmtl")
+						{						
+							if (data.materials.find(value) == data.materials.end())
+							{
+
+								current.name = value;
+								data.materials.emplace(current.name, current);
+							}
+							data.mesh.activeMaterial = current;
+						}
+						else if (mtlStatement == "Ns") 
+						{
+							current.color.specularExponent = std::stof(value);
+						}
+						else if (mtlStatement == "Ka")
+						{
+							current.color.ambience = OBJGetVectorFromValue(value);
+						}
+						else if (mtlStatement == "Kd")
+						{
+							current.color.diffuse = OBJGetVectorFromValue(value);
+						}
+						else if (mtlStatement == "Ks")
+						{
+							current.color.specHighlight = OBJGetVectorFromValue(value);
+						}
+						else if (mtlStatement == "Ke")
+						{
+							current.color.emissive = OBJGetVectorFromValue(value);
+						}
+						else if (mtlStatement == "Tf")
+						{
+							current.color.transmission = OBJGetVectorFromValue(value);
+						}
+						else if (mtlStatement == "Ni")
+						{
+							current.color.refract = std::stof(value);
+						}
+						else if (mtlStatement == "D")
+						{
+							current.color.dissolve = std::stof(value);
+						}
+						else if (mtlStatement == "illum")
+						{
+							current.color.illumination = std::stoi(value);
+						}
+						else if (mtlStatement == "map_Ka") 
+						{
+							current.texture.ambience = value;
+							//TODO PROCESS TEXTURES
+						}
+						else if (mtlStatement == "map_Kd")
+						{
+							current.texture.diffuse = value;
+						}
+						else if (mtlStatement == "map_Ks")
+						{
+							current.texture.specular = value;
+						}
+						else if (mtlStatement == "map_d")
+						{
+							current.texture.dissolve = value;
+						}
+						else if (mtlStatement == "bump") 
+						{
+							current.texture.bump = value;
+						}
+
+						else
+						{
+							std::cout << "Unhandled statement: " << mtlStatement << std::endl;
+						}
+					}
+				}
+
+			}
+			std::cout << "Material file successfully parsed!" << std::endl;
+		}
+		else 
+		{
+			return false;
+		}
+	}
 
 	OBJVertex OBJGetFaceFromVertex(std::string faceData, OBJData& data)
 	{
@@ -511,7 +635,7 @@ int main(int argc, char* argv[])
 			std::cout << "Print comments? (Y / any other key): ";
 			std::cin >> charIn;
 			bool showComments = std::tolower(charIn) == 'y';
-			objLoader.Load(fileManager, showComments);
+			objLoader.OBJLoad(fileManager, showComments);
 		}
 		else
 		{
