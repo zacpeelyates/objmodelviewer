@@ -190,7 +190,7 @@ struct OBJData
 	std::vector<Vec3> normalVec;
 	std::vector<Vec2> textureVec;
 	std::vector<OBJGroup> groups;
-	std::map<std::string,OBJMaterial> materials;
+	std::map<std::string, OBJMaterial> materials;
 	OBJMesh mesh; //can an obj file have more than one mesh?
 	uint32_t faces = 0;
 
@@ -332,7 +332,6 @@ class OBJLoader
 		OBJData LoadedData;	
 		std::map<std::string, int32_t> faceIndexMap;
 		std::string line;
-		OBJGroup* currentGroup = nullptr;
 		
 		while (!fm.file.eof())
 		{
@@ -343,7 +342,7 @@ class OBJLoader
 
 				if (OBJGetKeyValuePair(line, objStatement, value))
 				{
-					if (objStatement == "#") //comment
+					if (objStatement[0] == '#') //comment, dont this way bc some files dont put a space after # in comment
 					{
 						if (printComments)
 						{
@@ -355,29 +354,28 @@ class OBJLoader
 						OBJGroup g;
 						g.name = value;
 						LoadedData.groups.push_back(g);
-						currentGroup = &g;
 					}
 					else if (objStatement == "v") //positional data
-					{
-						if (currentGroup != nullptr)
+					{			
+						if (LoadedData.groups.size() != 0)
 						{
-							currentGroup->v++;
+							LoadedData.groups[LoadedData.groups.size()-1].v++;
 						}
 						LoadedData.positionVec.push_back(OBJGetVectorFromValue(value));
 					}
 					else if (objStatement == "vn") //normal data
 					{
-						if (currentGroup != nullptr)
+						if (LoadedData.groups.size() != 0)
 						{
-							currentGroup->vn++;
+							LoadedData.groups[LoadedData.groups.size() - 1].vn++;
 						}
 						LoadedData.normalVec.push_back(OBJGetVectorFromValue(value));
 					}
 					else if (objStatement == "vt") //texture data
 					{
-						if (currentGroup != nullptr)
+						if (LoadedData.groups.size() != 0)
 						{
-							currentGroup->vt++;
+							LoadedData.groups[LoadedData.groups.size() - 1].vt++;
 						}
 						LoadedData.textureVec.push_back(OBJGetVectorFromValue(value));
 					}
@@ -410,10 +408,11 @@ class OBJLoader
 					else if (objStatement == "usemtl")
 					{
 						OBJMaterial m;
-						m.name = value;
 						if (LoadedData.materials.find(value) == LoadedData.materials.end())
 						{
-							LoadedData.materials.emplace(m);
+							
+							m.name = value;
+							LoadedData.materials.emplace(m.name,m);
 						}
 						LoadedData.mesh.activeMaterial = m;
 					}

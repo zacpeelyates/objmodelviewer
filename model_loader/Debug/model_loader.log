@@ -1,74 +1,13 @@
 ﻿  main.cpp
-C:\Users\Zac\Documents\UoG\Level\5\Resources\Module\SEM1\Lectures\low\model_loader\model_loader\main.cpp(308,119): warning C4244: 'return': conversion from '_Rep' to 'long', possible loss of data
+C:\Users\Zac\Documents\UoG\Level\5\Projects\SEM1\Low\ct5036-assessment-rendering-framework-ramkhisthrowing\model_loader\main.cpp(308,119): warning C4244: 'return': conversion from '_Rep' to 'long', possible loss of data
           with
           [
               _Rep=__int64
           ]
-C:\Users\Zac\Documents\UoG\Level\5\Resources\Module\SEM1\Lectures\low\model_loader\model_loader\main.cpp(395,1): warning C4267: 'argument': conversion from 'size_t' to '_Ty', possible loss of data
+C:\Users\Zac\Documents\UoG\Level\5\Projects\SEM1\Low\ct5036-assessment-rendering-framework-ramkhisthrowing\model_loader\main.cpp(393,1): warning C4267: 'argument': conversion from 'size_t' to '_Ty', possible loss of data
           with
           [
               _Ty=uint16_t
           ]
-C:\Users\Zac\Documents\UoG\Level\5\Resources\Module\SEM1\Lectures\low\model_loader\model_loader\main.cpp(403,25): warning C4018: '<': signed/unsigned mismatch
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\xmemory(714,47): error C2665: 'std::pair<const std::string,OBJMaterial>::pair': none of the 2 overloads could convert all the argument types
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\utility(213,5): message : could be 'std::pair<const std::string,OBJMaterial>::pair(std::pair<const std::string,OBJMaterial> &&)'
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\utility(212,5): message : or       'std::pair<const std::string,OBJMaterial>::pair(const std::pair<const std::string,OBJMaterial> &)'
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\xmemory(707,1): message : while trying to match the argument list '(OBJMaterial)'
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\xtree(811): message : see reference to function template instantiation 'void std::_Default_allocator_traits<_Alloc>::construct<_Ty,OBJMaterial&>(_Alloc &,_Objty *const ,OBJMaterial &)' being compiled
-          with
-          [
-              _Alloc=std::allocator<std::_Tree_node<std::pair<const std::string,OBJMaterial>,std::_Default_allocator_traits<std::allocator<std::pair<const std::string,OBJMaterial>>>::void_pointer>>,
-              _Ty=std::pair<const std::string,OBJMaterial>,
-              _Objty=std::pair<const std::string,OBJMaterial>
-          ]
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\xtree(812): message : see reference to function template instantiation 'void std::_Default_allocator_traits<_Alloc>::construct<_Ty,OBJMaterial&>(_Alloc &,_Objty *const ,OBJMaterial &)' being compiled
-          with
-          [
-              _Alloc=std::allocator<std::_Tree_node<std::pair<const std::string,OBJMaterial>,std::_Default_allocator_traits<std::allocator<std::pair<const std::string,OBJMaterial>>>::void_pointer>>,
-              _Ty=std::pair<const std::string,OBJMaterial>,
-              _Objty=std::pair<const std::string,OBJMaterial>
-          ]
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\xtree(1007): message : see reference to function template instantiation 'std::_Tree_temp_node<std::allocator<std::_Tree_node<std::pair<const std::string,OBJMaterial>,std::_Default_allocator_traits<_Alloc>::void_pointer>>>::_Tree_temp_node<OBJMaterial&>(_Alnode &,std::_Tree_node<std::pair<const std::string,OBJMaterial>,std::_Default_allocator_traits<_Alloc>::void_pointer> *,OBJMaterial &)' being compiled
-          with
-          [
-              _Alloc=std::allocator<std::pair<const std::string,OBJMaterial>>,
-              _Alnode=std::allocator<std::_Tree_node<std::pair<const std::string,OBJMaterial>,std::_Default_allocator_traits<std::allocator<std::pair<const std::string,OBJMaterial>>>::void_pointer>>
-          ]
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\xtree(1023): message : see reference to function template instantiation 'std::_Tree_temp_node<std::allocator<std::_Tree_node<std::pair<const std::string,OBJMaterial>,std::_Default_allocator_traits<_Alloc>::void_pointer>>>::_Tree_temp_node<OBJMaterial&>(_Alnode &,std::_Tree_node<std::pair<const std::string,OBJMaterial>,std::_Default_allocator_traits<_Alloc>::void_pointer> *,OBJMaterial &)' being compiled
-          with
-          [
-              _Alloc=std::allocator<std::pair<const std::string,OBJMaterial>>,
-              _Alnode=std::allocator<std::_Tree_node<std::pair<const std::string,OBJMaterial>,std::_Default_allocator_traits<std::allocator<std::pair<const std::string,OBJMaterial>>>::void_pointer>>
-          ]
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\xtree(1044): message : see reference to function template instantiation 'std::pair<std::_Tree_node<std::pair<const std::string,OBJMaterial>,std::_Default_allocator_traits<_Alloc>::void_pointer> *,bool> std::_Tree<std::_Tmap_traits<_Kty,_Ty,_Pr,_Alloc,false>>::_Emplace<OBJMaterial&>(OBJMaterial &)' being compiled
-          with
-          [
-              _Alloc=std::allocator<std::pair<const std::string,OBJMaterial>>,
-              _Kty=std::string,
-              _Ty=OBJMaterial,
-              _Pr=std::less<std::string>
-          ]
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\xtree(1045): message : see reference to function template instantiation 'std::pair<std::_Tree_node<std::pair<const std::string,OBJMaterial>,std::_Default_allocator_traits<_Alloc>::void_pointer> *,bool> std::_Tree<std::_Tmap_traits<_Kty,_Ty,_Pr,_Alloc,false>>::_Emplace<OBJMaterial&>(OBJMaterial &)' being compiled
-          with
-          [
-              _Alloc=std::allocator<std::pair<const std::string,OBJMaterial>>,
-              _Kty=std::string,
-              _Ty=OBJMaterial,
-              _Pr=std::less<std::string>
-          ]
-C:\Users\Zac\Documents\UoG\Level\5\Resources\Module\SEM1\Lectures\low\model_loader\model_loader\main.cpp(416): message : see reference to function template instantiation 'std::pair<std::_Tree_iterator<std::_Tree_val<std::_Tree_simple_types<std::pair<const std::string,OBJMaterial>>>>,bool> std::_Tree<std::_Tmap_traits<_Kty,_Ty,_Pr,_Alloc,false>>::emplace<OBJMaterial&>(OBJMaterial &)' being compiled
-          with
-          [
-              _Kty=std::string,
-              _Ty=OBJMaterial,
-              _Pr=std::less<std::string>,
-              _Alloc=std::allocator<std::pair<const std::string,OBJMaterial>>
-          ]
-C:\Users\Zac\Documents\UoG\Level\5\Resources\Module\SEM1\Lectures\low\model_loader\model_loader\main.cpp(416): message : see reference to function template instantiation 'std::pair<std::_Tree_iterator<std::_Tree_val<std::_Tree_simple_types<std::pair<const std::string,OBJMaterial>>>>,bool> std::_Tree<std::_Tmap_traits<_Kty,_Ty,_Pr,_Alloc,false>>::emplace<OBJMaterial&>(OBJMaterial &)' being compiled
-          with
-          [
-              _Kty=std::string,
-              _Ty=OBJMaterial,
-              _Pr=std::less<std::string>,
-              _Alloc=std::allocator<std::pair<const std::string,OBJMaterial>>
-          ]
+C:\Users\Zac\Documents\UoG\Level\5\Projects\SEM1\Low\ct5036-assessment-rendering-framework-ramkhisthrowing\model_loader\main.cpp(401,25): warning C4018: '<': signed/unsigned mismatch
+  model_loader.vcxproj -> C:\Users\Zac\Documents\UoG\Level\5\Projects\SEM1\Low\ct5036-assessment-rendering-framework-ramkhisthrowing\model_loader\Debug\model_loader.exe
