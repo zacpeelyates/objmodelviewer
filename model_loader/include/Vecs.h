@@ -1,3 +1,10 @@
+////////////////////////////////////////////////////////
+// File: Vecs.h
+// Author: Zac Peel-Yates (s1703955)
+// Date Created: 30/09/21
+// Last Edited:  30/09/21
+// Brief: Function declarations for Vecs.cpp
+///////////////////////////////////////////////////////
 #ifndef __VECS_H__
 #define __VECS_H__
 

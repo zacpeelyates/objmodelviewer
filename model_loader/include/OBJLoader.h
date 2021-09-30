@@ -1,3 +1,10 @@
+////////////////////////////////////////////////////////
+// File: OBJLoader.h
+// Author: Zac Peel-Yates (s1703955)
+// Date Created: 30/09/21
+// Last Edited:  30/09/21
+// Brief: Function declarations for OBJLoader.cpp
+///////////////////////////////////////////////////////
 #ifndef __OBJ_LOADER_H__
 #define __OBJ_LOADER_H__
 #include "FileManager.h"

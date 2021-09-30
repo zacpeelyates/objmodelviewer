@@ -1,3 +1,11 @@
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// File: OBJLoader.cpp
+// Author: Zac Peel-Yates (s1703955)
+// Date Created: 30/09/21
+// Last Edited:  30/09/21
+// Brief: Function implementations for parsing and loading OBJ Files
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 #include "OBJLoader.h"
 #include "MiscTools.h"
 #include <iostream>
@@ -5,6 +13,7 @@
 
 bool OBJLoader::OBJLoad(FileManager a_oFileManager, bool a_bPrintComments)
 {
+	//Parses an obj file line by line, storing found data in appropriate members of an OBJData object
 	OBJData LoadedData;
 	std::map<std::string, int32_t> faceIndexMap;
 	std::string line;
@@ -74,12 +83,12 @@ bool OBJLoader::OBJLoad(FileManager a_oFileManager, bool a_bPrintComments)
 					for (auto iter = faceComponents.begin(); iter != faceComponents.end(); ++iter)
 					{
 						auto iKey = faceIndexMap.find(*iter);
-						if (iKey == faceIndexMap.end()) //new vertex
+						if (iKey == faceIndexMap.end()) //vertex is new
 						{
 							LoadedData.mesh.verts.push_back(OBJGetFaceFromVertex(*iter, LoadedData));
 							faceIndicies.push_back(faceIndexMap[*iter] = (int32_t)LoadedData.mesh.verts.size() - 1);
 						}
-						else //duplicate vertex
+						else //vertex has already been processed
 						{
 							faceIndicies.push_back((*iKey).second);
 						}
@@ -125,6 +134,7 @@ bool OBJLoader::OBJLoad(FileManager a_oFileManager, bool a_bPrintComments)
 
 bool OBJLoader::OBJLoadMaterials(const std::string& a_strFilePath, OBJData& a_oLoadedData, const bool ac_bPrintComments)
 {
+	//Parses an mtl file line by line and stores data in parsed OBJData Material/Texture structs
 	std::fstream file;
 	FileManager fm(a_strFilePath, file);
 	if (fm.initialized)
@@ -139,78 +149,77 @@ bool OBJLoader::OBJLoadMaterials(const std::string& a_strFilePath, OBJData& a_oL
 				OBJMaterial current;
 				if (OBJGetKeyValuePairFromLine(line, mtlStatement, value))
 				{
-
-					if (mtlStatement[0] == '#') //comment
+					//perform appropriate action depending on given statement
+					if (mtlStatement[0] == '#') //comment, done this way to handle pepole who don't put a space after their comment >:(
 					{
 						if (ac_bPrintComments)
 						{
 							std::cout << value << std::endl;
 						}
 					}
-					else if (mtlStatement == "newmtl")
+					else if (mtlStatement == "newmtl") //new material
 					{
 						if (a_oLoadedData.materials.find(value) == a_oLoadedData.materials.end())
 						{
-
 							current.name = value;
 							a_oLoadedData.materials.emplace(current.name, current);
 						}
 						a_oLoadedData.mesh.activeMaterial = current;
 					}
-					else if (mtlStatement == "Ns")
+					else if (mtlStatement == "Ns") //set specular exponent
 					{
 						current.color.specularExponent = std::stof(value);
 					}
-					else if (mtlStatement == "Ka")
+					else if (mtlStatement == "Ka") //set ambiance RGB vector
 					{
 						current.color.ambience = OBJGetVectorFromValue(value);
 					}
-					else if (mtlStatement == "Kd")
+					else if (mtlStatement == "Kd") //set diffuse RGB vector
 					{
 						current.color.diffuse = OBJGetVectorFromValue(value);
 					}
-					else if (mtlStatement == "Ks")
+					else if (mtlStatement == "Ks") //set specular highlight RGB vector
 					{
 						current.color.specHighlight = OBJGetVectorFromValue(value);
 					}
-					else if (mtlStatement == "Ke")
+					else if (mtlStatement == "Ke") //set emissive RGB vector
 					{
 						current.color.emissive = OBJGetVectorFromValue(value);
 					}
-					else if (mtlStatement == "Tf")
+					else if (mtlStatement == "Tf") //set transmission RGB vector
 					{
 						current.color.transmission = OBJGetVectorFromValue(value);
 					}
-					else if (mtlStatement == "Ni")
+					else if (mtlStatement == "Ni") //set refract value
 					{
 						current.color.refract = std::stof(value);
 					}
-					else if (mtlStatement == "d")
+					else if (mtlStatement == "d") //set disolve value
 					{
 						current.color.dissolve = std::stof(value);
 					}
-					else if (mtlStatement == "illum")
+					else if (mtlStatement == "illum") //set illumination model value
 					{
 						current.color.illumination = std::stoi(value);
 					}
-					else if (mtlStatement == "map_Ka")
+					else if (mtlStatement == "map_Ka") //set ambiance map
 					{
 						current.texture.ambience = value;
 						//TODO PROCESS TEXTURES
 					}
-					else if (mtlStatement == "map_Kd")
+					else if (mtlStatement == "map_Kd") //set diffuse map 
 					{
 						current.texture.diffuse = value;
 					}
-					else if (mtlStatement == "map_Ks")
+					else if (mtlStatement == "map_Ks") //set specular map
 					{
 						current.texture.specular = value;
 					}
-					else if (mtlStatement == "map_d")
+					else if (mtlStatement == "map_d") //set dissolve map
 					{
 						current.texture.dissolve = value;
 					}
-					else if (mtlStatement == "bump")
+					else if (mtlStatement == "bump") //set bump map
 					{
 						current.texture.bump = value;
 					}
@@ -234,6 +243,7 @@ bool OBJLoader::OBJLoadMaterials(const std::string& a_strFilePath, OBJData& a_oL
 
 OBJVertex OBJLoader::OBJGetFaceFromVertex(std::string a_strFaceData, OBJData& a_oLoadedData)
 {
+	//contstructs an OBJ Face from input string, then return an OBJVertix containing relevant face information
 	std::vector<std::string> vertIndicies = SplitStringAtChar(a_strFaceData, '/');
 	OBJFace face = { 0,0,0 };
 	face.posIndex = std::stoi(vertIndicies[0]);
@@ -263,6 +273,7 @@ OBJVertex OBJLoader::OBJGetFaceFromVertex(std::string a_strFaceData, OBJData& a_
 
 Vec4 OBJLoader::OBJGetVectorFromValue(const std::string ac_strValue)
 {
+	//parses given string into a vec4 -- this vector is implicity cast to the correct size when assigned (dangerous,scary)
 	std::stringstream ss(ac_strValue);
 	Vec4 outVertex;
 	int i = 0;
@@ -275,6 +286,7 @@ Vec4 OBJLoader::OBJGetVectorFromValue(const std::string ac_strValue)
 
 bool OBJLoader::OBJGetKeyValuePairFromLine(const std::string& ac_rStrLine, std::string& a_rStrOutKey, std::string& a_rStrOutValue)
 {
+	//Splits a line from OBJ file into the key (or OBJStatement) and the associated value (the rest of the file)
 	if (ac_rStrLine.empty()) return false;
 
 	//get key
@@ -283,7 +295,7 @@ bool OBJLoader::OBJGetKeyValuePairFromLine(const std::string& ac_rStrLine, std::
 	size_t keyLast = ac_rStrLine.find_first_of("   \t\r\n", keyFirst); //start search from keyfirst
 	a_rStrOutKey = ac_rStrLine.substr(keyFirst, keyLast - keyFirst);
 
-	//get value range 
+	//get value 
 	size_t valueFirst = ac_rStrLine.find_first_not_of("  \t\r\n", keyLast); //start search from where we left off 
 	if (valueFirst == std::string::npos) return false; //value was not valid
 	size_t valueLast = ac_rStrLine.find_last_not_of("  \t\r\n") + 1; //add one to get last character as method used is exclusive

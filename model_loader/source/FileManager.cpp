@@ -1,8 +1,17 @@
+///////////////////////////////////////////////////////////////////////////////
+// File: FileManager.cpp	
+// Author: Zac Peel-Yates (s1703955)
+// Date Created: 30/09/21
+// Date Edited:  30/09/21
+// Brief: Function implementation for handling file loading and file information.
+// This information is NOT the parising of file contents, its just information about the file like path and size
+// For file parsing see the associated loader class (e.g OBJLoader.h)
+///////////////////////////////////////////////////////////////////////////////
 #include "FileManager.h"
 #include <iostream>
-
 FileManager::FileManager(std::string a_strFilePath, std::fstream& a_oFileIn) : file(a_oFileIn)
 {
+	//Constructor for FileManager class, sets associated variables and tries to load file at given path
 	time = std::chrono::high_resolution_clock::now();
 	path = a_strFilePath;
 	initialized = false;
@@ -32,16 +41,19 @@ FileManager::FileManager(std::string a_strFilePath, std::fstream& a_oFileIn) : f
 
 const std::string FileManager::GetName()
 {
+	//returns the file name with no preceeding path or extention
 	return path.substr(path.rfind('/') + 1, path.rfind('.'));
 }
 
 const std::string FileManager::GetType()
 {
+	//returns the file extention with no preceeding name or path
 	return path.substr(path.rfind('.') + 1);
 }
 
 const std::string FileManager::GetDirectory()
 {
+	//returns directory the file is contained in
 	return path.substr(0, path.rfind('/') + 1);
 }
 
@@ -52,6 +64,7 @@ long FileManager::GetProcessTime()
 
 std::streamsize FileManager::GetFileSize()
 {
+	//returns file size in KB
 	return bytes / 1024;
 }
 
