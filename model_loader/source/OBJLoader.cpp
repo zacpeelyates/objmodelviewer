@@ -24,6 +24,7 @@ bool OBJLoader::OBJLoad(FileManager a_oFileManager, bool a_bPrintComments)
 
 			std::string objStatement;
 			std::string value;
+			int s;
 
 			if (OBJGetKeyValuePairFromLine(line, objStatement, value))
 			{
@@ -42,13 +43,14 @@ bool OBJLoader::OBJLoad(FileManager a_oFileManager, bool a_bPrintComments)
 				}
 				else if (objStatement == "s")
 				{
-					if (ParseStringToInt(value)) 
+					if (ParseStringToInt(value))
 					{
-						LoadedData.mesh.verts.back().smoothingGroupIndex = std::stoi(value);
+						s = stoi(value);
+						std::cout << "smoothing group " << value << std::endl;
 					}
 					else if(value == "off")
 					{
-						std::cout << "Disabling smoothing groups" << std::endl;
+						std::cout << "disabling smoothing groups" << std::endl;
 					}
 				}
 				else if (objStatement == "v") //positional data
