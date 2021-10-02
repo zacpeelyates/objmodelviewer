@@ -1,7 +1,8 @@
 #version 400
-smooth in vec4 vertColour;
-out vec4 outputColour;
+smooth in vec4 vertColor;
+out vec4 outputColor;
+
 void main()
 {
-outputColour = vertColour;
+	outputColor = vertColor;
 }

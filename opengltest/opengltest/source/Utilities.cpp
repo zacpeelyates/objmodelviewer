@@ -52,9 +52,9 @@ GLuint CreateShader(const char* a_strShaderFile, unsigned int a_eShaderType)
 GLuint CreateProgram()
 	{
 		std::vector<GLuint> shaderList;
-		shaderList.push_back(CreateShader("resource/shaders/vertex.glsl",
+		shaderList.push_back(CreateShader("resources/shaders/vertex.glsl",
 			GL_VERTEX_SHADER));
-		shaderList.push_back(CreateShader("resource/shaders/fragment.glsl",
+		shaderList.push_back(CreateShader("resources/shaders/fragment.glsl",
 			GL_FRAGMENT_SHADER));
 		//create shader program ID
 		GLuint uiProgram = glCreateProgram();
