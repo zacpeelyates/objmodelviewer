@@ -5,6 +5,7 @@
 // Last Edited:  30/09/21
 // Brief: Main entry point of application. Handles user input and calling correct loader class for supplied file.
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#include "DisplayModel.h"
 #include "FileManager.h"
 #include "OBJLoader.h"
 #include <string>
@@ -14,6 +15,7 @@
 int main(int argc, char* argv[])
 {
 	//Main entry point of application
+	draw();
 	std::string inputPath;
 	std::cout << "Enter Filename: ";
 	std::getline(std::cin,inputPath);
@@ -29,6 +31,7 @@ int main(int argc, char* argv[])
 			std::cin >> charIn;
 			bool showComments = std::tolower(charIn) == 'y';
 			objLoader.OBJLoad(fileManager, showComments); //Attempt to laod OBJ file (OBJLoader.cpp)
+			draw();
 		}
 		else
 		{

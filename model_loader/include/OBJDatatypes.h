@@ -8,7 +8,7 @@
 #ifndef __OBJDATATYPES_H__
 #define __OBJDATATYPES_H__
 
-#include "Vecs.h"
+#include <glm/glm.hpp>
 #include <cstdint>
 #include <string>
 #include <vector>
@@ -18,10 +18,10 @@ struct OBJVertex
 {
 public:
 	OBJVertex();
-	OBJVertex(Vec3 a_oPosVec, Vec3 a_oNormVec, Vec2 a_oTextureVec);
+	OBJVertex(glm::vec3 a_oPosVec, glm::vec3 a_oNormVec, glm::vec2 a_oTextureVec);
 
-	Vec3 pos, normal;
-	Vec2 uvCoord;
+	glm::vec3 pos, normal;
+	glm::vec2 uvCoord;
 	uint32_t smoothingGroupIndex;
 };
 struct OBJColor
@@ -32,7 +32,7 @@ struct OBJColor
 	float dissolve = 0.0f;
 	float refract = 0.0f;
 	uint8_t illumination = 0;
-	Vec3 ambience, diffuse, specular, specHighlight, emissive, transmission;
+	glm::vec3 ambience, diffuse, specular, specHighlight, emissive, transmission;
 };
 struct OBJTexture
 {
@@ -76,9 +76,9 @@ struct OBJData
 	void Clear();
 	void Print() const;
 
-	std::vector<Vec3> positionVec;
-	std::vector<Vec3> normalVec;
-	std::vector<Vec2> textureVec;
+	std::vector<glm::vec3> positionVec;
+	std::vector<glm::vec3> normalVec;
+	std::vector<glm::vec3> textureVec;
 	std::vector<OBJGroup> groups;
 	std::map<std::string, OBJMaterial> materials;
 	OBJMesh mesh;

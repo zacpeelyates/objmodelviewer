@@ -7,7 +7,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "OBJLoader.h"
-#include "MiscTools.h"
+#include "Utilities.h"
 #include <iostream>
 #include <sstream>
 
@@ -273,11 +273,11 @@ OBJVertex OBJLoader::OBJGetFaceFromVertex(std::string a_strFaceData, OBJData& a_
 	return current;
 }
 
-Vec4 OBJLoader::OBJGetVectorFromValue(const std::string ac_strValue)
+glm::vec4 OBJLoader::OBJGetVectorFromValue(const std::string ac_strValue)
 {
 	//parses given string into a vec4 -- this vector is implicity cast to the correct size when assigned (dangerous,scary)
 	std::stringstream ss(ac_strValue);
-	Vec4 outVertex;
+	glm::vec4 outVertex;
 	int i = 0;
 	for (std::string s; ss >> s; ++i)
 	{

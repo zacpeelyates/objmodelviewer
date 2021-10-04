@@ -4,6 +4,7 @@
 #include <glm/ext.hpp>
 #include "Utilities.h"
 #include "Camera.h"
+#include "DisplayModel.h"
 
 
 constexpr float WINDOW_WIDTH = 640.0f;
@@ -23,7 +24,7 @@ struct Line
 	Vertex end;
 };
 
-int main()
+bool draw()
 {
 	glm::mat4 cameraMatrix = glm::inverse(glm::lookAt(glm::vec3(10,10,10),glm::vec3(0,0,0),glm::vec3(0, 1, 0)));
 
@@ -32,14 +33,14 @@ int main()
 	//Initialise GLFW
 	if (!glfwInit())
 	{
-		return -1;
+		return false;
 	}
 	//create a windowed mode window and it's OpenGL context
 	GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "OpenGL Testing", NULL, NULL);
 	if (!window)
 	{
 		glfwTerminate();
-		return -1;
+		return false;
 	}
 	//make the window's context current
 	glfwMakeContextCurrent(window);
@@ -57,9 +58,9 @@ int main()
 	glm::mat4 defaultCameraMatrix = cameraMatrix; //todo add reset button
 	glUseProgram(uiProgram);
 
-	int gridSize = 21;
-	Line* lines = new Line[gridSize * 2];
-	for (int i = 0; i < gridSize; ++i)
+	int gridSize = 42;
+	Line* lines = new Line[gridSize];
+	for (int i = 0; i < gridSize/2; ++i)
 	{
 		int j = i * 2;
 		lines[j].start.pos = glm::vec4(-10 + i, 0.0f, 10.0f, 1.0f);
@@ -77,7 +78,7 @@ int main()
 	glGenBuffers(1, &lineVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, lineVBO);
 
-	glBufferData(GL_ARRAY_BUFFER, gridSize * 2 * sizeof(Line), lines, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, gridSize * sizeof(Line), lines, GL_STATIC_DRAW);
 	delete[] lines;
 	
 
@@ -103,12 +104,12 @@ int main()
 		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (char*)nullptr+16);
 		glBindBuffer(GL_ARRAY_BUFFER, lineVBO);
 		//draw to the screen
-		glDrawArrays(GL_LINES, 0, gridSize * 4);
+		glDrawArrays(GL_LINES, 0, gridSize * 2);
 		//swap front and back buffers
 		glfwSwapBuffers(window);
 		//poll for and process events
 		glfwPollEvents();
 	}
 	glfwTerminate();
-	return 0;
+	return true;
 }

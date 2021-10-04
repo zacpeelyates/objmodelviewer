@@ -12,7 +12,7 @@ OBJVertex::OBJVertex()
 {
 	smoothingGroupIndex = 0;
 }
-OBJVertex::OBJVertex(Vec3 a_oPosVec, Vec3 a_oNormVec, Vec2 a_oTextureVec)
+OBJVertex::OBJVertex(glm::vec3 a_oPosVec, glm::vec3 a_oNormVec, glm::vec2 a_oTextureVec)
 {
 	this->pos = a_oPosVec;
 	this->normal = a_oNormVec;
