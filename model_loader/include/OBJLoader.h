@@ -12,7 +12,7 @@
 class OBJLoader
 {
 public:
-	bool OBJLoad(FileManager a_oFileManager, bool a_bPrintComments);
+	bool OBJLoad(FileManager a_oFileManager, bool a_bPrintComments, OBJData& LoadedData);
 	bool OBJLoadMaterials(const std::string& a_strFilePath, OBJData& a_roLoadedData, const bool a_bPrintComments);
 	OBJVertex OBJGetFaceFromVertex(std::string a_strFaceData, OBJData& a_roLoadedData);
 	glm::vec4 OBJGetVectorFromValue(const std::string a_strValue);

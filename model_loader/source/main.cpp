@@ -15,7 +15,7 @@
 int main(int argc, char* argv[])
 {
 	//Main entry point of application
-	draw();
+	draw(OBJData());
 	std::string inputPath;
 	std::cout << "Enter Filename: ";
 	std::getline(std::cin,inputPath);
@@ -30,8 +30,15 @@ int main(int argc, char* argv[])
 			std::cout << "Print comments? (Y / any other key): ";
 			std::cin >> charIn;
 			bool showComments = std::tolower(charIn) == 'y';
-			objLoader.OBJLoad(fileManager, showComments); //Attempt to laod OBJ file (OBJLoader.cpp)
-			draw();
+			OBJData loaded;
+			if (objLoader.OBJLoad(fileManager, showComments, loaded)) //Attempt to load OBJ file (OBJLoader.cpp)
+			{
+				draw(loaded);
+			}
+			else
+			{
+				std::cout << "failed to load file" << std::endl;
+			}
 		}
 		else
 		{

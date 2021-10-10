@@ -9,27 +9,14 @@
 
 constexpr float WINDOW_WIDTH = 640.0f;
 constexpr float WINDOW_HEIGHT = 480.0f;
-constexpr float TIMESTEP = 1.0f/60.0f;
-constexpr float BASESPEED = 0.5f;
 
-struct Vertex
+void resizeWindow(GLFWwindow* window, int w, int h)
 {
-	glm::vec4 pos;
-	glm::vec4 color;
-};
+	glViewport(0, 0, w, h);
+}
 
-struct Line
+bool draw(OBJData data)
 {
-	Vertex start;
-	Vertex end;
-};
-
-bool draw()
-{
-	glm::mat4 cameraMatrix = glm::inverse(glm::lookAt(glm::vec3(10,10,10),glm::vec3(0,0,0),glm::vec3(0, 1, 0)));
-
-	glm::mat4 projectionMatrix = glm::perspective(glm::pi<float>() * 0.25f, (float)(WINDOW_WIDTH / WINDOW_HEIGHT),0.1f, 1000.0f);
-
 	//Initialise GLFW
 	if (!glfwInit())
 	{
@@ -42,6 +29,7 @@ bool draw()
 		glfwTerminate();
 		return false;
 	}
+
 	//make the window's context current
 	glfwMakeContextCurrent(window);
 	//loop until the user closes the window
@@ -50,43 +38,45 @@ bool draw()
 		glfwTerminate();
 		return false;
 	}
+
+	//set program
+	GLuint uiProgram = CreateProgram();
+
+	//set viewport
+	glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+	//resize viewport if window changes size via callback
+	glfwSetFramebufferSizeCallback(window, resizeWindow);
+
+	//set up
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glClearColor(0.95f, 0.45f, 0.75f, 1.0f);
-	//create shader program
-	GLuint uiProgram = CreateProgram();
-	glm::mat4 defaultCameraMatrix = cameraMatrix; //todo add reset button
-	glUseProgram(uiProgram);
+	glClearDepth(1.0);
 
-	int gridSize = 42;
-	Line* lines = new Line[gridSize];
-	for (int i = 0; i < gridSize/2; ++i)
-	{
-		int j = i * 2;
-		lines[j].start.pos = glm::vec4(-10 + i, 0.0f, 10.0f, 1.0f);
-		lines[j].start.color = (i == 10) ? glm::vec4(1.0f, 1.0f, 1.0f, 1.0f) : glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
-		lines[j].end.pos = glm::vec4(-10 + i, 0.0f, -10.0f, 1.0f);
-		lines[j].end.color = (i == 10) ? glm::vec4(1.0f, 1.0f, 1.0f, 1.0f) : glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 
-		lines[j+1].start.pos = glm::vec4(10.0f, 0.0f, -10.0f + i, 1.0f);
-		lines[j+1].start.color = (i == 10) ? glm::vec4(1.0f, 1.0f, 1.0f, 1.0f) : glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
-		lines[j+1].end.pos = glm::vec4(-10, 0.0f, -10.0f + i, 1.0f);
-		lines[j+1].end.color = (i == 10) ? glm::vec4(1.0f, 1.0f, 1.0f, 1.0f) : glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
-	}
+	//set matrix values 
+	glm::mat4 cameraMatrix = glm::inverse(glm::lookAt(glm::vec3(10, 10, 10), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)));
+	glm::mat4 projectionMatrix = glm::perspective(glm::pi<float>() * 0.25f, (float)(WINDOW_WIDTH / WINDOW_HEIGHT), 0.1f, 1000.0f);
 
-	unsigned int lineVBO;
-	glGenBuffers(1, &lineVBO);
-	glBindBuffer(GL_ARRAY_BUFFER, lineVBO);
+	GLuint VAO, VBO;
+	glBindVertexArray(VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
-	glBufferData(GL_ARRAY_BUFFER, gridSize * sizeof(Line), lines, GL_STATIC_DRAW);
-	delete[] lines;
-	
+	//glvertexattribpointer:
+		//1. which vertex attrib we are configuring (defined in vertex.glsl -- 0 = position, 1 = color)
+		//2. size of vertex attrib (vec3 = 3)
+		//3. data type (GL_FLOAT, usually)
+		//4. normalize data boolean
+		//5. space between vertex attribs (vec3 would be 3 * sizeof(float))
+		//6. offset of position data from void*
+	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	while (!glfwWindowShouldClose(window)) {
 	
-		FreeMovement(cameraMatrix, TIMESTEP, BASESPEED);
-
-		//transform matricies 
+		FreeMovement(cameraMatrix);
+		//transform matrices 
 		glm::mat4 viewMatrix = glm::inverse(cameraMatrix);
 		glm::mat4 projectionViewMatrix = projectionMatrix * viewMatrix;
 		int projectionViewMatrixUniformLocation = glGetUniformLocation(uiProgram, "ProjectionViewMatrix");
@@ -95,21 +85,21 @@ bool draw()
 		//clear backbuffer
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		//draw code goes here
-		glEnableVertexAttribArray(0); 
-		glEnableVertexAttribArray(1);
-		//specify where our vertex array is, how many components each vertex has,
-		//the data type of each component and whether the data is normalized or not
-		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
-		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (char*)nullptr+16);
-		glBindBuffer(GL_ARRAY_BUFFER, lineVBO);
-		//draw to the screen
-		glDrawArrays(GL_LINES, 0, gridSize * 2);
+		//DRAW HERE
+		//glarraybuffer: 1. buffer type to copy into 2.size of data in bytes, 3. actual data, 4. draw type options
+		glBindVertexArray(VAO);
+		glDrawArrays(GL_VERTEX_ARRAY, 0, numberofverts);
+		
+
+		//CLEANUP / LOOP END
 		//swap front and back buffers
 		glfwSwapBuffers(window);
 		//poll for and process events
 		glfwPollEvents();
+
 	}
+	glDeleteVertexArrays(1, &VAO);
+	glDeleteBuffers(1, &VBO);
 	glfwTerminate();
 	return true;
 }

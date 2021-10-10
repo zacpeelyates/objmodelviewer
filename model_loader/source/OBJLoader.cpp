@@ -11,10 +11,9 @@
 #include <iostream>
 #include <sstream>
 
-bool OBJLoader::OBJLoad(FileManager a_oFileManager, bool a_bPrintComments)
+bool OBJLoader::OBJLoad(FileManager a_oFileManager, bool a_bPrintComments, OBJData &LoadedData)
 {
 	//Parses an obj file line by line, storing found data in appropriate members of an OBJData object
-	OBJData LoadedData;
 	std::map<std::string, int32_t> faceIndexMap;
 	std::string line;
 
@@ -130,7 +129,6 @@ bool OBJLoader::OBJLoad(FileManager a_oFileManager, bool a_bPrintComments)
 	a_oFileManager.Print();
 	a_oFileManager.file.close();
 	LoadedData.Print();
-	LoadedData.Clear();
 	return true;
 }
 

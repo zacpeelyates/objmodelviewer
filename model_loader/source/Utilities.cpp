@@ -78,9 +78,9 @@ GLuint CreateShader(const char* a_strShaderFile, unsigned int a_eShaderType)
 GLuint CreateProgram()
 	{
 		std::vector<GLuint> shaderList;
-		shaderList.push_back(CreateShader("C:/Users/Zac/Documents/UoG/Level/5/Projects/SEM1/Low/ct5036-assessment-rendering-framework-ramkhisthrowing/model_loader/resource/shaders/vertex.glsl" //THIS IS BAD AND IDK WHY I CANT GET IT TO WORK ANOTHER WAY ,
+		shaderList.push_back(CreateShader("resource/shaders/vertex.glsl",
 			GL_VERTEX_SHADER));
-		shaderList.push_back(CreateShader("C:/Users/Zac/Documents/UoG/Level/5/Projects/SEM1/Low/ct5036-assessment-rendering-framework-ramkhisthrowing/model_loader/resource/shaders/fragment.glsl",
+		shaderList.push_back(CreateShader("resource/shaders/fragment.glsl",
 			GL_FRAGMENT_SHADER));
 		//create shader program ID
 		GLuint uiProgram = glCreateProgram();
