@@ -7,8 +7,8 @@
 ///////////////////////////////////////////////////////
 #ifndef __FILE_MANAGER_H__
 #define __FILE_MANAGER_H__
-#include "FileInfo.h"
 #include <string>
+#include <vector>
 #include <fstream>
 #include <map>
 
@@ -22,16 +22,14 @@ public:
 	static void DestroyInstance();
 
 	static bool LoadFile(std::string a_strFilePath);
-	static FileInfo GetFileInfo(std::string a_strFilePath);
 
 
 private:
 	FileManager();
 	~FileManager();
+	std::vector<std::string> mFilePaths;
     bool LoadFileInternal(std::string a_strFilePath);
-    FileInfo GetFileInfoInternal(std::string a_strFilePath);
-    static  FileManager* mInstance;
-	std::map<std::string, FileInfo> mFileMap;
+    static FileManager* mInstance;
 
 };
 #endif // !__FILE_MANAGER_H__

@@ -30,10 +30,11 @@ int main(int argc, char* argv[])
 			std::cin >> charIn;
 			bool showComments = std::tolower(charIn) == 'y';
 			OBJData loaded;
+			Utilities::TimerReset();
 			if (objLoader.OBJLoad(inputPath,showComments, loaded)) //Attempt to load OBJ file (OBJLoader.cpp)
 			{
-				//draw code go here 
-				draw();
+				//draw();
+				std::cout << "Processed in: " << Utilities::TimerTick() << std::endl;
 			}
 			else
 			{

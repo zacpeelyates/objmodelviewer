@@ -13,10 +13,12 @@ bool OBJLoader::OBJLoad(const std::string a_strFilePath, const bool a_bPrintComm
 {
 	//Parses an obj file line by line, storing found data in appropriate members of an OBJData object
 	std::map<std::string, int32_t> faceIndexMap;
-	FileInfo currentFile = FileManager::GetFileInfo(a_strFilePath);
-	std::stringstream ss(currentFile.pszData);
 	std::string line;
-	while (std::getline(ss,line)) {
+	std::fstream file(a_strFilePath);
+	while (!file.eof())
+	{
+		if (std::getline(file, line))
+		{
 			std::string objStatement;
 			std::string value;
 			int s;
@@ -43,7 +45,7 @@ bool OBJLoader::OBJLoad(const std::string a_strFilePath, const bool a_bPrintComm
 						s = stoi(value);
 						std::cout << "smoothing group " << value << std::endl;
 					}
-					else if(value == "off")
+					else if (value == "off")
 					{
 						std::cout << "disabling smoothing groups" << std::endl;
 					}
@@ -120,8 +122,11 @@ bool OBJLoader::OBJLoad(const std::string a_strFilePath, const bool a_bPrintComm
 
 			}
 		}
-	std::cout << "File succesfully parsed!" << std::endl;
-	return true;
+	}
+		std::cout << "File succesfully parsed!" << std::endl;
+		LoadedData.Print();
+		return true;
+	
 }
 
 bool OBJLoader::OBJLoadMaterials(const std::string& a_strFilePath, OBJData& a_oLoadedData, const bool ac_bPrintComments)
@@ -131,9 +136,10 @@ bool OBJLoader::OBJLoadMaterials(const std::string& a_strFilePath, OBJData& a_oL
 	{
 		std::cout << a_strFilePath << " Loaded!" << std::endl;
 		std::string line;
-		FileInfo currentFile = FileManager::GetFileInfo(a_strFilePath);
-		std::stringstream ss(currentFile.pszData);
-			while (std::getline(ss, line))
+		std::fstream file(a_strFilePath);
+		while (!file.eof())
+		{
+			if (std::getline(file, line))
 			{
 				std::string mtlStatement;
 				std::string value;
@@ -221,8 +227,10 @@ bool OBJLoader::OBJLoadMaterials(const std::string& a_strFilePath, OBJData& a_oL
 					}
 				}
 			}
+		}
 
-		std::cout << "Material file successfully parsed!" << std::endl;
+			std::cout << "Material file successfully parsed!" << std::endl;
+		
 	}
 	else
 	{

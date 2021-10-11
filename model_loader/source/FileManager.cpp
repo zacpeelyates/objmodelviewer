@@ -66,24 +66,25 @@ bool FileManager::LoadFile(std::string a_strFilePath)
 
 bool FileManager::LoadFileInternal(std::string a_strFilePath)
 {
-	
-	FileInfo fileInfo;
-	fileInfo.path = a_strFilePath;
-	std::streamsize outSize = 0;
-	Utilities::FileToBuffer(a_strFilePath, outSize);
-	fileInfo.size = outSize;
-	mFileMap.emplace(a_strFilePath, fileInfo);
+	std::fstream file;
+	file.open(a_strFilePath, std::ios_base::in | std::ios_base::binary);
+	if (file.is_open())
+	{
+		file.ignore(std::numeric_limits<std::streamsize>::max());
+		std::streamsize fileSize = file.gcount();
+		if (fileSize == 0) 
+		{
+			file.close();
+			return false;
+		}
+		file.seekg(0, std::ios_base::beg);
+	}
+	else
+	{
+		return false;
+	}
+	mFilePaths.push_back(a_strFilePath);
 	return true;
 }
 
-FileInfo FileManager::GetFileInfo(std::string a_strFilePath)
-{
-	FileManager* instance = GetInstance();
-	return instance->GetFileInfoInternal(a_strFilePath);
-}
-
-FileInfo FileManager::GetFileInfoInternal(std::string a_strFilePath)
-{
-	return mFileMap.at(a_strFilePath);
-}
 
