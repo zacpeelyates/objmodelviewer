@@ -7,11 +7,29 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #ifndef __UTILITIES_H__
 #define __UTILITIES_H__
-#include <glad/glad.h>
 #include <vector>
 #include <string>
-	static GLuint CreateShader(const char* a_strShaderFile, unsigned int a_eShaderType);
-    GLuint CreateProgram();
-	std::vector<std::string> SplitStringAtChar(std::string a_strData, char a_cDelimiter);
-	bool ParseStringToInt(std::string& a_rStrIn);
+#include <glm/glm.hpp>
+class Utilities
+{
+public:
+	//utilities for string parsing
+	static std::vector<std::string> SplitStringAtChar(std::string a_strData, char a_cDelimiter);
+	static bool ParseStringToInt(std::string& a_rStrIn);
+
+	//utilities for timing
+	static void  TimerReset();
+	static float TimerTick();
+	static float getDeltaTime();
+	static float getTotalTime();
+
+	//utilites for file loading
+	static char* FileToBuffer(const std::string a_strFilePath);
+	static char* FileToBuffer(const std::string a_strFilePath, std::streamsize& a_rFileSize);
+
+	//utilities for file handling
+	static std::string GetFileDirectory(const std::string a_strFilePath);
+	static std::string GetFileName(const std::string a_strFilePath);
+	static std::string GetFileType(const std::string a_strFilePath);
+};
 #endif // !__UTILITIES_H__

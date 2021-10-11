@@ -2,8 +2,8 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
-#include "Utilities.h"
 #include "Camera.h"
+#include "ShaderManager.h"
 #include "DisplayModel.h"
 
 
@@ -15,7 +15,7 @@ void resizeWindow(GLFWwindow* window, int w, int h)
 	glViewport(0, 0, w, h);
 }
 
-bool draw(OBJData data)
+bool draw()
 {
 	//Initialise GLFW
 	if (!glfwInit())
@@ -40,7 +40,10 @@ bool draw(OBJData data)
 	}
 
 	//set program
-	GLuint uiProgram = CreateProgram();
+
+	GLuint vertexShader = ShaderManager::LoadShader("resource/shaders/vertex.glsl", GL_VERTEX_SHADER);
+	GLuint fragmentShader = ShaderManager::LoadShader("resource/shaders/fragment.glsl", GL_FRAGMENT_SHADER);
+	GLuint uiProgram = ShaderManager::CreateProgram(vertexShader,fragmentShader);
 
 	//set viewport
 	glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -58,10 +61,6 @@ bool draw(OBJData data)
 	glm::mat4 cameraMatrix = glm::inverse(glm::lookAt(glm::vec3(10, 10, 10), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)));
 	glm::mat4 projectionMatrix = glm::perspective(glm::pi<float>() * 0.25f, (float)(WINDOW_WIDTH / WINDOW_HEIGHT), 0.1f, 1000.0f);
 
-	GLuint VAO, VBO;
-	glBindVertexArray(VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
 	//glvertexattribpointer:
 		//1. which vertex attrib we are configuring (defined in vertex.glsl -- 0 = position, 1 = color)
 		//2. size of vertex attrib (vec3 = 3)
@@ -69,9 +68,6 @@ bool draw(OBJData data)
 		//4. normalize data boolean
 		//5. space between vertex attribs (vec3 would be 3 * sizeof(float))
 		//6. offset of position data from void*
-	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	while (!glfwWindowShouldClose(window)) {
 	
@@ -87,8 +83,6 @@ bool draw(OBJData data)
 
 		//DRAW HERE
 		//glarraybuffer: 1. buffer type to copy into 2.size of data in bytes, 3. actual data, 4. draw type options
-		glBindVertexArray(VAO);
-		glDrawArrays(GL_VERTEX_ARRAY, 0, numberofverts);
 		
 
 		//CLEANUP / LOOP END
@@ -98,8 +92,6 @@ bool draw(OBJData data)
 		glfwPollEvents();
 
 	}
-	glDeleteVertexArrays(1, &VAO);
-	glDeleteBuffers(1, &VBO);
 	glfwTerminate();
 	return true;
 }

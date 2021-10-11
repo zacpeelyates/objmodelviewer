@@ -432,3 +432,7 @@ FodyWeavers.xsd
 *.vcxproj
 
 # End of https://www.toptal.com/developers/gitignore/api/c++,visualstudio
+
+# ignoreignores
+!/deps/**/libs/**/*.lib
+!/deps/**/libs/**/*.pdb

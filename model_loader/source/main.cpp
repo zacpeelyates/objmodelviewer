@@ -7,7 +7,9 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #include "DisplayModel.h"
 #include "FileManager.h"
+#include "ShaderManager.h"
 #include "OBJLoader.h"
+#include "Utilities.h"
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -15,15 +17,12 @@
 int main(int argc, char* argv[])
 {
 	//Main entry point of application
-	draw(OBJData());
 	std::string inputPath;
 	std::cout << "Enter Filename: ";
 	std::getline(std::cin,inputPath);
-	std::fstream filestream;
-	FileManager fileManager(inputPath, filestream); //Handles file operations (FileManager.cpp)
-	if (fileManager.initialized) {
+	if (FileManager::LoadFile(inputPath)) {
 		//Get correct parsing class via filetype
-		if (fileManager.GetType() == "obj")
+		if (Utilities::GetFileType(inputPath) == "obj")
 		{
 			OBJLoader objLoader;
 			char charIn = ' ';
@@ -31,9 +30,10 @@ int main(int argc, char* argv[])
 			std::cin >> charIn;
 			bool showComments = std::tolower(charIn) == 'y';
 			OBJData loaded;
-			if (objLoader.OBJLoad(fileManager, showComments, loaded)) //Attempt to load OBJ file (OBJLoader.cpp)
+			if (objLoader.OBJLoad(inputPath,showComments, loaded)) //Attempt to load OBJ file (OBJLoader.cpp)
 			{
-				draw(loaded);
+				//draw code go here 
+				draw();
 			}
 			else
 			{

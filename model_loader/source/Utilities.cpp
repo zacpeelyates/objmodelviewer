@@ -7,9 +7,121 @@
 // Brief: Collection of useful function implementations used across the project that don't have a home anywhere else :( 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #include "Utilities.h"
-#include <fstream>
 #include <sstream>
-std::vector<std::string> SplitStringAtChar(std::string a_strData, char a_cDelimiter)
+#include <fstream>
+#include <iostream>
+
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+#include <glm/ext.hpp>
+
+static double s_prevTime = 0;
+static float  s_totalTime = 0;
+static float  s_deltaTime = 0;
+
+//time function definitions
+
+void Utilities::TimerReset()
+{
+	s_prevTime = glfwGetTime();
+	s_totalTime = 0;
+	s_deltaTime = 0;
+}
+
+float Utilities::TimerTick()
+{
+	double currentTime = glfwGetTime();
+	s_deltaTime = (float)(currentTime - s_prevTime);
+	s_totalTime += s_deltaTime;
+	s_prevTime = currentTime;
+	return s_deltaTime;
+}
+
+float Utilities::getDeltaTime() 
+{
+	return s_deltaTime;
+}
+
+float Utilities::getTotalTime()
+{
+	return s_totalTime;
+}
+
+//file loading definitions 
+
+char* Utilities::FileToBuffer(const std::string a_strFilePath)
+{
+	std::fstream file;
+	file.open(a_strFilePath, std::ios_base::in | std::ios_base::binary);
+	if (file.is_open())
+	{
+		file.ignore(std::numeric_limits<std::streamsize>::max());
+		std::streamsize fileSize = file.gcount();
+		file.clear();
+		file.seekg(0, std::ios_base::beg);
+		if (fileSize == 0)
+		{
+			file.close();
+			return nullptr;
+		}
+		char* databuffer = new char[fileSize + 1];
+		memset(databuffer, 0, fileSize + 1); //clear buffer
+		file.read(databuffer, fileSize);
+		file.close();
+		return databuffer;
+	}
+	return nullptr;
+}
+
+
+//todo: find a better way to get the filesize here without needing duplicate method overload
+char* Utilities::FileToBuffer(const std::string a_strFilePath, std::streamsize& a_rFileSize)
+{
+	std::fstream file;
+	file.open(a_strFilePath, std::ios_base::in | std::ios_base::binary);
+	if (file.is_open())
+	{
+		file.ignore(std::numeric_limits<std::streamsize>::max());
+		a_rFileSize = file.gcount();
+		file.clear();
+		file.seekg(0, std::ios_base::beg);
+		if (a_rFileSize == 0)
+		{
+			file.close();
+			return nullptr;
+		}
+		char* databuffer = new char[a_rFileSize + 1];
+		memset(databuffer, 0, a_rFileSize + 1); //clear buffer
+		file.read(databuffer, a_rFileSize);
+		file.close();
+		return databuffer;
+	}
+	return nullptr;
+}
+
+//file information utility definitions
+std::string Utilities::GetFileName(const std::string a_strFilePath)
+{
+	//returns the file name with no preceeding path or extention
+	return a_strFilePath.substr(a_strFilePath.rfind('/') + 1, a_strFilePath.rfind('.'));
+}
+
+std::string Utilities::GetFileType(const std::string a_strFilePath)
+{
+	//returns the file extention with no preceeding name or path
+	return a_strFilePath.substr(a_strFilePath.rfind('.') + 1);
+}
+
+std::string Utilities::GetFileDirectory(const std::string a_strFilePath)
+{
+	//returns directory the file is contained in
+	return a_strFilePath.substr(0, a_strFilePath.rfind('/') + 1);
+}
+
+
+//parsing function definitions
+std::vector<std::string> Utilities::SplitStringAtChar(std::string a_strData, char a_cDelimiter)
 {
 	//Splits a string at give char and returns a vector of all the parts 
 	std::vector<std::string> outVec;
@@ -22,89 +134,9 @@ std::vector<std::string> SplitStringAtChar(std::string a_strData, char a_cDelimi
 	return outVec;
 }
 
-bool ParseStringToInt(std::string& a_rStrIn)
+bool Utilities::ParseStringToInt(std::string& a_rStrIn)
 {
 	//Checks if given string can be parsed to an integer
 	if (a_rStrIn.empty()) return false;
 	return std::find_if(a_rStrIn.begin(), a_rStrIn.end(), [](unsigned char c) {return !std::isdigit(c); }) == a_rStrIn.end();
 }
-
-
-GLuint CreateShader(const char* a_strShaderFile, unsigned int a_eShaderType)
-{
-	std::string strShaderCode;
-	//open shader file
-	std::ifstream shaderStream(a_strShaderFile);
-	//if that worked ok, load file line by line
-	if (shaderStream.is_open())
-	{
-		std::string Line = "";
-		while (std::getline(shaderStream, Line))
-		{
-			strShaderCode += "\n" + Line;
-		}
-		shaderStream.close();
-	}
-	//convert to cstring
-	char const* szShaderSourcePointer = strShaderCode.c_str();
-	//create shader ID
-	GLuint uiShader = glCreateShader(a_eShaderType);
-	//load source code
-	glShaderSource(uiShader, 1, &szShaderSourcePointer, NULL);
-	//compile shader
-	glCompileShader(uiShader);
-	//check for compilation errors and output them
-	GLint iStatus;
-	glGetShaderiv(uiShader, GL_COMPILE_STATUS, &iStatus);
-	if (iStatus == GL_FALSE)
-	{
-		GLint infoLogLength;
-		glGetShaderiv(uiShader, GL_INFO_LOG_LENGTH, &infoLogLength);
-		GLchar* strInfoLog = new GLchar[infoLogLength];
-		glGetShaderInfoLog(uiShader, infoLogLength, NULL, strInfoLog);
-		const char* strShaderType = NULL;
-		switch (a_eShaderType)
-		{
-		case GL_VERTEX_SHADER: strShaderType = "vertex"; break;
-		case GL_FRAGMENT_SHADER: strShaderType = "fragment"; break;
-		}
-		fprintf(stderr, "Compile failure in %s shader:\n%s\n", strShaderType,
-			strInfoLog);
-		delete[] strInfoLog;
-	}
-	return uiShader;
-}
-
-GLuint CreateProgram()
-	{
-		std::vector<GLuint> shaderList;
-		shaderList.push_back(CreateShader("resource/shaders/vertex.glsl",
-			GL_VERTEX_SHADER));
-		shaderList.push_back(CreateShader("resource/shaders/fragment.glsl",
-			GL_FRAGMENT_SHADER));
-		//create shader program ID
-		GLuint uiProgram = glCreateProgram();
-		//attach shaders
-		for (auto shader = shaderList.begin(); shader != shaderList.end(); shader++)
-			glAttachShader(uiProgram, *shader);
-		//link program
-		glLinkProgram(uiProgram);
-		//check for link errors and output them
-		GLint status;
-		glGetProgramiv(uiProgram, GL_LINK_STATUS, &status);
-		if (status == GL_FALSE)
-		{
-			GLint infoLogLength;
-			glGetProgramiv(uiProgram, GL_INFO_LOG_LENGTH, &infoLogLength);
-			GLchar* strInfoLog = new GLchar[infoLogLength];
-			glGetProgramInfoLog(uiProgram, infoLogLength, NULL, strInfoLog);
-			fprintf(stderr, "Linker failure: %s\n", strInfoLog);
-			delete[] strInfoLog;
-		}
-		for (auto shader = shaderList.begin(); shader != shaderList.end(); shader++)
-		{
-			glDetachShader(uiProgram, *shader);
-			glDeleteShader(*shader);
-		}
-		return uiProgram;
-	}

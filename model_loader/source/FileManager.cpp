@@ -4,75 +4,86 @@
 // Date Created: 30/09/21
 // Date Edited:  30/09/21
 // Brief: Function implementation for handling file loading and file information.
-// This information is NOT the parising of file contents, its just information about the file like path and size
+// This information is NOT the parsing of file contents, its just information about the file like path and size
 // For file parsing see the associated loader class (e.g OBJLoader.h)
 ///////////////////////////////////////////////////////////////////////////////
 #include "FileManager.h"
+#include "Utilities.h"
 #include <iostream>
-FileManager::FileManager(std::string a_strFilePath, std::fstream& a_oFileIn) : file(a_oFileIn)
+
+FileManager* FileManager::mInstance = nullptr;
+
+FileManager::FileManager() 
 {
-	//Constructor for FileManager class, sets associated variables and tries to load file at given path
-	time = std::chrono::high_resolution_clock::now();
-	path = a_strFilePath;
-	initialized = false;
-	std::cout << "Initializing file: " << path << std::endl;
-	file.open(path, std::ios_base::in | std::ios_base::binary);
-	if (file.is_open())
+
+}
+
+FileManager::~FileManager() 
+{
+	
+}
+
+FileManager* FileManager::CreateInstance()
+{
+	if (mInstance == nullptr) 
 	{
-		file.ignore(std::numeric_limits<std::streamsize>::max());
-		bytes = file.gcount();
-		if (bytes == 0)
-		{
-			std::cout << "File is empty. Closing." << std::endl;
-			file.close();
-		}
-		else
-		{
-			file.seekg(0, std::ios_base::beg);
-			initialized = true;
-			std::cout << "File initialized" << std::endl;
-		}
+		mInstance = new FileManager();
 	}
 	else
 	{
-		std::cout << "Could not open file." << std::endl;
+		std::cout << "Tried to create more than one File Manager!" << std::endl;
+	}
+	return mInstance;
+}
+
+FileManager* FileManager::GetInstance()
+{
+	if (mInstance == nullptr)
+	{
+		return FileManager::CreateInstance();
+	}
+	else return mInstance;
+}
+
+void FileManager::DestroyInstance()
+{
+	if(mInstance != nullptr)
+	{
+		delete mInstance;
+		mInstance = nullptr;
+	}
+	else
+	{
+		std::cout << "Tried to delete null File Manager instance!" << std::endl;
 	}
 }
 
-const std::string FileManager::GetName()
+bool FileManager::LoadFile(std::string a_strFilePath)
 {
-	//returns the file name with no preceeding path or extention
-	return path.substr(path.rfind('/') + 1, path.rfind('.'));
+	FileManager* instance = GetInstance();
+	return instance->LoadFileInternal(a_strFilePath);
 }
 
-const std::string FileManager::GetType()
+bool FileManager::LoadFileInternal(std::string a_strFilePath)
 {
-	//returns the file extention with no preceeding name or path
-	return path.substr(path.rfind('.') + 1);
+	
+	FileInfo fileInfo;
+	fileInfo.path = a_strFilePath;
+	std::streamsize outSize = 0;
+	Utilities::FileToBuffer(a_strFilePath, outSize);
+	fileInfo.size = outSize;
+	mFileMap.emplace(a_strFilePath, fileInfo);
+	return true;
 }
 
-const std::string FileManager::GetDirectory()
+FileInfo FileManager::GetFileInfo(std::string a_strFilePath)
 {
-	//returns directory the file is contained in
-	return path.substr(0, path.rfind('/') + 1);
+	FileManager* instance = GetInstance();
+	return instance->GetFileInfoInternal(a_strFilePath);
 }
 
-long FileManager::GetProcessTime()
+FileInfo FileManager::GetFileInfoInternal(std::string a_strFilePath)
 {
-	return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - time).count();
-}
-
-std::streamsize FileManager::GetFileSize()
-{
-	//returns file size in KB
-	return bytes / 1024;
-}
-
-void FileManager::Print()
-{
-	std::cout << "\nName:\t" << this->GetName() << std::endl;
-	std::cout << "Type:\t" << this->GetType() << std::endl;
-	std::cout << "Size (File):\t" << this->GetFileSize() << "KB" << std::endl;
-	std::cout << "Time to Process: " << this->GetProcessTime() << "ms" << std::endl;
+	return mFileMap.at(a_strFilePath);
 }
 

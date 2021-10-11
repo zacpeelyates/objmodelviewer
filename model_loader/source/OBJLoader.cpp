@@ -8,19 +8,15 @@
 
 #include "OBJLoader.h"
 #include "Utilities.h"
-#include <iostream>
-#include <sstream>
 
-bool OBJLoader::OBJLoad(FileManager a_oFileManager, bool a_bPrintComments, OBJData &LoadedData)
+bool OBJLoader::OBJLoad(const std::string a_strFilePath, const bool a_bPrintComments, OBJData& LoadedData)
 {
 	//Parses an obj file line by line, storing found data in appropriate members of an OBJData object
 	std::map<std::string, int32_t> faceIndexMap;
+	FileInfo currentFile = FileManager::GetFileInfo(a_strFilePath);
+	std::stringstream ss(currentFile.pszData);
 	std::string line;
-
-	while (!a_oFileManager.file.eof())
-	{
-		if (std::getline(a_oFileManager.file, line)) {
-
+	while (std::getline(ss,line)) {
 			std::string objStatement;
 			std::string value;
 			int s;
@@ -42,7 +38,7 @@ bool OBJLoader::OBJLoad(FileManager a_oFileManager, bool a_bPrintComments, OBJDa
 				}
 				else if (objStatement == "s")
 				{
-					if (ParseStringToInt(value))
+					if (Utilities::ParseStringToInt(value))
 					{
 						s = stoi(value);
 						std::cout << "smoothing group " << value << std::endl;
@@ -79,7 +75,7 @@ bool OBJLoader::OBJLoad(FileManager a_oFileManager, bool a_bPrintComments, OBJDa
 				else if (objStatement == "f") //face data
 				{
 					LoadedData.faces++;
-					std::vector<std::string> faceComponents = SplitStringAtChar(value, ' ');
+					std::vector<std::string> faceComponents = Utilities::SplitStringAtChar(value, ' ');
 					std::vector<uint16_t> faceIndicies;
 					for (auto iter = faceComponents.begin(); iter != faceComponents.end(); ++iter)
 					{
@@ -115,7 +111,7 @@ bool OBJLoader::OBJLoad(FileManager a_oFileManager, bool a_bPrintComments, OBJDa
 				}
 				else if (objStatement == "mtllib")
 				{
-					OBJLoadMaterials(a_oFileManager.GetDirectory() + value, LoadedData, a_bPrintComments);
+					OBJLoadMaterials(Utilities::GetFileDirectory(a_strFilePath) + value, LoadedData, a_bPrintComments);
 				}
 				else
 				{
@@ -124,25 +120,20 @@ bool OBJLoader::OBJLoad(FileManager a_oFileManager, bool a_bPrintComments, OBJDa
 
 			}
 		}
-	}
 	std::cout << "File succesfully parsed!" << std::endl;
-	a_oFileManager.Print();
-	a_oFileManager.file.close();
-	LoadedData.Print();
 	return true;
 }
 
 bool OBJLoader::OBJLoadMaterials(const std::string& a_strFilePath, OBJData& a_oLoadedData, const bool ac_bPrintComments)
 {
 	//Parses an mtl file line by line and stores data in parsed OBJData Material/Texture structs
-	std::fstream file;
-	FileManager fm(a_strFilePath, file);
-	if (fm.initialized)
+	if (FileManager::LoadFile(a_strFilePath))
 	{
 		std::cout << a_strFilePath << " Loaded!" << std::endl;
-		while (!fm.file.eof()) {
-			std::string line;
-			while (std::getline(fm.file, line))
+		std::string line;
+		FileInfo currentFile = FileManager::GetFileInfo(a_strFilePath);
+		std::stringstream ss(currentFile.pszData);
+			while (std::getline(ss, line))
 			{
 				std::string mtlStatement;
 				std::string value;
@@ -231,7 +222,6 @@ bool OBJLoader::OBJLoadMaterials(const std::string& a_strFilePath, OBJData& a_oL
 				}
 			}
 
-		}
 		std::cout << "Material file successfully parsed!" << std::endl;
 	}
 	else
@@ -244,7 +234,7 @@ bool OBJLoader::OBJLoadMaterials(const std::string& a_strFilePath, OBJData& a_oL
 OBJVertex OBJLoader::OBJGetFaceFromVertex(std::string a_strFaceData, OBJData& a_oLoadedData)
 {
 	//contstructs an OBJ Face from input string, then return an OBJVertix containing relevant face information
-	std::vector<std::string> vertIndicies = SplitStringAtChar(a_strFaceData, '/');
+	std::vector<std::string> vertIndicies = Utilities::SplitStringAtChar(a_strFaceData, '/');
 	OBJFace face = { 0,0,0 };
 	face.posIndex = std::stoi(vertIndicies[0]);
 	if (vertIndicies.size() > 1) {

@@ -7,25 +7,31 @@
 ///////////////////////////////////////////////////////
 #ifndef __FILE_MANAGER_H__
 #define __FILE_MANAGER_H__
+#include "FileInfo.h"
 #include <string>
 #include <fstream>
-#include <chrono>
+#include <map>
+
+
 class FileManager
 {
 public:
-	FileManager(std::string a_strFilePath, std::fstream& a_oFileIn);
-	const std::string GetName();
-	const std::string GetType();
-	const std::string GetDirectory();
-	long GetProcessTime();
-	std::streamsize GetFileSize();
-	void Print();
 
-	std::string path;
-	std::fstream& file;
-	std::streamsize bytes;
-	bool initialized;
-	std::chrono::time_point<std::chrono::steady_clock> time;
+	static FileManager* CreateInstance();
+	static FileManager* GetInstance();
+	static void DestroyInstance();
+
+	static bool LoadFile(std::string a_strFilePath);
+	static FileInfo GetFileInfo(std::string a_strFilePath);
+
+
+private:
+	FileManager();
+	~FileManager();
+    bool LoadFileInternal(std::string a_strFilePath);
+    FileInfo GetFileInfoInternal(std::string a_strFilePath);
+    static  FileManager* mInstance;
+	std::map<std::string, FileInfo> mFileMap;
 
 };
 #endif // !__FILE_MANAGER_H__
