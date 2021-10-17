@@ -52,30 +52,11 @@ float Utilities::getTotalTime()
 
 char* Utilities::FileToBuffer(const std::string a_strFilePath)
 {
-	std::fstream file;
-	file.open(a_strFilePath, std::ios_base::in | std::ios_base::binary);
-	if (file.is_open())
-	{
-		file.ignore(std::numeric_limits<std::streamsize>::max());
-		std::streamsize fileSize = file.gcount();
-		file.clear();
-		file.seekg(0, std::ios_base::beg);
-		if (fileSize == 0)
-		{
-			file.close();
-			return nullptr;
-		}
-		char* databuffer = new char[fileSize + 1];
-		memset(databuffer, 0, fileSize + 1); //clear buffer
-		file.read(databuffer, fileSize);
-		file.close();
-		return databuffer;
-	}
-	return nullptr;
+	std::streamsize temp;
+	return FileToBuffer(a_strFilePath, temp);
 }
 
 
-//todo: find a better way to get the filesize here without needing duplicate method overload
 char* Utilities::FileToBuffer(const std::string a_strFilePath, std::streamsize& a_rFileSize)
 {
 	std::fstream file;

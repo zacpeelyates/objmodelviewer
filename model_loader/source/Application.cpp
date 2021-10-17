@@ -25,6 +25,7 @@ bool Application::Create(const char* a_appName, unsigned int a_windowWidth, unsi
 		glfwTerminate();
 		return false;
 	}
+	//get version
 	int major = glfwGetWindowAttrib(m_window, GLFW_VERSION_MAJOR); 
 	int minor = glfwGetWindowAttrib(m_window, GLFW_VERSION_MINOR);
 	int revision = glfwGetWindowAttrib(m_window, GLFW_VERSION_REVISION);

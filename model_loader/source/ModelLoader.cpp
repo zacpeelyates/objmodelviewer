@@ -2,7 +2,6 @@
 #include "ShaderManager.h"
 #include "Utilities.h"
 #include "Camera.h"
-#include "FileManager.h"
 #include "OBJLoader.h"
 
 #include <glad/glad.h>
@@ -22,7 +21,7 @@ bool ModelLoaderApp::onCreate()
 	glClearDepth(1.0f);
 	//set shader program
 	GLuint vertexShader = ShaderManager::LoadShader("resource/shaders/vertex.glsl", GL_VERTEX_SHADER);
-	GLuint fragmentShader = ShaderManager::LoadShader("resource/shader/fragment.glsl", GL_FRAGMENT_SHADER);
+	GLuint fragmentShader = ShaderManager::LoadShader("resource/shaders/fragment.glsl", GL_FRAGMENT_SHADER);
 	GLuint uiProgram = ShaderManager::CreateProgram(vertexShader, fragmentShader);
 	//set viewport
 	glViewport(0, 0, m_windowWidth, m_windowHeight);
