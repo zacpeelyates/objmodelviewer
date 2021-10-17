@@ -1,6 +1,5 @@
 #include "Camera.h"
-#include <GLFW/glfw3.h>
-#include <glm/ext.hpp>
+
 void FreeMovement(glm::mat4& a_m4Transform, float a_fDeltaTime, float a_fSpeed, const glm::vec3& a_v3Up)
 {
 	GLFWwindow* window = glfwGetCurrentContext();
@@ -13,11 +12,11 @@ void FreeMovement(glm::mat4& a_m4Transform, float a_fDeltaTime, float a_fSpeed, 
 	glm::vec4 v4Translation = a_m4Transform[3];
 	//set speed variables (shift to sprint)
 	float defactoSpeed = a_fDeltaTime * a_fSpeed;
-	float framespeed = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS ? defactoSpeed * 2.0f: defactoSpeed;
+	float framespeed = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS ? defactoSpeed * 2.0f : defactoSpeed;
 
 
 	if (glfwGetKey(window, 'W') == GLFW_PRESS)
-	{		
+	{
 		v4Translation -= v4Forward * framespeed;
 	}
 	if (glfwGetKey(window, 'S') == GLFW_PRESS)

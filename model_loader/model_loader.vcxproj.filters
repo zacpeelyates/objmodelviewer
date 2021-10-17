@@ -30,9 +30,6 @@
     <ClCompile Include="source\Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\DisplayModel.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\Utilities.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -40,6 +37,12 @@
       <Filter>Resource Files</Filter>
     </ClCompile>
     <ClCompile Include="source\ShaderManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Application.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ModelLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -59,10 +62,13 @@
     <ClInclude Include="include\Utilities.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\DisplayModel.h">
+    <ClInclude Include="include\ShaderManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\ShaderManager.h">
+    <ClInclude Include="include\Application.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ModelLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

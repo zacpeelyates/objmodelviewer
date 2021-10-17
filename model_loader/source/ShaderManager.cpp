@@ -1,4 +1,5 @@
 #include "ShaderManager.h"
+#include "Utilities.h"
 #include <sstream>
 #include <fstream>
 #include <iostream>
@@ -20,7 +21,7 @@ ShaderManager* ShaderManager::CreateInstance()
 	 return mInstance;
 }
 
-ShaderManager* ShaderManager::GetInstance() 
+ShaderManager* ShaderManager::GetInstance( ) 
 {
 	if (mInstance == nullptr)
 	{
@@ -128,10 +129,10 @@ GLuint ShaderManager::LoadShader(const char* a_strShaderFile, unsigned int a_eSh
 
 }
 
-unsigned int ShaderManager::LoadShaderInternal(const char* a_filename,unsigned int a_type)
+unsigned int ShaderManager::LoadShaderInternal(const char* a_filePath,unsigned int a_type)
 {
 	//get shader from file
-	char* source;
+	char* source = Utilities::FileToBuffer(a_filePath);
 	GLuint shader = glCreateShader(a_type);
 	//set source buffer & compile 
 	glShaderSource(shader, 1, (const char**)&source, 0);
@@ -148,14 +149,14 @@ unsigned int ShaderManager::LoadShaderInternal(const char* a_filename,unsigned i
 		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &result);
 		char* infoLog = new char[infoLogLength];
 		glGetShaderInfoLog(shader, infoLogLength, 0, infoLog);
-		std::cout << "Compile Falied: " << a_filename << std::endl;
+		std::cout << "Compile Falied: " << a_filePath << std::endl;
 		std::cout << infoLog << std::endl;
 		delete[] infoLog;
 		return 0;
 	}
 	else 
 	{
-		mShaders.emplace(a_filename, shader);
+		mShaders.emplace(a_filePath, shader);
 	}
 	return result;
 
