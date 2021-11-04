@@ -21,14 +21,16 @@ public:
 	static FileManager* GetInstance();
 	static void DestroyInstance();
 
-	static bool LoadFile(std::string a_strFilePath);
+	static bool LoadFile(std::string a_strFilePath, std::fstream& ao_oOutFStream);
+	static std::string GetFileNameFromIndex(unsigned int index);
 
 
 private:
 	FileManager();
 	~FileManager();
 	std::vector<std::string> mFilePaths;
-    bool LoadFileInternal(std::string a_strFilePath);
+    bool LoadFileInternal(std::string a_strFilePath, std::fstream& ao_oOutFStream);
+	std::string GetFileNameFromIndexInternal(unsigned int index);
     static FileManager* mInstance;
 
 };

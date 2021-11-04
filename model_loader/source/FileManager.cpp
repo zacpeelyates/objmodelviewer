@@ -18,9 +18,9 @@ FileManager::FileManager()
 
 }
 
-FileManager::~FileManager() 
+FileManager::~FileManager()
 {
-	
+
 }
 
 FileManager* FileManager::CreateInstance()
@@ -58,26 +58,40 @@ void FileManager::DestroyInstance()
 	}
 }
 
-bool FileManager::LoadFile(std::string a_strFilePath)
+
+std::string FileManager::GetFileNameFromIndex(unsigned int index)
 {
 	FileManager* instance = GetInstance();
-	return instance->LoadFileInternal(a_strFilePath);
+	return instance->GetFileNameFromIndexInternal(index);
 }
 
-bool FileManager::LoadFileInternal(std::string a_strFilePath)
+
+
+std::string FileManager::GetFileNameFromIndexInternal(unsigned int index)
 {
-	std::fstream file;
-	file.open(a_strFilePath, std::ios_base::in | std::ios_base::binary);
-	if (file.is_open())
+	return mFilePaths[index];
+}
+
+bool FileManager::LoadFile(std::string a_strFilePath, std::fstream& ao_outFStream)
+{
+	FileManager* instance = GetInstance();
+	return instance->LoadFileInternal(a_strFilePath,ao_outFStream);
+}
+
+
+bool FileManager::LoadFileInternal(std::string a_strFilePath, std::fstream& ao_outFStream)
+{
+	ao_outFStream.open(a_strFilePath, std::ios_base::in | std::ios_base::binary);
+	if (ao_outFStream.is_open())
 	{
-		file.ignore(std::numeric_limits<std::streamsize>::max());
-		std::streamsize fileSize = file.gcount();
+		ao_outFStream.ignore(std::numeric_limits<std::streamsize>::max());
+		std::streamsize fileSize = ao_outFStream.gcount();
 		if (fileSize == 0) 
 		{
-			file.close();
+			ao_outFStream.close();
 			return false;
 		}
-		file.seekg(0, std::ios_base::beg);
+		ao_outFStream.seekg(0, std::ios_base::beg);
 	}
 	else
 	{

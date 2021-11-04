@@ -1,44 +1,60 @@
-#include "ModelLoader.h"
+#include "RenderWindow.h"
 #include "ShaderManager.h"
 #include "Utilities.h"
 #include "Camera.h"
-#include "OBJLoader.h"
+#include "obj_Loader.h"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 
-ModelLoaderApp::ModelLoaderApp() {};
-ModelLoaderApp::~ModelLoaderApp() {};
+RenderWindow::RenderWindow() {};
+RenderWindow::~RenderWindow() {};
 
-bool ModelLoaderApp::onCreate()
+bool RenderWindow::onCreate()
 {
 	//setup clear color, depth test, culling
 	glClearColor(0.95f, 0.45f, 0.75f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glClearDepth(1.0f);
-	//set shader program
-	GLuint vertexShader = ShaderManager::LoadShader("resource/shaders/vertex.glsl", GL_VERTEX_SHADER);
-	GLuint fragmentShader = ShaderManager::LoadShader("resource/shaders/fragment.glsl", GL_FRAGMENT_SHADER);
-	GLuint uiProgram = ShaderManager::CreateProgram(vertexShader, fragmentShader);
 	//set viewport
 	glViewport(0, 0, m_windowWidth, m_windowHeight);
 	//create matricies
 	m_cameraMatrix = glm::inverse(glm::lookAt(glm::vec3(10, 10, 10), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)));
 	m_projectionMatrix = glm::perspective(glm::pi<float>() * 0.25f, (float)(m_windowWidth / m_windowHeight), 0.1f, 1000.0f);
-	return true;
+	
+	// get filepath from user
+	std::string path;
+	bool comments = true; //remove this
+	if ((m_objModel = OBJLoader::OBJProcess(path,comments)) != nullptr)
+	{
+		//set shader program
+		GLuint vertexShader = ShaderManager::LoadShader("resource/shaders/obj_vertex.glsl", GL_VERTEX_SHADER);
+		GLuint fragmentShader = ShaderManager::LoadShader("resource/shaders/obj_fragment.glsl", GL_FRAGMENT_SHADER);
+		m_objProgram = ShaderManager::CreateProgram(vertexShader, fragmentShader);
+		glGenBuffers(2, m_objModelBuffer);
+		glBindBuffer(GL_ARRAY_BUFFER, m_objModelBuffer[0]);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+
 }
 
 
 
-void ModelLoaderApp::Update(float deltaTime)
+
+void RenderWindow::Update(float deltaTime)
 {
 	FreeMovement(m_cameraMatrix,deltaTime);
 }
 
-void ModelLoaderApp::Draw() 
+void RenderWindow::Draw() 
 {
 	//clear backbuffer
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -50,12 +66,16 @@ void ModelLoaderApp::Draw()
 	//get projection view matrix var location from shader file
 	int projectionViewMatrixUniformLocation = glGetUniformLocation(m_uiProgram, "ProjecionViewMatrix");
 	//send pointer to location of matrix 
-	glUniformMatrix4fv(projectionViewMatrixUniformLocation, 1, false, glm::value_ptr(projectionViewMatrix));
-	//bind buffers 
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	
+
+	//unbind buffer/arrays and release program
+	glDisableVertexAttribArray(0); //position
+	glDisableVertexAttribArray(1); //normal
+	glDisableVertexAttribArray(2); //uvcoord
+	glUseProgram(0);
 }
 
- void ModelLoaderApp::Destroy() 
+ void RenderWindow::Destroy() 
 {
 	//glDeleteBuffers(1, &location);
 	ShaderManager::DeleteProgram(m_uiProgram);
