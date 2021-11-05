@@ -4,6 +4,11 @@
 #include <sstream>
 #include <iostream>
 #include <glm\glm.hpp>
+
+//declare these here as they're only needed in this cpp file.
+glm::vec4 OBJGetVectorFromValue(const std::string a_strValue);
+bool OBJGetKeyValuePairFromLine(const std::string& a_rStrLine, std::string& a_rStrOutKey, std::string& a_rStrOutValue);
+
 OBJModel* OBJLoader::OBJProcess(const std::string& a_strFilePath, const bool a_bPrintComments)
 {
 	OBJModel oLoadedData;

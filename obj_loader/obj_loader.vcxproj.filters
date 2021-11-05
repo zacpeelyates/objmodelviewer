@@ -15,25 +15,25 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\obj_Loader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\OBJDatatypes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\OBJProcessUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="include\OBJProcessUtils.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
     <ClCompile Include="source\obj_Loader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\OBJDatatypes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="include\OBJProcessUtils.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="include\OBJDatatypes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\obj_Loader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\OBJProcessUtils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

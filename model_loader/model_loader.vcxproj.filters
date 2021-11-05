@@ -15,57 +15,49 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\Application.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\FileManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RenderWindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ShaderManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Utilities.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="source\Application.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="source\FileManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\Camera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\Utilities.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\ShaderManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\Application.cpp">
+    <ClCompile Include="source\OBJDatatypes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\RenderWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\deps\glad\src\glad.c">
-      <Filter>Resource Files</Filter>
+    <ClCompile Include="source\ShaderManager.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="include\FileManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Camera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Utilities.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ShaderManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Application.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\RenderWindow.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="resource\shaders\fragment.glsl">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="resource\shaders\vertex.glsl">
-      <Filter>Resource Files</Filter>
-    </None>
+    <ClCompile Include="source\Utilities.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

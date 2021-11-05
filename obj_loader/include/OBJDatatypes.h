@@ -16,8 +16,8 @@ class OBJVertex
 {
 
 public:
-	OBJVertex();
-	~OBJVertex();
+	OBJVertex() {};
+	~OBJVertex() {};
 	
 	glm::vec3 GetPosition();
 	void SetPosition(glm::vec3 a_v3New);
@@ -66,8 +66,8 @@ struct OBJMaterial
 struct OBJMesh
 {
 
-	OBJMesh();
-	~OBJMesh();
+	OBJMesh() {};
+	~OBJMesh() {};
 	std::vector<OBJVertex> verts;
 	std::vector<unsigned int> indicies;
 	OBJMaterial* activeMaterial;
