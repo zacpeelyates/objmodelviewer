@@ -1,7 +1,6 @@
 #include "RenderWindow.h"
 #include "ShaderManager.h"
 #include "Utilities.h"
-#include "Camera.h"
 #include "obj_Loader.h"
 
 #include <glad/glad.h>
@@ -47,11 +46,11 @@ bool RenderWindow::onCreate()
 }
 
 
-
+ 
 
 void RenderWindow::Update(float deltaTime)
 {
-	FreeMovement(m_cameraMatrix,deltaTime);
+	Utilities::FreeMovement(m_cameraMatrix,deltaTime);
 }
 
 void RenderWindow::Draw() 
