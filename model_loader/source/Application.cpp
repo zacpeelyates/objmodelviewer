@@ -1,11 +1,6 @@
 #include "Application.h"
 #include "Utilities.h"
 #include "ShaderManager.h"
-
-
-
-
-
 #include <glad\glad.h>
 #include <GLFW\glfw3.h>
 #include <iostream>

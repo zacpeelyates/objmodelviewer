@@ -26,13 +26,13 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="include\OBJProcessUtils.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\obj_Loader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\OBJDatatypes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="include\OBJProcessUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

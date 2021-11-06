@@ -47,9 +47,6 @@
     <ClCompile Include="source\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\OBJDatatypes.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\RenderWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
