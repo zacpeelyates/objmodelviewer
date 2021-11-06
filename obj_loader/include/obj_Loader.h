@@ -10,8 +10,6 @@ class OBJLoader {
 		
 		
 	private:
-		OBJLoader();
-		~OBJLoader() {};
-		std::map<std::string, OBJModel*> m_modelMap;
+		static std::map<std::string, OBJModel*> m_modelMap;
 	
 };

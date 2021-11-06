@@ -135,7 +135,7 @@ unsigned int ShaderManager::LoadShaderInternal(const char* a_filePath,unsigned i
 	char* source = Utilities::FileToBuffer(a_filePath);
 	GLuint shader = glCreateShader(a_type);
 	//set source buffer & compile 
-	glShaderSource(shader, 1, (const char**)&source, 0);
+	glShaderSource(shader, 1, &source, NULL);
 	glCompileShader(shader);
 	//delete source as buffer has been allocated
 	delete[] source;

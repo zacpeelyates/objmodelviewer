@@ -100,6 +100,10 @@
     <ClCompile Include="source\ShaderManager.cpp" />
     <ClCompile Include="source\Utilities.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="resource\shaders\obj_fragment.glsl" />
+    <None Include="resource\shaders\obj_vertex.glsl" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

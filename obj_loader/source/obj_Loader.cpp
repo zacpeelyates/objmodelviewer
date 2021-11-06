@@ -40,7 +40,7 @@ OBJModel* OBJLoader::OBJProcess(const std::string& a_strFilePath, const bool a_b
 						g->name = value;
 						if (currentMesh != nullptr)
 						{
-							oLoadedData.GetMeshes().push_back(currentMesh);
+							oLoadedData.AddMesh(currentMesh);
 						}										
 						currentMesh = new OBJMesh();
 						if (oLoadedData.AddGroup(g)) std::cout << "added group" << value;
@@ -97,32 +97,35 @@ OBJModel* OBJLoader::OBJProcess(const std::string& a_strFilePath, const bool a_b
 						{
 							currentMesh = new OBJMesh();
 						}
-							std::vector<std::string> faceComponents = OBJProcessUtils::SplitStringAtChar(value, ' ');
-							unsigned int ci = currentMesh->verts.size();
-							for(auto iter = faceComponents.begin(); iter !=faceComponents.end(); ++iter)
-							{
-								OBJFace face = ProcessFace(*iter);
-								OBJVertex currentVertex;
-								currentVertex.SetPosition(vertexData[face.posIndex-1]);
-								if (face.normIndex != 0) currentVertex.SetNormal(normalData[face.normIndex - 1]);
-								if (face.uvIndex != 0) currentVertex.SetTextureCoords(textureData[face.uvIndex - 1]);
-								currentMesh->verts.push_back(currentVertex);
-							}
-							for (unsigned int offset = 1; offset < (faceComponents.size() - 1); ++offset)
-							{
-								currentMesh->indicies.push_back(ci);
-								currentMesh->indicies.push_back(ci + offset);
-								currentMesh->indicies.push_back(ci + offset);
-							}
-
+						std::vector<std::string> faceComponents = OBJProcessUtils::SplitStringAtChar(value, ' ');
+						unsigned int ci = currentMesh->verts.size();
+						for(auto iter = faceComponents.begin(); iter !=faceComponents.end(); ++iter)
+						{
+							OBJFace face = ProcessFace(*iter);
+							OBJVertex currentVertex;
+							currentVertex.SetPosition(vertexData[face.posIndex-1]);
+							if (face.normIndex != 0) currentVertex.SetNormal(normalData[face.normIndex - 1]);
+							if (face.uvIndex != 0) currentVertex.SetTextureCoords(textureData[face.uvIndex - 1]);
+							currentMesh->verts.push_back(currentVertex);
 						}
+						for (unsigned int offset = 1; offset < (faceComponents.size() - 1); ++offset)
+						{
+							currentMesh->indicies.push_back(ci);
+							currentMesh->indicies.push_back(ci + offset);
+							currentMesh->indicies.push_back(ci + offset);
+						}
+						 
 					}
 				}
 			}
-		return &oLoadedData;
 		}
-		return nullptr;
 	}
+	if (currentMesh != new OBJMesh()) 
+	{
+		oLoadedData.AddMesh(currentMesh);
+	}
+	return &oLoadedData;
+}
 
 
 

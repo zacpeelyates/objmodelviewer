@@ -22,9 +22,7 @@ private:
 	unsigned int m_uiProgram;
 	unsigned int m_objProgram;
 	unsigned int m_lineVBO;
-	unsigned int m_objModelBuffer[1];
-
-
+	unsigned int m_objModelBuffer[2];
 
 	//member structs
 	struct Vertex

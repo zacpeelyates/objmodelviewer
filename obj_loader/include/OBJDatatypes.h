@@ -16,8 +16,8 @@ class OBJVertex
 {
 
 public:
-	OBJVertex() {};
-	~OBJVertex() {};
+	OBJVertex();
+	~OBJVertex();
 	
 	glm::vec3 GetPosition();
 	void SetPosition(glm::vec3 a_v3New);
@@ -36,6 +36,7 @@ public:
 		UVCOORD = NORMAL + sizeof(glm::vec3),
 		END = UVCOORD + sizeof(glm::vec2)
 	};
+
 	bool operator == (const OBJVertex& a_oOther) const;
 	bool operator < (const OBJVertex& a_oOther) const;
 private:
@@ -44,6 +45,8 @@ private:
 	unsigned int m_smoothingIndex;
 
 };
+inline OBJVertex::OBJVertex() {};
+inline OBJVertex::~OBJVertex() {};
 
 struct  OBJColor
 {
@@ -65,13 +68,15 @@ struct OBJMaterial
 
 struct OBJMesh
 {
-
-	OBJMesh() {};
-	~OBJMesh() {};
+	OBJMesh();
+	~OBJMesh();
 	std::vector<OBJVertex> verts;
 	std::vector<unsigned int> indicies;
 	OBJMaterial* activeMaterial;
 };
+inline OBJMesh::OBJMesh() {};
+inline OBJMesh::~OBJMesh() {};
+
 
 
 
@@ -86,18 +91,17 @@ class OBJModel
 {
 public:
 	bool AddGroup(OBJGroup* ao_groupIn);
+	bool AddMaterial(OBJMaterial* a_oInMaterial);
+	void AddMesh(OBJMesh* a_InMesh);
 	const std::string GetPath();
 	unsigned int GetMeshCount();
-	std::vector<OBJMesh*> GetMeshes();
-	const glm::mat4& GetWorldMatrix();
 	OBJMesh* GetMesh(unsigned int index);
 	OBJMaterial* GetMaterial(std::string a_name);
-	void AddMaterial(OBJMaterial* a_oInMaterial);
+	
 
 private:
 	std::string m_path;
-	std::vector<OBJMesh*> m_meshes;
-	glm::mat4 m_worldMatrix;
+	std::vector<OBJMesh*> m_meshes; //can't get this one to work in a map for some reason, will look into it once other stuff is working
 	std::map<std::string, OBJGroup*> m_groupMap;
 	std::map<std::string, OBJMaterial*> m_matMap;
 };

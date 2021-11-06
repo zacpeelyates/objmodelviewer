@@ -22,11 +22,6 @@ unsigned int OBJModel::GetMeshCount()
 	return m_meshes.size();
 }
 
-std::vector<OBJMesh*> OBJModel::GetMeshes()
-{
-	return m_meshes;
-}
-
 
 OBJMesh* OBJModel::GetMesh(unsigned int a_uiIndex)
 {
@@ -45,12 +40,19 @@ OBJMaterial* OBJModel::GetMaterial(std::string a_name)
 	return mat->second;
 }
 
-void OBJModel::AddMaterial(OBJMaterial* a_poInMaterial)
+bool OBJModel::AddMaterial(OBJMaterial* a_poInMaterial)
 {
 	if (m_matMap.find(a_poInMaterial->name) == m_matMap.end())
 	{
 		m_matMap.emplace(a_poInMaterial->name, a_poInMaterial);
+		return true;
 	}
+	return false;
+}
+
+void OBJModel::AddMesh(OBJMesh* a_InMesh)
+{
+	m_meshes.push_back(a_InMesh);
 }
 
 glm::vec3 OBJVertex::GetPosition()
