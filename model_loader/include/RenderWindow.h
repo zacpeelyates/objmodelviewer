@@ -15,16 +15,17 @@ protected:
 	virtual void Draw();
 	virtual void Destroy();
 private:
+	//matricies
 	glm::mat4 m_cameraMatrix;
 	glm::mat4 m_projectionMatrix;
-
 	//programs
 	unsigned int m_uiProgram;
 	unsigned int m_objProgram;
+	//vertex buffer objects
 	unsigned int m_lineVBO;
 	unsigned int m_objModelBuffer[2];
 
-	//member structs
+	//member data structs
 	struct Vertex
 	{
 		glm::vec4 pos;
@@ -59,5 +60,6 @@ private:
 	//models
 	OBJModel* m_objModel;
 	Line* m_lines;
+	int m_lineSize;
 
 };

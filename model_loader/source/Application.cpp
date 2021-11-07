@@ -26,11 +26,9 @@ bool Application::Create(const char* a_appName, unsigned int a_windowWidth, unsi
 		return false;
 	}
 	//get version
-	int major = glfwGetWindowAttrib(m_window, GLFW_VERSION_MAJOR); 
-	int minor = glfwGetWindowAttrib(m_window, GLFW_VERSION_MINOR);
-	int revision = glfwGetWindowAttrib(m_window, GLFW_VERSION_REVISION);
+	std::cout << glGetString(GL_VERSION) << std::endl;
+	 
 
-	std::cout << "OpenGL Version " << major << "." << minor << "." << revision << std::endl;
 	bool result = onCreate();
 	if (!result)
 	{
