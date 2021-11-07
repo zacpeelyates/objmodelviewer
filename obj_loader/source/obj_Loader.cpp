@@ -16,7 +16,7 @@ OBJModel* OBJLoader::OBJProcess(const std::string& a_strFilePath, const float a_
 	OBJMesh* currentMesh = nullptr;
 	std::vector<glm::vec3> vertexData, normalData;
 	std::vector<glm::vec2> textureData;
-	std::fstream file(a_strFilePath);
+	std::fstream file;
 	file.open(a_strFilePath, std::ios_base::in | std::ios_base::binary);
 	if (!file.is_open()) 
 	{
@@ -148,7 +148,7 @@ OBJModel* OBJLoader::OBJProcess(const std::string& a_strFilePath, const float a_
 
 bool OBJLoader::OBJLoadMaterials(const std::string& a_strFilePath, OBJModel& a_roLoadedData, const bool a_bPrintComments)
 {
-	std::fstream file(a_strFilePath);
+	std::fstream file;
 	file.open(a_strFilePath, std::ios_base::in | std::ios_base::binary);
 	if (!file.is_open())
 	{

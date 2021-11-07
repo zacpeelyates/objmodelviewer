@@ -20,10 +20,6 @@ bool RenderWindow::onCreate()
 	bool comments = true;
 	std::cout << "Enter Filepath: ";
 	std::cin >> path;
-	std::cout << "Enter Scale: ";
-	std::cin >> scale;
-	//std::cout << "Show Comments?";
-	//std::cin >> comments;
 	
 
 	//setup clear color, depth test, culling
