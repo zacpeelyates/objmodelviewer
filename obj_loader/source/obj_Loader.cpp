@@ -9,7 +9,7 @@
 glm::vec4 OBJGetVectorFromValue(const std::string a_strValue);
 bool OBJGetKeyValuePairFromLine(const std::string& a_rStrLine, std::string& a_rStrOutKey, std::string& a_rStrOutValue);
 
-OBJModel* OBJLoader::OBJProcess(const std::string& a_strFilePath, const bool a_bPrintComments)
+OBJModel* OBJLoader::OBJProcess(const std::string& a_strFilePath, const float a_fScale, const bool a_bPrintComments)
 {
 	OBJModel oLoadedData;
 	std::string line,key,value;
@@ -17,8 +17,12 @@ OBJModel* OBJLoader::OBJProcess(const std::string& a_strFilePath, const bool a_b
 	std::vector<glm::vec3> vertexData, normalData;
 	std::vector<glm::vec2> textureData;
 	std::fstream file(a_strFilePath);
-	
-
+	file.open(a_strFilePath, std::ios_base::in | std::ios_base::binary);
+	if (!file.is_open()) 
+	{
+		std::cout << "Failed to open file " << a_strFilePath << std::endl;
+		return nullptr;
+	}
 	while (!file.eof())
 	{
 		if (std::getline(file, line))
@@ -41,7 +45,7 @@ OBJModel* OBJLoader::OBJProcess(const std::string& a_strFilePath, const bool a_b
 						if (currentMesh != nullptr)
 						{
 							oLoadedData.AddMesh(currentMesh);
-						}										
+						}												
 						currentMesh = new OBJMesh();
 						if (oLoadedData.AddGroup(g)) std::cout << "added group" << value;
 						else std::cout << "failed to add group " << value;
@@ -59,7 +63,7 @@ OBJModel* OBJLoader::OBJProcess(const std::string& a_strFilePath, const bool a_b
 					}
 					else if (key == "v")
 					{
-						vertexData.push_back(OBJGetVectorFromValue(value));
+						vertexData.push_back(OBJGetVectorFromValue(value)*a_fScale);
 					}
 					else if (key == "vn")
 					{
@@ -85,7 +89,7 @@ OBJModel* OBJLoader::OBJProcess(const std::string& a_strFilePath, const bool a_b
 						{
 							currentMesh = new OBJMesh();
 						}
-						currentMesh->activeMaterial = m;
+						currentMesh->m_activeMaterial = m;
 					}
 					else if (key == "mtllib") 
 					{
@@ -98,7 +102,7 @@ OBJModel* OBJLoader::OBJProcess(const std::string& a_strFilePath, const bool a_b
 							currentMesh = new OBJMesh();
 						}
 						std::vector<std::string> faceComponents = OBJProcessUtils::SplitStringAtChar(value, ' ');
-						unsigned int ci = currentMesh->verts.size();
+						unsigned int ci = currentMesh->m_verts.size();						
 						for(auto iter = faceComponents.begin(); iter !=faceComponents.end(); ++iter)
 						{
 							OBJFace face = ProcessFace(*iter);
@@ -106,21 +110,34 @@ OBJModel* OBJLoader::OBJProcess(const std::string& a_strFilePath, const bool a_b
 							currentVertex.SetPosition(vertexData[face.posIndex-1]);
 							if (face.normIndex != 0) currentVertex.SetNormal(normalData[face.normIndex - 1]);
 							if (face.uvIndex != 0) currentVertex.SetTextureCoords(textureData[face.uvIndex - 1]);
-							currentMesh->verts.push_back(currentVertex);
+							currentMesh->m_verts.push_back(currentVertex);
 						}
+						bool hasNormals = !normalData.empty();
 						for (unsigned int offset = 1; offset < (faceComponents.size() - 1); ++offset)
 						{
-							currentMesh->indicies.push_back(ci);
-							currentMesh->indicies.push_back(ci + offset);
-							currentMesh->indicies.push_back(ci + offset);
-						}
-						 
+							currentMesh->m_indicies.push_back(ci);
+							currentMesh->m_indicies.push_back(ci + offset);
+							currentMesh->m_indicies.push_back(ci + offset + 1);
+
+							if (!hasNormals)
+							{
+								//calculate our own normals as they were not supplied in the OBJ file
+								glm::vec3 normal = currentMesh->calculateFaceNormal(ci, ci + offset, ci + offset + 1);
+								currentMesh->m_verts[ci].SetNormal(normal);
+								currentMesh->m_verts[ci + offset].SetNormal(normal);
+								currentMesh->m_verts[ci + offset + 1].SetNormal(normal);
+							}
+						}					 
+					}
+					else
+					{
+						std::cout << "Unhandled Statement: " << value << std::endl;
 					}
 				}
 			}
 		}
 	}
-	if (currentMesh != new OBJMesh()) 
+	if (currentMesh != nullptr && currentMesh != new OBJMesh()) 
 	{
 		oLoadedData.AddMesh(currentMesh);
 	}
@@ -133,41 +150,106 @@ bool OBJLoader::OBJLoadMaterials(const std::string& a_strFilePath, OBJModel& a_r
 {
 	std::fstream file(a_strFilePath);
 	file.open(a_strFilePath, std::ios_base::in | std::ios_base::binary);
-	if (file.is_open())
+	if (!file.is_open())
 	{
-		std::string line; 
+		std::cout << "Failed to open file: " << a_strFilePath << std::endl;
+		return false;
+	}
+		OBJMaterial* currentMaterial = nullptr;
+		std::string line;
 		while (!file.eof())
 		{
 			if (line.size() > 0) {
 				std::string key;
 				std::string value;
-				OBJMaterial* currentMaterial = nullptr;
 
 				if (OBJGetKeyValuePairFromLine(line, key, value))
 				{
-					if (key[0] == '#')
+					if (key[0] == '#') //comment
 					{
 						if (a_bPrintComments)
 						{
 							std::cout << value << std::endl;
 						}
 					}
-					else if (key == "newmtl")
+					else if (key == "newmtl") //new material
 					{
-						if (a_roLoadedData.GetMaterial(value) == nullptr)
+						if (currentMaterial != nullptr)
 						{
-							currentMaterial = new OBJMaterial();
-							currentMaterial->name = value;
 							a_roLoadedData.AddMaterial(currentMaterial);
 						}
+
+						if (a_roLoadedData.GetMaterial(value) == nullptr)
+						{
+
+							currentMaterial = new OBJMaterial();
+							currentMaterial->name = value;
+						}
+						else
+						{
+							std::cout << "Material Already Exists! " << value << std::endl;
+						}
 					}
+					else if (key == "Ns") //specularExponent
+					{
+						currentMaterial->SetSpecularExponent(stof(value));
+					}
+					else if (key == "Ni") //refraction index / opticlal density
+					{
+						currentMaterial->SetDensity(stof(value));
+					}
+					else if (key == "D") //dissolve
+					{
+						currentMaterial->SetDissolve(stof(value));
+					}
+					else if (key == "illum") //illumination model
+					{
+						currentMaterial->SetIlluminationModel(stoi(value));
+					}
+					else if (key == "Ka") //ambience
+					{
+						currentMaterial->SetAmbience(OBJGetVectorFromValue(value));
+					}
+					else if (key == "Kd") //diffuse
+					{
+						currentMaterial->SetDiffuse(OBJGetVectorFromValue(value));
+					}
+					else if (key == "Ks") //specular highlight
+					{
+						currentMaterial->SetSpecular(OBJGetVectorFromValue(value));
+					}
+					else if (key == "Ke") //emissive
+					{
+						currentMaterial->SetEmissive(OBJGetVectorFromValue(value));
+					}
+					else if (key == "d") //opacity
+					{
+						currentMaterial->SetTransparency(stof(value));
+					}
+					else if (key == "Tr") //transparency (1-opacity)
+					{
+						currentMaterial->SetTransparency(1.0f - stof(value));
+					}
+					else
+					{
+						std::cout << "Unhandled Statement: " << value << std::endl;
+					}
+
 				}
 			}
+			
 		}
+
+		if (currentMaterial != nullptr && currentMaterial != new OBJMaterial())
+		{
+			a_roLoadedData.AddMaterial(currentMaterial);
+		}
+
+		std::cout << "Material File Parsed: " << a_strFilePath << std::endl;
+		file.close();
 		return true;
-	}
-	return false;
 }
+	
 
 
 OBJFace OBJLoader::ProcessFace(std::string a_strFaceData)

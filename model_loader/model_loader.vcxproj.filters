@@ -52,5 +52,11 @@
     <None Include="resource\shaders\obj_fragment.glsl">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="resource\shaders\fragment.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resource\shaders\vertex.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -48,34 +48,39 @@ private:
 inline OBJVertex::OBJVertex() {};
 inline OBJVertex::~OBJVertex() {};
 
-struct  OBJColor
-{
-	float exponent, dis, ref = 0.0f;
-	uint8_t illumModel;
-};
-
-struct OBJTexture
-{
-	//std::string amb, dif, spec, alpha, bump, dis;
-};
 
 struct OBJMaterial
 {
+public:
 	std::string name;
-	OBJColor color;
-	OBJTexture texture;
+	glm::vec3 GetAmbience(), GetDiffuse(), GetSpecular(), GetEmissive();
+	void SetAmbience(glm::vec3 a_inv3), SetDiffuse(glm::vec3 a_inv3), SetSpecular(glm::vec3 a_inv3), SetEmissive(glm::vec3 a_inv3);
+
+	float GetDensity(), GetDissolve(), GetSpecularExponent(), GetTransparency();
+	void SetDensity(float a_fIn), SetDissolve(float a_fIn), SetSpecularExponent(float a_fIn), SetTransparency(float a_fIn);
+
+	uint8_t GetIlluminationModel();
+	void SetIlluminationModel(uint8_t a_inUint);
+private:
+	glm::vec3 ambience, diffuse, specular, emissive;
+	float density, dissolve, specularExponent,transparency;
+	uint8_t illumModel;
+
+
 };
 
 struct OBJMesh
 {
 	OBJMesh();
 	~OBJMesh();
-	std::vector<OBJVertex> verts;
-	std::vector<unsigned int> indicies;
-	OBJMaterial* activeMaterial;
+	glm::vec3 calculateFaceNormal(const unsigned int& a_indexA, const unsigned int& a_indexB, const unsigned int& a_indexC);
+	void CalculateUnassignedFaceNormals();
+	std::vector<OBJVertex> m_verts;
+	std::vector<unsigned int> m_indicies;
+	OBJMaterial* m_activeMaterial =nullptr;
 };
 inline OBJMesh::OBJMesh() {};
-inline OBJMesh::~OBJMesh() {};
+inline OBJMesh::~OBJMesh() {}
 
 
 
@@ -90,6 +95,8 @@ struct OBJGroup
 class OBJModel
 {
 public:
+	OBJModel() :m_worldMatrix(glm::mat4(0.0f)) {};
+	~OBJModel() {};
 	bool AddGroup(OBJGroup* ao_groupIn);
 	bool AddMaterial(OBJMaterial* a_oInMaterial);
 	void AddMesh(OBJMesh* a_InMesh);
@@ -97,11 +104,12 @@ public:
 	unsigned int GetMeshCount();
 	OBJMesh* GetMesh(unsigned int index);
 	OBJMaterial* GetMaterial(std::string a_name);
-	
+	const glm::mat4 GetWorldMatrix();
 
 private:
 	std::string m_path;
 	std::vector<OBJMesh*> m_meshes; //can't get this one to work in a map for some reason, will look into it once other stuff is working
 	std::map<std::string, OBJGroup*> m_groupMap;
 	std::map<std::string, OBJMaterial*> m_matMap;
+	glm::mat4 m_worldMatrix;
 };

@@ -1,11 +1,22 @@
 #version 400
-layout(location = 0) in vec4 position;
-layout(location = 1) in vec4 colour;
+
+layout(location = 0) in vec3 position;
+layout(location = 1) in vec3 normal;
 layout(location = 2) in vec2 uvCoord;
-smooth out vec4 vertColour;
+
+out vec3 vertPos;
+out vec3 vertNormal;
+out vec2 vertUV;
+
 uniform mat4 ProjectionViewMatrix;
+uniform mat4 ModelMatrix;
+vec4 tempVec;
+
 void main()
 {
-vertColour = vec4(0.5f,0.5f,0.5f,1.0f);
-gl_Position = ProjectionViewMatrix * position;
+	vertUV = uvCoord;
+	vertNormal = normal;
+	tempVec = ModelMatrix * vec4(position.xyz,1.0f);
+	vertPos = tempVec.xyz;
+	
 }

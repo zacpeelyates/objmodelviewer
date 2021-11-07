@@ -15,10 +15,16 @@ RenderWindow::~RenderWindow() {};
 bool RenderWindow::onCreate()
 {
 	// get filepath from user
-	//std::string path;
-	//std::cout << "Enter Filepath: ";
-	//std::cin >> path;
-	//bool comments = true;
+	std::string path;
+	float scale = 1.0f;
+	bool comments = true;
+	std::cout << "Enter Filepath: ";
+	std::cin >> path;
+	std::cout << "Enter Scale: ";
+	std::cin >> scale;
+	//std::cout << "Show Comments?";
+	//std::cin >> comments;
+	
 
 	//setup clear color, depth test, culling
 	glClearColor(0.95f, 0.45f, 0.75f, 1.0f);
@@ -32,8 +38,8 @@ bool RenderWindow::onCreate()
 	//create matricies
 	m_cameraMatrix = glm::inverse(glm::lookAt(glm::vec3(10, 10, 10), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)));
 	m_projectionMatrix = glm::perspective(glm::pi<float>() * 0.25f, (float)(m_windowWidth / m_windowHeight), 0.1f, 1000.0f);
-	//m_objModel = OBJLoader::OBJProcess(path, comments);
-	//if (m_objModel == nullptr) return false;
+	m_objModel = OBJLoader::OBJProcess(path, scale,comments);
+	if (m_objModel == nullptr) return false;
 
 	//set shader programs
 	//obj
@@ -91,7 +97,6 @@ void RenderWindow::Draw()
 	int projectionViewMatrixUniformLocation = glGetUniformLocation(m_uiProgram, "ProjecionViewMatrix");
 	//send pointer to location of matrix 
 	glUniformMatrix4fv(projectionViewMatrixUniformLocation, 1, false, glm::value_ptr(projectionViewMatrix));
-
 	//enable array attribs
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
@@ -101,20 +106,76 @@ void RenderWindow::Draw()
 	//draw line grid
 	glBindBuffer(GL_ARRAY_BUFFER, m_lineVBO);
 	glDrawArrays(GL_LINES, 0, m_lineSize *2);
+
+	//unbind
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
 
 	//draw OBJ model
-	//glBindBuffer(GL_ARRAY_BUFFER, m_objModelBuffer[0]);
+	glUseProgram(m_objProgram);
+	for (int i = 0; i < m_objModel->GetMeshCount(); ++i) 
+	{
+		int ModelMatrixUniformLocation = glGetUniformLocation(m_objProgram, "ModelMatrix");
+		glUniformMatrix4fv(ModelMatrixUniformLocation, 1, false, glm::value_ptr(m_objModel->GetWorldMatrix()));
+
+		int cameraPositionUniformLocation = glGetUniformLocation(m_objProgram, "camPos");
+		glUniform4fv(cameraPositionUniformLocation, 1, glm::value_ptr(m_cameraMatrix[3]));
+		OBJMesh* currentMesh = m_objModel->GetMesh(i);
+		int kA_location = glGetUniformLocation(m_objProgram, "kA");
+		int kD_location = glGetUniformLocation(m_objProgram, "kD");
+		int kS_location = glGetUniformLocation(m_objProgram, "kS");
+
+		OBJMaterial* currentMaterial = currentMesh->m_activeMaterial;
+		if (currentMaterial != nullptr)
+		{
+			glUniform4fv(kA_location, 1, glm::value_ptr(currentMaterial->GetAmbience()));
+			glUniform4fv(kD_location, 1, glm::value_ptr(currentMaterial->GetDiffuse()));
+			glUniform4fv(kS_location, 1, glm::value_ptr(currentMaterial->GetSpecular()));
+
+			//TODO: texture code here 
+		}
+		else
+		{
+			//use default lighting
+			glUniform4fv(kA_location, 1, glm::value_ptr(glm::vec4(0.25f,0.25f,0.25f,1.0f)));
+			glUniform4fv(kD_location, 1, glm::value_ptr(glm::vec4(1.0f)));
+			glUniform4fv(kS_location, 1, glm::value_ptr(glm::vec4(1.0f,1.0f,1.0f,64.0f)));
+		}
+		//bind buffers
+		glBindBuffer(GL_ARRAY_BUFFER, m_objModelBuffer[0]);
+		glBufferData(GL_ARRAY_BUFFER, currentMesh->m_verts.size() * sizeof(OBJVertex), currentMesh->m_verts.data(), GL_STATIC_DRAW);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_objModelBuffer[1]);
+		glEnableVertexAttribArray(0); //position
+		glEnableVertexAttribArray(1); //normal
+		glEnableVertexAttribArray(2); //UVs
+
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(OBJVertex), ((char*)0) + OBJVertex::Offsets::POS);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(OBJVertex), ((char*)0) + OBJVertex::Offsets::NORMAL);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(OBJVertex), ((char*)0) + OBJVertex::Offsets::UVCOORD);
+
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, currentMesh->m_indicies.size() * sizeof(unsigned int), currentMesh->m_indicies.data(), GL_STATIC_DRAW);
+		glDrawElements(GL_TRIANGLES, currentMesh->m_indicies.size(), GL_UNSIGNED_INT, 0);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	}
 
 	//unbind buffer/arrays and release program
 	glDisableVertexAttribArray(0); //position
 	glDisableVertexAttribArray(1); //normal
-	//glDisableVertexAttribArray(2); //uvcoord
+	glDisableVertexAttribArray(2); //uvcoord
 	glUseProgram(0);
 }
 
  void RenderWindow::Destroy() 
 {
-	//glDeleteBuffers(1, &location);
+	delete m_objModel;
+	delete[] m_lines;
+	glDeleteBuffers(1, &m_lineVBO);
+	glDeleteBuffers(2, &m_objModelBuffer[0]);
+
 	ShaderManager::DeleteProgram(m_uiProgram);
+	ShaderManager::DestroyInstance();
 }
