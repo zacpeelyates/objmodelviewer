@@ -100,14 +100,12 @@ public:
 	bool AddGroup(OBJGroup* ao_groupIn);
 	bool AddMaterial(OBJMaterial* a_oInMaterial);
 	void AddMesh(OBJMesh* a_InMesh);
-	const std::string GetPath();
 	unsigned int GetMeshCount();
 	OBJMesh* GetMesh(unsigned int index);
 	OBJMaterial* GetMaterial(std::string a_name);
 	const glm::mat4 GetWorldMatrix();
 
 private:
-	std::string m_path;
 	std::vector<OBJMesh*> m_meshes; //can't get this one to work in a map for some reason, will look into it once other stuff is working
 	std::map<std::string, OBJGroup*> m_groupMap;
 	std::map<std::string, OBJMaterial*> m_matMap;

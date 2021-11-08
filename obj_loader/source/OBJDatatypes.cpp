@@ -12,10 +12,6 @@ bool OBJModel::AddGroup(OBJGroup* ao_groupIn)
 
 }
 
-const std::string OBJModel::GetPath()
-{
-	return m_path;
-}
 
 unsigned int OBJModel::GetMeshCount()
 {

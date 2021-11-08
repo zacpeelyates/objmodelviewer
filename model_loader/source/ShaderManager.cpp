@@ -77,7 +77,7 @@ unsigned int ShaderManager::CreateProgramInternal(const int& a_vertexShader, con
 		delete[] infoLog;
 		return 0; //null program return 
 	}
-	return result;
+	return handle;
 
 }
 
@@ -158,6 +158,6 @@ unsigned int ShaderManager::LoadShaderInternal(const char* a_filePath,unsigned i
 	{
 		mShaders.emplace(a_filePath, shader);
 	}
-	return result;
+	return shader;
 
 }

@@ -28,7 +28,7 @@ private:
 	//member data structs
 	struct Vertex
 	{
-		glm::vec4 pos;
+		glm::vec3 pos; 
 		glm::vec4 color;
 	};
 

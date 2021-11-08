@@ -11,7 +11,7 @@ bool OBJGetKeyValuePairFromLine(const std::string& a_rStrLine, std::string& a_rS
 
 OBJModel* OBJLoader::OBJProcess(const std::string& a_strFilePath, const float a_fScale, const bool a_bPrintComments)
 {
-	OBJModel oLoadedData;
+	OBJModel* oLoadedData = new OBJModel();
 	std::string line,key,value;
 	OBJMesh* currentMesh = nullptr;
 	std::vector<glm::vec3> vertexData, normalData;
@@ -44,10 +44,10 @@ OBJModel* OBJLoader::OBJProcess(const std::string& a_strFilePath, const float a_
 						g->name = value;
 						if (currentMesh != nullptr)
 						{
-							oLoadedData.AddMesh(currentMesh);
+							oLoadedData->AddMesh(currentMesh);
 						}												
 						currentMesh = new OBJMesh();
-						if (oLoadedData.AddGroup(g)) std::cout << "added group" << value;
+						if (oLoadedData->AddGroup(g)) std::cout << "added group" << value;
 						else std::cout << "failed to add group " << value;
 					}
 					else if (key == "s")
@@ -63,27 +63,27 @@ OBJModel* OBJLoader::OBJProcess(const std::string& a_strFilePath, const float a_
 					}
 					else if (key == "v")
 					{
-						vertexData.push_back(OBJGetVectorFromValue(value)*a_fScale);
+						vertexData.push_back(OBJGetVectorFromValue(value) * a_fScale);
 					}
 					else if (key == "vn")
 					{
 						normalData.push_back(OBJGetVectorFromValue(value));
 					}
 					else if (key == "vt")
-					{
+					{				
 						textureData.push_back(OBJGetVectorFromValue(value));
 					}
 					else if (key == "usemtl")
 					{
 						OBJMaterial* m = new OBJMaterial; 
-						if (oLoadedData.GetMaterial(value) == nullptr)
+						if (oLoadedData->GetMaterial(value) == nullptr)
 						{
 							m->name = value;
-							oLoadedData.AddMaterial(m);
+							oLoadedData->AddMaterial(m);
 						}
 						else 
 						{
-							m = oLoadedData.GetMaterial(value);
+							m = oLoadedData->GetMaterial(value);
 						}
 						if(currentMesh == nullptr)
 						{
@@ -93,7 +93,7 @@ OBJModel* OBJLoader::OBJProcess(const std::string& a_strFilePath, const float a_
 					}
 					else if (key == "mtllib") 
 					{
-						OBJLoadMaterials(OBJProcessUtils::GetFileDirectory(a_strFilePath) + value,oLoadedData,a_bPrintComments);
+						OBJLoadMaterials(OBJProcessUtils::GetFileDirectory(a_strFilePath) + value,*oLoadedData,a_bPrintComments);
 					}
 					else if (key == "f") 
 					{										
@@ -139,9 +139,10 @@ OBJModel* OBJLoader::OBJProcess(const std::string& a_strFilePath, const float a_
 	}
 	if (currentMesh != nullptr && currentMesh != new OBJMesh()) 
 	{
-		oLoadedData.AddMesh(currentMesh);
+		oLoadedData->AddMesh(currentMesh);
 	}
-	return &oLoadedData;
+	std::cout << "File Successfully Parsed: " << a_strFilePath << std::endl;
+	return oLoadedData;
 }
 
 
@@ -159,82 +160,85 @@ bool OBJLoader::OBJLoadMaterials(const std::string& a_strFilePath, OBJModel& a_r
 		std::string line;
 		while (!file.eof())
 		{
-			if (line.size() > 0) {
-				std::string key;
-				std::string value;
+			if (std::getline(file, line))
+			{
+				if (line.size() > 0) {
+					std::string key;
+					std::string value;
 
-				if (OBJGetKeyValuePairFromLine(line, key, value))
-				{
-					if (key[0] == '#') //comment
+					if (OBJGetKeyValuePairFromLine(line, key, value))
 					{
-						if (a_bPrintComments)
+						if (key[0] == '#') //comment
 						{
-							std::cout << value << std::endl;
+							if (a_bPrintComments)
+							{
+								std::cout << value << std::endl;
+							}
 						}
-					}
-					else if (key == "newmtl") //new material
-					{
-						if (currentMaterial != nullptr)
+						else if (key == "newmtl") //new material
 						{
-							a_roLoadedData.AddMaterial(currentMaterial);
+							if (currentMaterial != nullptr)
+							{
+								a_roLoadedData.AddMaterial(currentMaterial);
+							}
+
+							if (a_roLoadedData.GetMaterial(value) == nullptr)
+							{
+
+								currentMaterial = new OBJMaterial();
+								currentMaterial->name = value;
+							}
+							else
+							{
+								std::cout << "Material Already Exists! " << value << std::endl;
+							}
 						}
-
-						if (a_roLoadedData.GetMaterial(value) == nullptr)
+						else if (key == "Ns") //specularExponent
 						{
-
-							currentMaterial = new OBJMaterial();
-							currentMaterial->name = value;
+							currentMaterial->SetSpecularExponent(stof(value));
+						}
+						else if (key == "Ni") //refraction index / opticlal density
+						{
+							currentMaterial->SetDensity(stof(value));
+						}
+						else if (key == "D") //dissolve
+						{
+							currentMaterial->SetDissolve(stof(value));
+						}
+						else if (key == "illum") //illumination model
+						{
+							currentMaterial->SetIlluminationModel(stoi(value));
+						}
+						else if (key == "Ka") //ambience
+						{
+							currentMaterial->SetAmbience(OBJGetVectorFromValue(value));
+						}
+						else if (key == "Kd") //diffuse
+						{
+							currentMaterial->SetDiffuse(OBJGetVectorFromValue(value));
+						}
+						else if (key == "Ks") //specular highlight
+						{
+							currentMaterial->SetSpecular(OBJGetVectorFromValue(value));
+						}
+						else if (key == "Ke") //emissive
+						{
+							currentMaterial->SetEmissive(OBJGetVectorFromValue(value));
+						}
+						else if (key == "d") //opacity
+						{
+							currentMaterial->SetTransparency(stof(value));
+						}
+						else if (key == "Tr") //transparency (1-opacity)
+						{
+							currentMaterial->SetTransparency(1.0f - stof(value));
 						}
 						else
 						{
-							std::cout << "Material Already Exists! " << value << std::endl;
+							std::cout << "Unhandled Statement: " << value << std::endl;
 						}
-					}
-					else if (key == "Ns") //specularExponent
-					{
-						currentMaterial->SetSpecularExponent(stof(value));
-					}
-					else if (key == "Ni") //refraction index / opticlal density
-					{
-						currentMaterial->SetDensity(stof(value));
-					}
-					else if (key == "D") //dissolve
-					{
-						currentMaterial->SetDissolve(stof(value));
-					}
-					else if (key == "illum") //illumination model
-					{
-						currentMaterial->SetIlluminationModel(stoi(value));
-					}
-					else if (key == "Ka") //ambience
-					{
-						currentMaterial->SetAmbience(OBJGetVectorFromValue(value));
-					}
-					else if (key == "Kd") //diffuse
-					{
-						currentMaterial->SetDiffuse(OBJGetVectorFromValue(value));
-					}
-					else if (key == "Ks") //specular highlight
-					{
-						currentMaterial->SetSpecular(OBJGetVectorFromValue(value));
-					}
-					else if (key == "Ke") //emissive
-					{
-						currentMaterial->SetEmissive(OBJGetVectorFromValue(value));
-					}
-					else if (key == "d") //opacity
-					{
-						currentMaterial->SetTransparency(stof(value));
-					}
-					else if (key == "Tr") //transparency (1-opacity)
-					{
-						currentMaterial->SetTransparency(1.0f - stof(value));
-					}
-					else
-					{
-						std::cout << "Unhandled Statement: " << value << std::endl;
-					}
 
+					}
 				}
 			}
 			
