@@ -77,7 +77,7 @@ struct OBJMesh
 	void CalculateUnassignedFaceNormals();
 	std::vector<OBJVertex> m_verts;
 	std::vector<unsigned int> m_indicies;
-	OBJMaterial* m_activeMaterial =nullptr;
+	OBJMaterial* m_activeMaterial = nullptr;
 };
 inline OBJMesh::OBJMesh() {};
 inline OBJMesh::~OBJMesh() {}

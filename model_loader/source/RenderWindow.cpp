@@ -103,7 +103,7 @@ void RenderWindow::Draw()
 	glEnableVertexAttribArray(1);
 	//tell opengl where array is, no of element coponents, data type, normalization
 	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
-	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), ((char*)nullptr) + sizeof(float)*3);
+	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), ((char*)nullptr) + sizeof(float)*3); //x3 because vec3 used for position data
 	//draw line grid
 	glDrawArrays(GL_LINES, 0, m_lineSize *2);
 
@@ -112,14 +112,13 @@ void RenderWindow::Draw()
 
 	//draw OBJ model
 	glUseProgram(m_objProgram);
-	int test = m_objModel->GetMeshCount();
 	for (int i = 0; i < m_objModel->GetMeshCount(); ++i) 
 	{
 		int ModelMatrixUniformLocation = glGetUniformLocation(m_objProgram, "ModelMatrix");
 		glUniformMatrix4fv(ModelMatrixUniformLocation, 1, false, glm::value_ptr(m_objModel->GetWorldMatrix()));
 
 		int cameraPositionUniformLocation = glGetUniformLocation(m_objProgram, "camPos");
-		glUniform4fv(cameraPositionUniformLocation, 1, glm::value_ptr(m_cameraMatrix[3]));
+		glUniform3fv(cameraPositionUniformLocation, 1, glm::value_ptr(m_cameraMatrix[3]));
 		OBJMesh* currentMesh = m_objModel->GetMesh(i);
 		int kA_location = glGetUniformLocation(m_objProgram, "kA");
 		int kD_location = glGetUniformLocation(m_objProgram, "kD");
