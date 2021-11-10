@@ -95,8 +95,10 @@ void ShaderManager::DeleteProgramInternal(unsigned int a_program)
 {
 	for (std::map<std::string, unsigned int>::iterator iter = mPrograms.begin(); iter != mShaders.end(); ++iter)
 	{
+
 		glDeleteProgram(iter->second);
-		mPrograms.erase(iter);
+		iter->second = 0;
+		//mPrograms.erase(iter);
 		break;
 	}
 }

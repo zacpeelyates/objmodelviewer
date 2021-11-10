@@ -95,7 +95,7 @@ struct OBJGroup
 class OBJModel
 {
 public:
-	OBJModel() :m_worldMatrix(glm::mat4(0.0f)) {};
+	OBJModel() :m_worldMatrix(glm::mat4(1.0f)) {};
 	~OBJModel() {};
 	bool AddGroup(OBJGroup* ao_groupIn);
 	bool AddMaterial(OBJMaterial* a_oInMaterial);

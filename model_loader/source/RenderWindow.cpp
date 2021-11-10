@@ -15,7 +15,7 @@ RenderWindow::~RenderWindow() {};
 bool RenderWindow::onCreate()
 {
 	// get filepath from user
-	std::string path = "c:/obj_models/the chair modeling.obj";
+	std::string path = "./resource/obj_models/the chair modeling.obj";
 	float scale = 1.0f;
 	bool comments = true;
 
@@ -55,13 +55,13 @@ bool RenderWindow::onCreate()
 		glm::vec4 color = (i == 10) ? glm::vec4(1.0f, 1.0f, 1.0f, 1.0f) : glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 
 		int j = i * 2;
-		m_lines[j].v0.pos = glm::vec3(i - 10, 0.0f, 10.0f);
-		m_lines[j].v1.pos = glm::vec3(i - 10, 0.0f, -10.0f);
+		m_lines[j].v0.pos = glm::vec3(i - 10.f, 0.0f, 10.0f);
+		m_lines[j].v1.pos = glm::vec3(i - 10.f, 0.0f, -10.0f);
 
 		m_lines[j].v0.color = color;
 		m_lines[j].v1.color = color;
 
-		m_lines[j + 1].v0.pos = glm::vec3(10, 0.0f, i - 10.0f);
+		m_lines[j + 1].v0.pos = glm::vec3(10.f, 0.0f, i - 10.0f);
 		m_lines[j + 1].v1.pos = glm::vec3(-10.f, 0.0f, i - 10.0f);
 
 		m_lines[j + 1].v0.color = color;
@@ -73,6 +73,12 @@ bool RenderWindow::onCreate()
 	glBindBuffer(GL_ARRAY_BUFFER, m_lineVBO);
 	glBufferData(GL_ARRAY_BUFFER, m_lineSize * sizeof(Line), m_lines, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glGenBuffers(2, m_objModelBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, m_objModelBuffer[0]);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_objModelBuffer[1]);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	return true;
 }
 
@@ -102,16 +108,19 @@ void RenderWindow::Draw()
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
 	//tell opengl where array is, no of element coponents, data type, normalization
-	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
 	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), ((char*)nullptr) + sizeof(float)*3); //x3 because vec3 used for position data
 	//draw line grid
-	glDrawArrays(GL_LINES, 0, m_lineSize *2);
+	glDrawArrays(GL_LINES, 0, (m_lineSize *2) + 10);
 
 	//unbind
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	//draw OBJ model
 	glUseProgram(m_objProgram);
+	projectionViewMatrixUniformLocation = glGetUniformLocation(m_objProgram, "ProjectionViewMatrix");
+	//send pointer to location of matrix 
+	glUniformMatrix4fv(projectionViewMatrixUniformLocation, 1, false, glm::value_ptr(projectionViewMatrix));
 	for (int i = 0; i < m_objModel->GetMeshCount(); ++i) 
 	{
 		int ModelMatrixUniformLocation = glGetUniformLocation(m_objProgram, "ModelMatrix");
