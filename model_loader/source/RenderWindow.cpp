@@ -5,8 +5,8 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
-#include <glm/ext.hpp>
+#include <glm.hpp>
+#include <ext.hpp> //glm ext
 #include <iostream>
 
 RenderWindow::RenderWindow() {};
@@ -55,14 +55,14 @@ bool RenderWindow::onCreate()
 		glm::vec4 color = (i == 10) ? glm::vec4(1.0f, 1.0f, 1.0f, 1.0f) : glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 
 		int j = i * 2;
-		m_lines[j].v0.pos = glm::vec3(i - 10.f, 0.0f, 10.0f);
-		m_lines[j].v1.pos = glm::vec3(i - 10.f, 0.0f, -10.0f);
+		m_lines[j].v0.pos = glm::vec3(i - 10.0f, 0.0f, 10.0f);
+		m_lines[j].v1.pos = glm::vec3(i - 10.0f, 0.0f, -10.0f);
 
 		m_lines[j].v0.color = color;
 		m_lines[j].v1.color = color;
 
-		m_lines[j + 1].v0.pos = glm::vec3(10.f, 0.0f, i - 10.0f);
-		m_lines[j + 1].v1.pos = glm::vec3(-10.f, 0.0f, i - 10.0f);
+		m_lines[j + 1].v0.pos = glm::vec3(10.0f, 0.0f, i - 10.0f);
+		m_lines[j + 1].v1.pos = glm::vec3(-10.0f, 0.0f, i - 10.0f);
 
 		m_lines[j + 1].v0.color = color;
 		m_lines[j + 1].v1.color = color;

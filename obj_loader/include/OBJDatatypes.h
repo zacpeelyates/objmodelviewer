@@ -1,4 +1,4 @@
-#include <glm/glm.hpp>
+#include <glm.hpp>
 #include <vector>
 #include <string>
 #include <map>

@@ -3,7 +3,7 @@
 #include "OBJProcessUtils.h"
 #include <sstream>
 #include <iostream>
-#include <glm\glm.hpp>
+#include <glm.hpp>
 
 //declare these here as they're only needed in this cpp file.
 glm::vec4 OBJGetVectorFromValue(const std::string a_strValue);

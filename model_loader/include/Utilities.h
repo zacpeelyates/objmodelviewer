@@ -9,7 +9,7 @@
 #define __UTILITIES_H__
 #include <vector>
 #include <string>
-#include <glm/glm.hpp>
+#include <glm.hpp>
 class Utilities
 {
 public:

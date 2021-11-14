@@ -13,8 +13,8 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
-#include <glm/ext.hpp>
+#include <glm.hpp>
+#include <ext.hpp> //glm ext
 
 static double s_prevTime = 0;
 static float  s_totalTime = 0;
