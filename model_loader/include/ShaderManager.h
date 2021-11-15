@@ -23,8 +23,8 @@ private:
 
 	static ShaderManager* mInstance;
 
-	std::map<std::string, unsigned int> mShaders;
-	std::map<std::string, unsigned int> mPrograms;
+	std::map<std::string, unsigned int> m_shaders;
+	std::map<std::string, unsigned int> m_programs;
 
 	unsigned int LoadShaderInternal(const char* a_strShaderFile, unsigned int a_eShaderType);
 	unsigned int CreateProgramInternal(const int& a_irVertexShader, const int& a_irFragmentShader);

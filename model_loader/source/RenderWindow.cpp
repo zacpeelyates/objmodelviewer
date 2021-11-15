@@ -188,8 +188,5 @@ void RenderWindow::Draw()
 	delete m_objModel;
 	delete[] m_lines;
 	glDeleteBuffers(1, &m_lineVBO);
-	glDeleteBuffers(2, &m_objModelBuffer[0]);
-
-	ShaderManager::DeleteProgram(m_uiProgram);
 	ShaderManager::DestroyInstance();
 }

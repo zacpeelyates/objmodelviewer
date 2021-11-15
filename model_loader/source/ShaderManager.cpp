@@ -49,10 +49,6 @@ unsigned int ShaderManager::CreateProgram(const int& a_vertexShader, const int& 
 	return instance->CreateProgramInternal(a_vertexShader, a_fragmentShader);
 }
 
-void ShaderManager::DeleteShader(unsigned int a_uiShaderID)
-{
-}
-
 unsigned int ShaderManager::CreateProgramInternal(const int& a_vertexShader, const int& a_fragmentShader)
 {
 	int result = GL_FALSE;
@@ -81,8 +77,22 @@ unsigned int ShaderManager::CreateProgramInternal(const int& a_vertexShader, con
 
 }
 
+
+void ShaderManager::DeleteShader(unsigned int a_uiShaderID)
+{
+	ShaderManager* instance = ShaderManager::GetInstance();
+	instance->DeleteShaderInternal(a_uiShaderID);
+}
+
 void ShaderManager::DeleteShaderInternal(unsigned int a_uiShaderID)
 {
+	for (std::map<std::string, unsigned int>::iterator iter = m_shaders.begin(); iter != m_shaders.end(); ++iter)
+	{
+		if (iter->second = a_uiShaderID) {
+			glDeleteShader(iter->second);
+			break;
+		}
+	}
 }
 
 void ShaderManager::DeleteProgram(unsigned int a_program) 
@@ -93,13 +103,12 @@ void ShaderManager::DeleteProgram(unsigned int a_program)
 
 void ShaderManager::DeleteProgramInternal(unsigned int a_program) 
 {
-	for (std::map<std::string, unsigned int>::iterator iter = mPrograms.begin(); iter != mShaders.end(); ++iter)
+	for (std::map<std::string, unsigned int>::iterator iter = m_programs.begin(); iter != m_programs.end(); ++iter)
 	{
-
-		glDeleteProgram(iter->second);
-		iter->second = 0;
-		//mPrograms.erase(iter);
-		break;
+		if (iter->second = a_program) {
+			glDeleteProgram(iter->second);
+			break;
+		}
 	}
 }
 
@@ -111,12 +120,12 @@ ShaderManager::ShaderManager()
 ShaderManager::~ShaderManager() 
 {
 	//delete shaders
-	for (std::map<std::string,unsigned int>::iterator iter = mShaders.begin(); iter != mShaders.end(); ++iter) 
+	for (std::map<std::string,unsigned int>::iterator iter = m_shaders.begin(); iter != m_shaders.end(); ++iter) 
 	{
 		glDeleteShader(iter->second);
 	}
 	//delete programs
-	for (std::map<std::string, unsigned int>::iterator iter = mPrograms.begin(); iter != mPrograms.end(); ++iter)
+	for (std::map<std::string, unsigned int>::iterator iter = m_programs.begin(); iter != m_programs.end(); ++iter)
 	{
 		glDeleteProgram(iter->second);
 	}
@@ -158,7 +167,7 @@ unsigned int ShaderManager::LoadShaderInternal(const char* a_filePath,unsigned i
 	}
 	else 
 	{
-		mShaders.emplace(a_filePath, shader);
+		m_shaders.emplace(a_filePath, shader);
 	}
 	return shader;
 

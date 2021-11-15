@@ -33,22 +33,22 @@ OBJModel* OBJLoader::OBJProcess(const std::string& a_strFilePath, const float a_
 				{
 					if (key[0] == '#')
 					{
-						if (a_bPrintComments) 
+						if (a_bPrintComments)
 						{
 							std::cout << value << std::endl;
 						}
 					}
-					else if(key == "g" || key == "o")
+					else if (key == "g" || key == "o")
 					{
-						OBJGroup* g = new OBJGroup();					
+						OBJGroup* g = new OBJGroup();
 						g->name = value;
 						if (currentMesh != nullptr)
 						{
 							oLoadedData->AddMesh(currentMesh);
-						}												
+						}
 						currentMesh = new OBJMesh();
 						if (oLoadedData->AddGroup(g)) std::cout << "added group" << value << std::endl;
-						else std::cout << "failed to add group " << value <<std::endl;
+						else std::cout << "failed to add group " << value << std::endl;
 					}
 					else if (key == "s")
 					{
@@ -70,26 +70,27 @@ OBJModel* OBJLoader::OBJProcess(const std::string& a_strFilePath, const float a_
 						normalData.push_back(OBJGetVectorFromValue(value));
 					}
 					else if (key == "vt")
-					{				
+					{
 						textureData.push_back(OBJGetVectorFromValue(value));
 					}
 					else if (key == "usemtl")
 					{
-						OBJMaterial* m = new OBJMaterial; 
-						if (oLoadedData->GetMaterial(value) == nullptr)
-						{
-							m->name = value;
-							oLoadedData->AddMaterial(m);
-						}
-						else 
-						{
-							m = oLoadedData->GetMaterial(value);
-						}
-						if(currentMesh == nullptr)
+						OBJMaterial* m = nullptr;
+						if (currentMesh == nullptr)
 						{
 							currentMesh = new OBJMesh();
 						}
-						currentMesh->m_activeMaterial = m;
+
+						if (oLoadedData->GetMaterial(value) == nullptr)
+						{
+							std::cout << "Found new MTL in .OBJ -- This is non-standard! MTL: " << value << std::endl;
+						}
+						else
+						{
+							m = oLoadedData->GetMaterial(value);
+							currentMesh->m_activeMaterial = m;
+						}					
+						
 					}
 					else if (key == "mtllib") 
 					{
@@ -188,6 +189,7 @@ bool OBJLoader::OBJLoadMaterials(const std::string& a_strFilePath, OBJModel& a_r
 
 								currentMaterial = new OBJMaterial();
 								currentMaterial->name = value;
+								std::cout << "New Material: " << value << std::endl;
 							}
 							else
 							{
@@ -248,6 +250,7 @@ bool OBJLoader::OBJLoadMaterials(const std::string& a_strFilePath, OBJModel& a_r
 		if (currentMaterial != nullptr && currentMaterial != new OBJMaterial())
 		{
 			a_roLoadedData.AddMaterial(currentMaterial);
+			std::cout << "New Material: " << currentMaterial->name;
 		}
 
 		std::cout << "Material File Parsed: " << a_strFilePath << std::endl;
