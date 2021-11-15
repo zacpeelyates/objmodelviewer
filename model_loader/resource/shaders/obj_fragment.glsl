@@ -3,6 +3,7 @@ smooth in vec3 vertPos;
 smooth in vec3 vertNormal;
 
 out vec4 outputColor;
+
 uniform vec3 camPos;
 
 uniform vec3 kA;
@@ -28,9 +29,9 @@ void main()
 	vec3 R = reflect(lightDir, normalize(vertNormal));
 	vec3 E = normalize(camPos - vertPos);
 
-	float SpecTerm = 1.0f;// pow(min(0.0f,dot(R,E)),nS);
+	float SpecTerm = pow(max(0.0f,dot(R,E)),nS);
 	vec3 Specular = kS * iS * SpecTerm;
-	outputColor = vec4((Ambient + Diffuse + Specular)*0.75, 1.0f);
+	outputColor = vec4((Ambient + Diffuse + Specular), 1.0f);
 
 }
 
