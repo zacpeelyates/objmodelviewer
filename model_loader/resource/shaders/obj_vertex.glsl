@@ -10,14 +10,14 @@ out vec2 vertUV;
 
 uniform mat4 ProjectionViewMatrix;
 uniform mat4 ModelMatrix;
-vec4 tempVec;
+vec4 pos4;
 
 void main()
 {
+    pos4 = vec4(position.xyz,1.0f);
 	vertUV = uvCoord;
 	vertNormal = normal;
-	tempVec = ModelMatrix * vec4(position.xyz,1.0f);
-	vertPos = tempVec.xyz;
-	gl_Position = ProjectionViewMatrix * ModelMatrix * vec4(position,1.0f);
+	vertPos = (ModelMatrix * pos4).xyz;
+	gl_Position = ProjectionViewMatrix * ModelMatrix * pos4;
 	
 }

@@ -15,12 +15,17 @@ RenderWindow::~RenderWindow() {};
 bool RenderWindow::onCreate()
 {
 	// get filepath from user
-	std::string path = "./resource/obj_models/the chair modeling.obj";
+	std::string path;
 	float scale = 1.0f;
 	bool comments = true;
 
-	//std::cout << "Enter Filepath: ";
-	//std::cin >> path;
+	std::cout << "Enter Filename: ";
+	std::getline(std::cin, path);
+	path = "./resource/obj_models/" + path;
+
+	m_objModel = OBJLoader::OBJProcess(path, scale, comments);
+	if (m_objModel == nullptr) return false;
+
 	
 
 	//setup clear color, depth test, culling
@@ -35,8 +40,6 @@ bool RenderWindow::onCreate()
 	//create matricies
 	m_cameraMatrix = glm::inverse(glm::lookAt(glm::vec3(10, 10, 10), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)));
 	m_projectionMatrix = glm::perspective(glm::pi<float>() * 0.25f, (float)(m_windowWidth / m_windowHeight), 0.1f, 1000.0f);
-	m_objModel = OBJLoader::OBJProcess(path, scale,comments);
-	if (m_objModel == nullptr) return false;
 
 	//set shader programs
 	//obj
@@ -132,7 +135,7 @@ void RenderWindow::Draw()
 		int kA_location = glGetUniformLocation(m_objProgram, "kA");
 		int kD_location = glGetUniformLocation(m_objProgram, "kD");
 		int kS_location = glGetUniformLocation(m_objProgram, "kS");
-		//int nS_location = glGetUniformLocation(m_objProgram, "nS");
+		int nS_location = glGetUniformLocation(m_objProgram, "nS");
 
 		OBJMaterial* currentMaterial = currentMesh->m_activeMaterial;
 		if (currentMaterial != nullptr)
@@ -140,6 +143,7 @@ void RenderWindow::Draw()
 			glUniform3fv(kA_location, 1, glm::value_ptr(currentMaterial->GetAmbience()));
 			glUniform3fv(kD_location, 1, glm::value_ptr(currentMaterial->GetDiffuse()));
 			glUniform3fv(kS_location, 1, glm::value_ptr(currentMaterial->GetSpecular()));
+			glUniform1f(nS_location, currentMaterial->GetSpecularExponent());
 			
 
 			//TODO: texture code here 
@@ -150,6 +154,7 @@ void RenderWindow::Draw()
 			glUniform3fv(kA_location, 1, glm::value_ptr(glm::vec3(0.25f)));
 			glUniform3fv(kD_location, 1, glm::value_ptr(glm::vec3(1.0f)));
 			glUniform3fv(kS_location, 1, glm::value_ptr(glm::vec3(1.0f)));
+			glUniform1f(nS_location, 1.0f);
 		}
 		//bind buffers
 		glBindBuffer(GL_ARRAY_BUFFER, m_objModelBuffer[0]);
@@ -159,9 +164,9 @@ void RenderWindow::Draw()
 		glEnableVertexAttribArray(1); //normal
 		glEnableVertexAttribArray(2); //UVs
 
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(OBJVertex), ((char*)0) + OBJVertex::Offsets::POS);
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(OBJVertex), ((char*)0) + OBJVertex::Offsets::NORMAL);
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(OBJVertex), ((char*)0) + OBJVertex::Offsets::UVCOORD);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(OBJVertex), ((char*)0) + OBJVertex::Offsets::POS); //vec3 pos
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(OBJVertex), ((char*)0) + OBJVertex::Offsets::NORMAL); //vec3 normal
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(OBJVertex), ((char*)0) + OBJVertex::Offsets::UVCOORD); //vec2 UVs
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_objModelBuffer[1]);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, currentMesh->m_indicies.size() * sizeof(unsigned int), currentMesh->m_indicies.data(), GL_STATIC_DRAW);

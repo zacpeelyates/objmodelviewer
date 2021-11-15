@@ -29,8 +29,8 @@ void main()
 	vec3 R = reflect(lightDir, normalize(vertNormal));
 	vec3 E = normalize(camPos - vertPos);
 
-	vec3 Specular = kS * iS * 10.f;// nS;
-	outputColor = vec4(Ambient + Diffuse + Specular, 1.0f);
+	vec3 Specular = kS * iS;
+	outputColor = vec4((Ambient + Diffuse + Specular)*0.75, 1.0f);
 
 }
 

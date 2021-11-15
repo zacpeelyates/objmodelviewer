@@ -47,8 +47,8 @@ OBJModel* OBJLoader::OBJProcess(const std::string& a_strFilePath, const float a_
 							oLoadedData->AddMesh(currentMesh);
 						}												
 						currentMesh = new OBJMesh();
-						if (oLoadedData->AddGroup(g)) std::cout << "added group" << value;
-						else std::cout << "failed to add group " << value;
+						if (oLoadedData->AddGroup(g)) std::cout << "added group" << value << std::endl;
+						else std::cout << "failed to add group " << value <<std::endl;
 					}
 					else if (key == "s")
 					{
@@ -129,6 +129,7 @@ OBJModel* OBJLoader::OBJProcess(const std::string& a_strFilePath, const float a_
 							}
 						}					 
 					}
+
 					else
 					{
 						std::cout << "Unhandled Statement: " << value << std::endl;
