@@ -47,21 +47,21 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(ProjectDir)build\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)intermediate\$(Configuration)\</IntDir>
-    <IncludePath>$(SolutionDir)deps/glfw/include/GLFW;$(ProjectDir)include;$(SolutionDir)obj_loader/include;$(SolutionDir)deps/glfw/include;$(SolutionDir)deps/glm;$(SolutionDir)deps/glad/include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <IncludePath>$(SolutionDir)deps/stb;$(SolutionDir)deps/glfw/include/GLFW;$(ProjectDir)include;$(SolutionDir)obj_loader/include;$(SolutionDir)deps/glfw/include;$(SolutionDir)deps/glm;$(SolutionDir)deps/glad/include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
     <LibraryPath>$(SolutionDir)deps/glfw/libs/$(Configuration);$(SolutionDir)deps/glm/libs/$(Configuration);$(SolutionDir)deps/glad/libs/$(Configuration);$(SolutionDir)obj_loader/libs/$(Configuration);$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(ProjectDir)build\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)intermediate\$(Configuration)\</IntDir>
-    <IncludePath>$(SolutionDir)deps/glfw/include/GLFW;$(ProjectDir)include;$(SolutionDir)obj_loader/include;$(SolutionDir)deps/glfw/include;$(SolutionDir)deps/glm;$(SolutionDir)deps/glad/include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <IncludePath>$(SolutionDir)deps/stb;$(SolutionDir)deps/glfw/include/GLFW;$(ProjectDir)include;$(SolutionDir)obj_loader/include;$(SolutionDir)deps/glfw/include;$(SolutionDir)deps/glm;$(SolutionDir)deps/glad/include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
     <LibraryPath>$(SolutionDir)deps/glfw/libs/$(Configuration);$(SolutionDir)deps/glm/libs/$(Configuration);$(SolutionDir)deps/glad/libs/$(Configuration);$(SolutionDir)obj_loader/libs/$(Configuration);$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>GLM_FORCE_SWIZZLE;GLM_ENABLE_EXPERIMENTAL;GLM_FORCE_PURE;NOMINMAX;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>STB_IMAGE_IMPLEMENTATION;GLM_FORCE_SWIZZLE;GLM_ENABLE_EXPERIMENTAL;GLM_FORCE_PURE;NOMINMAX;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
@@ -76,7 +76,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>GLM_FORCE_SWIZZLE;GLM_ENABLE_EXPERIMENTAL;GLM_FORCE_PURE;NOMINMAX;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>STB_IMAGE_IMPLEMENTATION;GLM_FORCE_SWIZZLE;GLM_ENABLE_EXPERIMENTAL;GLM_FORCE_PURE;NOMINMAX;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
