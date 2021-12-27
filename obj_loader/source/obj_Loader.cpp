@@ -236,6 +236,30 @@ bool OBJLoader::OBJLoadMaterials(const std::string& a_strFilePath, OBJModel& a_r
 						{
 							currentMaterial->SetTransparency(1.0f - stof(value));
 						}
+						else if (key.substr(0,3) == "map") //texture map data
+						{
+							std::vector<std::string> mapData = OBJProcessUtils::SplitStringAtChar(value, ' ');
+							std::string textureFileName = a_strFilePath + mapData.back();
+							std::string mapType = OBJProcessUtils::SplitStringAtChar(key, '_')[1];
+
+							if (mapType == "Kd") //diffuse map
+							{
+								currentMaterial->textureFileNames[OBJMaterial::DiffuseTexture] = textureFileName;
+							}
+							else if (mapType == "Ks") //specular map
+							{
+								currentMaterial->textureFileNames[OBJMaterial::SpecularTexture] = textureFileName;
+							}
+							else if (mapType == "bump") //bump/normal map
+							{
+								currentMaterial->textureFileNames[OBJMaterial::NormalTexture] = textureFileName;
+							}
+
+						}
+						else if (key == "bump") //edge case for stupid obj standards that allow for "bump" instead of "map_bump" key??? why??? 
+						{
+							currentMaterial->textureFileNames[OBJMaterial::NormalTexture] = a_strFilePath + OBJProcessUtils::SplitStringAtChar(value,' ').back();
+						}
 						else
 						{
 							std::cout << "Unhandled Statement: " << value << std::endl;

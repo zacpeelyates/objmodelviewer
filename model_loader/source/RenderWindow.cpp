@@ -2,6 +2,7 @@
 #include "ShaderManager.h"
 #include "Utilities.h"
 #include "obj_Loader.h"
+#include "TextureManager.h"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -25,6 +26,20 @@ bool RenderWindow::onCreate()
 
 	m_objModel = OBJLoader::OBJProcess(path, scale, comments);
 	if (m_objModel == nullptr) return false;
+
+	//handle textures
+	TextureManager* pTexM = TextureManager::CreateInstance();
+	for (unsigned int i = 0; i < m_objModel->GetMaterialCount(); ++i) 
+	{
+		OBJMaterial* currentMaterial = m_objModel->GetMaterial(i);
+		for (int j = 0; j < OBJMaterial::TextureTypes_Count; ++j) 
+		{
+			if (currentMaterial->textureFileNames[j].size() > 0)
+			{
+				currentMaterial->textureIDs[j] = pTexM->LoadTexture(currentMaterial->textureFileNames[j].c_str());
+			}
+		}
+	}
 
 	
 
@@ -146,7 +161,25 @@ void RenderWindow::Draw()
 			glUniform1f(nS_location, currentMaterial->GetSpecularExponent());
 			
 
-			//TODO: texture code here 
+			//textures
+			//diffuse
+			int TextureUniformLocation = glGetUniformLocation(m_objProgram, "DiffuseTexture");
+			glUniform1i(TextureUniformLocation, 0);
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, currentMaterial->textureIDs[OBJMaterial::DiffuseTexture]);
+
+			//diffuse
+			TextureUniformLocation = glGetUniformLocation(m_objProgram, "SpecularTexture");
+			glUniform1i(TextureUniformLocation, 1);
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, currentMaterial->textureIDs[OBJMaterial::SpecularTexture]);
+
+			//normal
+			TextureUniformLocation = glGetUniformLocation(m_objProgram, "NormalTexture");
+			glUniform1i(TextureUniformLocation, 2);
+			glActiveTexture(GL_TEXTURE2);
+			glBindTexture(GL_TEXTURE_2D, currentMaterial->textureIDs[OBJMaterial::NormalTexture]);
+
 		}
 		else
 		{
@@ -189,4 +222,5 @@ void RenderWindow::Draw()
 	delete[] m_lines;
 	glDeleteBuffers(1, &m_lineVBO);
 	ShaderManager::DestroyInstance();
+	TextureManager::DestroyInstance();
 }

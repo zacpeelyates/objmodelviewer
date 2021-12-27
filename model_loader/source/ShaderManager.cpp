@@ -21,7 +21,7 @@ ShaderManager* ShaderManager::CreateInstance()
 	 return mInstance;
 }
 
-ShaderManager* ShaderManager::GetInstance( ) 
+ShaderManager* ShaderManager::GetInstance() 
 {
 	if (mInstance == nullptr)
 	{

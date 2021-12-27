@@ -61,11 +61,23 @@ public:
 
 	uint8_t GetIlluminationModel();
 	void SetIlluminationModel(uint8_t a_inUint);
+
+	enum TextureTypes
+	{
+		DiffuseTexture = 0,
+		SpecularTexture,
+		NormalTexture,
+
+		TextureTypes_Count
+	};
+
+	std::string textureFileNames[TextureTypes_Count];
+	unsigned int textureIDs[TextureTypes_Count];
+
 private:
 	glm::vec3 ambience, diffuse, specular, emissive;
 	float density, dissolve, specularExponent,transparency;
 	uint8_t illumModel;
-
 
 };
 
@@ -103,6 +115,8 @@ public:
 	unsigned int GetMeshCount();
 	OBJMesh* GetMesh(unsigned int index);
 	OBJMaterial* GetMaterial(std::string a_name);
+	OBJMaterial* GetMaterial(unsigned int index);
+	unsigned int GetMaterialCount();
 	const glm::mat4 GetWorldMatrix();
 
 private:

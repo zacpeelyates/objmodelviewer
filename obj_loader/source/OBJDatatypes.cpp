@@ -36,6 +36,20 @@ OBJMaterial* OBJModel::GetMaterial(std::string a_name)
 	return mat->second;
 }
 
+OBJMaterial* OBJModel::GetMaterial(unsigned int index)
+{
+	if (index > m_matMap.size()) return nullptr;
+	auto iter = m_matMap.begin();
+	std::advance(iter, index);
+	return iter->second;
+
+}
+
+unsigned int OBJModel::GetMaterialCount()
+{
+	return m_matMap.size();
+}
+
 const glm::mat4 OBJModel::GetWorldMatrix()
 {
 	return m_worldMatrix;
