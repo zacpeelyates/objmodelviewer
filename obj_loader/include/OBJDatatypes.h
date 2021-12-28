@@ -21,6 +21,7 @@ public:
 	
 	glm::vec3 GetPosition();
 	void SetPosition(glm::vec3 a_v3New);
+	void TranslatePosition(glm::vec3 a_v3Delta);
 
 	glm::vec3 GetNormal();
 	void SetNormal(glm::vec3 a_v3New);

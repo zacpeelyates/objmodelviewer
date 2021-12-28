@@ -9,7 +9,7 @@
 glm::vec4 OBJGetVectorFromValue(const std::string a_strValue);
 bool OBJGetKeyValuePairFromLine(const std::string& a_rStrLine, std::string& a_rStrOutKey, std::string& a_rStrOutValue);
 
-OBJModel* OBJLoader::OBJProcess(const std::string& a_strFilePath, const float a_fScale, const bool a_bPrintComments)
+OBJModel* OBJLoader::OBJProcess(const std::string& a_strFilePath, const bool a_bPrintComments)
 {
 	OBJModel* oLoadedData = new OBJModel();
 	std::string line,key,value;
@@ -54,16 +54,16 @@ OBJModel* OBJLoader::OBJProcess(const std::string& a_strFilePath, const float a_
 					{
 						if (OBJProcessUtils::ParseStringToInt(value))
 						{
-							std::cout << "smoothing group " << stoi(value) << std::endl;
+							//std::cout << "smoothing group " << stoi(value) << std::endl;
 						}
 						else if (value == "off")
 						{
-							std::cout << "disabling smoothing groups" << std::endl;
+							//std::cout << "disabling smoothing groups" << std::endl;
 						}
 					}
-					else if (key == "v")
+					else if (key == "v") 
 					{
-						vertexData.push_back(OBJGetVectorFromValue(value) * a_fScale);
+						vertexData.push_back(OBJGetVectorFromValue(value));
 					}
 					else if (key == "vn")
 					{
@@ -143,9 +143,42 @@ OBJModel* OBJLoader::OBJProcess(const std::string& a_strFilePath, const float a_
 	{
 		oLoadedData->AddMesh(currentMesh);
 	}
+
+	//Scale Model Vertex Data
+	glm::vec3 min(std::numeric_limits<float>::max());
+	glm::vec3 max(std::numeric_limits<float>::min());
+	//get model bounding box 
+	for (int i = 0; i < oLoadedData->GetMeshCount(); ++i)
+	{
+		for (OBJVertex v : oLoadedData->GetMesh(i)->m_verts) 
+		{
+			glm::vec3 pos = v.GetPosition();
+			
+			max.x = std::max(max.x, pos.x);
+			max.y = std::max(max.y, pos.y);
+			max.z = std::max(max.z, pos.z);
+
+			min.x = std::min(min.x, pos.x);
+			min.y = std::min(min.y, pos.y);
+			min.z = std::min(min.z, pos.z);
+		}
+	}
+
+	float scale = 10.0f;
+	//scale to new box size (10,10,10) | (scale,scale,scale)
+	for (int i = 0; i < oLoadedData->GetMeshCount(); ++i)
+	{
+		for (OBJVertex& v : oLoadedData->GetMesh(i)->m_verts)
+		{
+			v.TranslatePosition(glm::vec3(0, -min.y, 0));
+			v.SetPosition(v.GetPosition() *= scale/(max - min));
+		}
+	}
+
 	std::cout << "File Successfully Parsed: " << a_strFilePath << std::endl;
 	return oLoadedData;
 }
+
 
 
 

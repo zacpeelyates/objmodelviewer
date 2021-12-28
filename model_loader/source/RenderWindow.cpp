@@ -17,14 +17,13 @@ bool RenderWindow::onCreate()
 {
 	// get filepath from user
 	std::string path;
-	float scale = 1.0f;
 	bool comments = true;
 
 	std::cout << "Enter Filename: ";
 	std::getline(std::cin, path);
 	path = "./resource/obj_models/" + path;
 
-	m_objModel = OBJLoader::OBJProcess(path, scale, comments);
+	m_objModel = OBJLoader::OBJProcess(path, comments);
 	if (m_objModel == nullptr) return false;
 
 	//handle textures

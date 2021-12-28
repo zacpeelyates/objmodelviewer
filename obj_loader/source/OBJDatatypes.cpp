@@ -12,7 +12,6 @@ bool OBJModel::AddGroup(OBJGroup* ao_groupIn)
 
 }
 
-
 unsigned int OBJModel::GetMeshCount()
 {
 	return m_meshes.size();
@@ -88,6 +87,11 @@ glm::vec2 OBJVertex::GetTextureCoords()
 void OBJVertex::SetPosition(glm::vec3 a_v3New)
 {
 	m_pos = a_v3New;
+}
+
+void OBJVertex::TranslatePosition(glm::vec3 a_v3Delta)
+{
+	m_pos += a_v3Delta;
 }
 
 void OBJVertex::SetNormal(glm::vec3 a_v3New)
