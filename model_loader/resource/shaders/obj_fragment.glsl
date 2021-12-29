@@ -2,6 +2,7 @@
 smooth in vec3 vertPos;
 smooth in vec3 vertNormal;
 smooth in vec2 vertUV;
+smooth in vec3 lightPos;
 
 out vec4 outputColor;
 
@@ -19,7 +20,6 @@ vec3 iA = vec3(0.25f);
 vec3 iD = vec3(1.0f);
 vec3 iS = vec3(1.0f);
 
-vec3 lightDir = normalize(vec3(0.0f) - vec3(10.0f,8.0f,10.0f));
 
 //texture
 uniform sampler2D DiffuseTexture;
@@ -29,6 +29,7 @@ uniform sampler2D NormalTexture;
 
 void main()
 {
+	vec3 lightDir = normalize(vec3(0.0f) - vec3(10.0f,8.0f,10.0f));
 	//texture
 	vec4 normalData = texture(NormalTexture,vertUV);
 	vec4 specularData = texture(SpecularTexture,vertUV);

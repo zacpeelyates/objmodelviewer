@@ -11,6 +11,11 @@ bool OBJGetKeyValuePairFromLine(const std::string& a_rStrLine, std::string& a_rS
 
 OBJModel* OBJLoader::OBJProcess(const std::string& a_strFilePath, const bool a_bPrintComments)
 {
+	if (OBJProcessUtils::GetFileType(a_strFilePath) != "obj") 
+	{
+		std::cout << "File Type Incompatible!" << std::endl;
+		return nullptr;
+	}
 	OBJModel* oLoadedData = new OBJModel();
 	std::string line,key,value;
 	OBJMesh* currentMesh = nullptr;
@@ -272,8 +277,10 @@ bool OBJLoader::OBJLoadMaterials(const std::string& a_strFilePath, OBJModel& a_r
 						else if (key.substr(0,3) == "map") //texture map data
 						{
 							std::vector<std::string> mapData = OBJProcessUtils::SplitStringAtChar(value, ' ');
-							std::string textureFileName = a_strFilePath + mapData.back();
-							std::string mapType = OBJProcessUtils::SplitStringAtChar(key, '_')[1];
+							std::string textureFileName = OBJProcessUtils::GetFileDirectory(a_strFilePath) + "Model_" + OBJProcessUtils::GetFileName(a_strFilePath) + '/' + mapData.back();
+							std::string mapType = OBJProcessUtils::SplitStringAtChar(key, '_').back();
+
+							std::cout << "Texture file at: " << textureFileName << " type: " << mapType << std::endl;
 
 							if (mapType == "Kd") //diffuse map
 							{

@@ -137,6 +137,14 @@ void RenderWindow::Draw()
 	glUseProgram(m_objProgram);
 	projectionViewMatrixUniformLocation = glGetUniformLocation(m_objProgram, "ProjectionViewMatrix");
 	//send pointer to location of matrix 
+
+	//light position 
+	glm::vec3 lightPos;
+	double time = glfwGetTime();
+	lightPos.x = sin(time) * 2.0f;
+	lightPos.y = sin(time / 2.0f);
+	lightPos.z = 10.0f;
+
 	glUniformMatrix4fv(projectionViewMatrixUniformLocation, 1, false, glm::value_ptr(projectionViewMatrix));
 	for (int i = 0; i < m_objModel->GetMeshCount(); ++i) 
 	{
@@ -150,6 +158,9 @@ void RenderWindow::Draw()
 		int kD_location = glGetUniformLocation(m_objProgram, "kD");
 		int kS_location = glGetUniformLocation(m_objProgram, "kS");
 		int nS_location = glGetUniformLocation(m_objProgram, "nS");
+		int lightPos_location = glGetUniformLocation(m_objProgram, "lightPos");
+		glUniform3fv(lightPos_location, 1, glm::value_ptr(lightPos));
+
 
 		OBJMaterial* currentMaterial = currentMesh->m_activeMaterial;
 		if (currentMaterial != nullptr)
@@ -158,9 +169,9 @@ void RenderWindow::Draw()
 			glUniform3fv(kD_location, 1, glm::value_ptr(currentMaterial->GetDiffuse()));
 			glUniform3fv(kS_location, 1, glm::value_ptr(currentMaterial->GetSpecular()));
 			glUniform1f(nS_location, currentMaterial->GetSpecularExponent());
-			
 
 			//textures
+			
 			//diffuse
 			int TextureUniformLocation = glGetUniformLocation(m_objProgram, "DiffuseTexture");
 			glUniform1i(TextureUniformLocation, 0);

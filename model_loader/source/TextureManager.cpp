@@ -1,5 +1,6 @@
 #include "TextureManager.h"
 #include "Texture.h"
+#include <iostream>
 
 TextureManager* TextureManager::m_instance = nullptr;
 
@@ -60,6 +61,7 @@ unsigned int TextureManager::LoadTexture(const char* a_pfilename)
 			else 
 			{
 				//failed to load
+				std::cout << "Failed to Load Texture! " << a_pfilename << std::endl;
 				delete pTexture;
 				return 0;
 			}

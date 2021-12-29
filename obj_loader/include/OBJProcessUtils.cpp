@@ -25,7 +25,10 @@ bool OBJProcessUtils::ParseStringToInt(std::string& a_rStrIn)
 std::string OBJProcessUtils::GetFileName(const std::string a_strFilePath)
 {
 	//returns the file name with no preceeding path or extention
-	return a_strFilePath.substr(a_strFilePath.rfind('/') + 1, a_strFilePath.rfind('.'));
+	int start = a_strFilePath.rfind('/')+1;
+	int size = a_strFilePath.rfind('.') - start;
+	return a_strFilePath.substr(start, size);
+	//fixed this it was silently making everything not work (was putting start, end instead of start,size)
 }
 
 std::string OBJProcessUtils::GetFileType(const std::string a_strFilePath)
