@@ -141,7 +141,7 @@ void RenderWindow::Draw()
 	//light position 
 	glm::vec3 lightPos;
 	double time = glfwGetTime();
-	lightPos.x = sin(time) * 2.0f;
+	lightPos.x = sin(time) * 5.0f;
 	lightPos.y = sin(time / 2.0f);
 	lightPos.z = 10.0f;
 
@@ -171,7 +171,7 @@ void RenderWindow::Draw()
 			glUniform1f(nS_location, currentMaterial->GetSpecularExponent());
 
 			//textures
-			
+
 			//diffuse
 			int TextureUniformLocation = glGetUniformLocation(m_objProgram, "DiffuseTexture");
 			glUniform1i(TextureUniformLocation, 0);
