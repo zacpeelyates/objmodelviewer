@@ -124,7 +124,7 @@ void RenderWindow::Draw()
 	glBindBuffer(GL_ARRAY_BUFFER, m_lineVBO);
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
-	//tell opengl where array is, no of element coponents, data type, normalization
+	//tell opengl where array is, no of element components, data type, normalization
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
 	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), ((char*)nullptr) + sizeof(float)*3); //x3 because vec3 used for position data
 	//draw line grid
@@ -163,6 +163,10 @@ void RenderWindow::Draw()
 
 
 		OBJMaterial* currentMaterial = currentMesh->m_activeMaterial;
+		bool bUseNormal = false;
+		bool bUseSpecular = false;
+		bool bUseDiffuse = false;
+
 		if (currentMaterial != nullptr)
 		{
 			glUniform3fv(kA_location, 1, glm::value_ptr(currentMaterial->GetAmbience()));
@@ -170,35 +174,52 @@ void RenderWindow::Draw()
 			glUniform3fv(kS_location, 1, glm::value_ptr(currentMaterial->GetSpecular()));
 			glUniform1f(nS_location, currentMaterial->GetSpecularExponent());
 
+
 			//textures
+			int TextureUniformLocation;
+			if (!currentMaterial->textureFileNames[OBJMaterial::DiffuseTexture].empty()) {
+				//diffuse
+				bUseDiffuse = true;
+				TextureUniformLocation = glGetUniformLocation(m_objProgram, "DiffuseTexture");
+				glUniform1i(TextureUniformLocation, 0);
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, currentMaterial->textureIDs[OBJMaterial::DiffuseTexture]);
+			}
 
-			//diffuse
-			int TextureUniformLocation = glGetUniformLocation(m_objProgram, "DiffuseTexture");
-			glUniform1i(TextureUniformLocation, 0);
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, currentMaterial->textureIDs[OBJMaterial::DiffuseTexture]);
+			if (!currentMaterial->textureFileNames[OBJMaterial::SpecularTexture].empty()) {
+				//specular
+				bUseSpecular = true;
+				TextureUniformLocation = glGetUniformLocation(m_objProgram, "SpecularTexture");
+				glUniform1i(TextureUniformLocation, 1);
+				glActiveTexture(GL_TEXTURE1);
+				glBindTexture(GL_TEXTURE_2D, currentMaterial->textureIDs[OBJMaterial::SpecularTexture]);
+			}
 
-			//diffuse
-			TextureUniformLocation = glGetUniformLocation(m_objProgram, "SpecularTexture");
-			glUniform1i(TextureUniformLocation, 1);
-			glActiveTexture(GL_TEXTURE1);
-			glBindTexture(GL_TEXTURE_2D, currentMaterial->textureIDs[OBJMaterial::SpecularTexture]);
-
-			//normal
-			TextureUniformLocation = glGetUniformLocation(m_objProgram, "NormalTexture");
-			glUniform1i(TextureUniformLocation, 2);
-			glActiveTexture(GL_TEXTURE2);
-			glBindTexture(GL_TEXTURE_2D, currentMaterial->textureIDs[OBJMaterial::NormalTexture]);
+			if (!currentMaterial->textureFileNames[OBJMaterial::NormalTexture].empty()) {
+				//normal
+				bUseNormal = true;
+				TextureUniformLocation = glGetUniformLocation(m_objProgram, "NormalTexture");
+				glUniform1i(TextureUniformLocation, 2);
+				glActiveTexture(GL_TEXTURE2);
+				glBindTexture(GL_TEXTURE_2D, currentMaterial->textureIDs[OBJMaterial::NormalTexture]);
+			}
 
 		}
 		else
 		{
 			//use default lighting
 			glUniform3fv(kA_location, 1, glm::value_ptr(glm::vec3(0.25f)));
-			glUniform3fv(kD_location, 1, glm::value_ptr(glm::vec3(1.0f)));
-			glUniform3fv(kS_location, 1, glm::value_ptr(glm::vec3(1.0f)));
+			glUniform3fv(kD_location, 1, glm::value_ptr(glm::vec3(0.25f)));
+			glUniform3fv(kS_location, 1, glm::value_ptr(glm::vec3(0.25f)));
 			glUniform1f(nS_location, 1.0f);
 		}
+		int TextureCheckUniformLocation = glGetUniformLocation(m_objProgram, "useNormal");
+		glUniform1i(TextureCheckUniformLocation, bUseNormal);
+		TextureCheckUniformLocation = glGetUniformLocation(m_objProgram, "useSpecular");
+		glUniform1i(TextureCheckUniformLocation, bUseSpecular);
+		TextureCheckUniformLocation = glGetUniformLocation(m_objProgram, "useDiffuse");
+		glUniform1i(TextureCheckUniformLocation, bUseDiffuse);
+
 		//bind buffers
 		glBindBuffer(GL_ARRAY_BUFFER, m_objModelBuffer[0]);
 		glBufferData(GL_ARRAY_BUFFER, currentMesh->m_verts.size() * sizeof(OBJVertex), currentMesh->m_verts.data(), GL_STATIC_DRAW);
