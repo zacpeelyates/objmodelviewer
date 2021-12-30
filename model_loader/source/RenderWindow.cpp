@@ -13,6 +13,8 @@
 RenderWindow::RenderWindow() {};
 RenderWindow::~RenderWindow() {};
 
+
+
 bool RenderWindow::onCreate()
 {
 	// get filepath from user
@@ -28,10 +30,10 @@ bool RenderWindow::onCreate()
 
 	//handle textures
 	TextureManager* pTexM = TextureManager::CreateInstance();
-	for (unsigned int i = 0; i < m_objModel->GetMaterialCount(); ++i) 
+	for (unsigned int i = 0; i < m_objModel->GetMaterialCount(); ++i)
 	{
 		OBJMaterial* currentMaterial = m_objModel->GetMaterial(i);
-		for (int j = 0; j < OBJMaterial::TextureTypes_Count; ++j) 
+		for (int j = 0; j < OBJMaterial::TextureTypes_Count; ++j)
 		{
 			if (currentMaterial->textureFileNames[j].size() > 0)
 			{
@@ -40,7 +42,16 @@ bool RenderWindow::onCreate()
 		}
 	}
 
-	
+	//handle skybox
+	path = "./resource/skyboxes/";
+	std::string skyboxName = "skybox_1";
+	std::string skyboxType = ".jpg";
+	const char* SkyBoxFilenames[6]{ "Right","Left","Top","Bottom","Back","Front" };
+	for (int i = 0; i < 6; ++i) 
+	{
+		m_skyboxIDs[i] = pTexM->LoadTexture((path + skyboxName + '/' + SkyBoxFilenames[i] + skyboxType).c_str(), i);
+	}
+
 
 	//setup clear color, depth test, culling
 	glClearColor(0.95f, 0.45f, 0.75f, 1.0f);
@@ -56,13 +67,20 @@ bool RenderWindow::onCreate()
 	m_projectionMatrix = glm::perspective(glm::pi<float>() * 0.25f, (float)(m_windowWidth / m_windowHeight), 0.1f, 1000.0f);
 
 	//set shader programs
+
+	
 	//obj
 	GLuint vertexShader = ShaderManager::LoadShader("resource/shaders/obj_vertex.glsl", GL_VERTEX_SHADER);
 	GLuint fragmentShader = ShaderManager::LoadShader("resource/shaders/obj_fragment.glsl", GL_FRAGMENT_SHADER);
 	m_objProgram = ShaderManager::CreateProgram(vertexShader, fragmentShader);
+	//skybox
+	vertexShader = ShaderManager::LoadShader("resource/shaders/skybox_vertex.glsl", GL_VERTEX_SHADER);
+    fragmentShader = ShaderManager::LoadShader("resource/shaders/skybox_fragment.glsl", GL_FRAGMENT_SHADER);
+	m_skyboxProgram = ShaderManager::CreateProgram(vertexShader, fragmentShader);
+
 	//ui
-	vertexShader = ShaderManager::LoadShader("resource/shaders/vertex.glsl", GL_VERTEX_SHADER);
-	fragmentShader = ShaderManager::LoadShader("resource/shaders/fragment.glsl", GL_FRAGMENT_SHADER);
+	vertexShader = ShaderManager::LoadShader("resource/shaders/ui_vertex.glsl", GL_VERTEX_SHADER);
+	fragmentShader = ShaderManager::LoadShader("resource/shaders/ui_fragment.glsl", GL_FRAGMENT_SHADER);
 	m_uiProgram = ShaderManager::CreateProgram(vertexShader, fragmentShader);
 	m_lineSize = 42;
 	m_lines = new Line[m_lineSize];
@@ -86,16 +104,29 @@ bool RenderWindow::onCreate()
 	}
 
 	//generate buffers
+	//lines
 	glGenBuffers(1, &m_lineVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, m_lineVBO);
 	glBufferData(GL_ARRAY_BUFFER, m_lineSize * sizeof(Line), m_lines, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
+	//skybox
+	glGenVertexArrays(1, &m_skyboxVAO);
+	glGenBuffers(1, &m_skyboxVBO);
+	glBindVertexArray(m_skyboxVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, m_skyboxVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(m_skyboxVertices), &m_skyboxVertices, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	//model
 	glGenBuffers(2, m_objModelBuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, m_objModelBuffer[0]);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_objModelBuffer[1]);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
 	return true;
 }
 
@@ -133,17 +164,17 @@ void RenderWindow::Draw()
 	//unbind
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	//draw OBJ model
-	glUseProgram(m_objProgram);
-	projectionViewMatrixUniformLocation = glGetUniformLocation(m_objProgram, "ProjectionViewMatrix");
-	//send pointer to location of matrix 
-
 	//light position 
 	glm::vec3 lightPos;
 	double time = glfwGetTime();
 	lightPos.x = sin(time) * 5.0f;
 	lightPos.y = sin(time / 2.0f);
 	lightPos.z = 10.0f;
+
+	//draw OBJ model
+	glUseProgram(m_objProgram);
+	projectionViewMatrixUniformLocation = glGetUniformLocation(m_objProgram, "ProjectionViewMatrix");
+	//send pointer to location of matrix 
 
 	glUniformMatrix4fv(projectionViewMatrixUniformLocation, 1, false, glm::value_ptr(projectionViewMatrix));
 	for (int i = 0; i < m_objModel->GetMeshCount(); ++i) 
@@ -240,10 +271,27 @@ void RenderWindow::Draw()
 
 	}
 
-	//unbind buffer/arrays and release program
+	//unbind buffer/arrays 
 	glDisableVertexAttribArray(0); //position
 	glDisableVertexAttribArray(1); //normal
 	glDisableVertexAttribArray(2); //uvcoord
+
+	//draw skybox
+	glDepthFunc(GL_LEQUAL); //skybox depth test
+	glUseProgram(m_skyboxProgram);
+	projectionViewMatrix = glm::mat4(glm::mat3(projectionViewMatrix)); //remove translation from view matrix when drawing skybox 
+	//get projection view matrix var location from shader file
+	 projectionViewMatrixUniformLocation = glGetUniformLocation(m_skyboxProgram, "ProjectionViewMatrix");
+	//send pointer to location of matrix 
+	glUniformMatrix4fv(projectionViewMatrixUniformLocation, 1, false, glm::value_ptr(projectionViewMatrix));
+	glBindVertexArray(m_skyboxVAO);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, m_skyboxIDs[0]);
+	glDrawArrays(GL_TRIANGLES,0,36);
+	glBindVertexArray(0);
+	glDepthFunc(GL_LESS); //revert to normal depth test
+
+	//release program
 	glUseProgram(0);
 }
 

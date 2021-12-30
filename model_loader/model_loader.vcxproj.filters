@@ -64,10 +64,16 @@
     <None Include="resource\shaders\obj_fragment.glsl">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="resource\shaders\fragment.glsl">
+    <None Include="resource\shaders\skybox_fragment.glsl">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="resource\shaders\vertex.glsl">
+    <None Include="resource\shaders\skybox_vertex.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resource\shaders\ui_fragment.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resource\shaders\ui_vertex.glsl">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

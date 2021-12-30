@@ -15,15 +15,21 @@ protected:
 	virtual void Draw();
 	virtual void Destroy();
 private:
+	//skybox
+	unsigned int m_skyboxIDs[6];
 	//matricies
 	glm::mat4 m_cameraMatrix;
 	glm::mat4 m_projectionMatrix;
 	//programs
 	unsigned int m_uiProgram;
 	unsigned int m_objProgram;
+	unsigned int m_skyboxProgram;
 	//vertex buffer objects
 	unsigned int m_lineVBO;
 	unsigned int m_objModelBuffer[2];
+	unsigned int m_skyboxVBO;
+	unsigned int m_skyboxVAO;
+
 
 	//member data structs
 	struct Vertex
@@ -61,5 +67,50 @@ private:
 	OBJModel* m_objModel;
 	Line* m_lines;
 	int m_lineSize;
+
+	float m_skyboxVertices[108] = {
+		//positions          
+		-1.0f,  1.0f, -1.0f,
+		-1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+		 1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+
+		-1.0f, -1.0f,  1.0f,
+		-1.0f, -1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f,  1.0f,
+		-1.0f, -1.0f,  1.0f,
+
+		 1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+
+		-1.0f, -1.0f,  1.0f,
+		-1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f, -1.0f,  1.0f,
+		-1.0f, -1.0f,  1.0f,
+
+		-1.0f,  1.0f, -1.0f,
+		 1.0f,  1.0f, -1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		-1.0f,  1.0f,  1.0f,
+		-1.0f,  1.0f, -1.0f,
+
+		-1.0f, -1.0f, -1.0f,
+		-1.0f, -1.0f,  1.0f,
+		 1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+		-1.0f, -1.0f,  1.0f,
+		 1.0f, -1.0f,  1.0f
+	};
 
 };

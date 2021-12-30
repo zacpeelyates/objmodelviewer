@@ -3,7 +3,6 @@
 #include <iostream>
 
 TextureManager* TextureManager::m_instance = nullptr;
-
 TextureManager* TextureManager::CreateInstance()
 {
 	if (m_instance == nullptr) 
@@ -36,7 +35,7 @@ inline bool TextureManager::TextureExists(const char* a_pName)
 	return m_TextureMap.find(a_pName) != m_TextureMap.end();
 }
 
-unsigned int TextureManager::LoadTexture(const char* a_pfilename)
+unsigned int TextureManager::LoadTexture(const char* a_pfilename, int skyboxOffset)
 {
 	if (a_pfilename != nullptr)
 	{
@@ -52,7 +51,7 @@ unsigned int TextureManager::LoadTexture(const char* a_pfilename)
 		{
 			//load in new texture
 			Texture* pTexture = new Texture();
-			if (pTexture->Load(a_pfilename))
+			if (pTexture->Load(a_pfilename,skyboxOffset))
 			{
 				TextureRef texRef = { pTexture, 1 };
 				m_TextureMap[a_pfilename] = texRef;
@@ -104,3 +103,8 @@ TextureManager::~TextureManager()
 {
 	m_TextureMap.clear();
 }
+
+
+
+
+
