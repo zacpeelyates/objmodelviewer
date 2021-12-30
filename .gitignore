@@ -43,7 +43,6 @@
 #ignore build and intermediate directories
 **/obj/
 **/bin/
-**/libs/
 **/build/
 **/intermediate/
 
