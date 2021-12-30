@@ -35,7 +35,7 @@ inline bool TextureManager::TextureExists(const char* a_pName)
 	return m_TextureMap.find(a_pName) != m_TextureMap.end();
 }
 
-unsigned int TextureManager::LoadTexture(const char* a_pfilename, int skyboxOffset)
+unsigned int TextureManager::LoadTexture(const char* a_pfilename)
 {
 	if (a_pfilename != nullptr)
 	{
@@ -51,7 +51,7 @@ unsigned int TextureManager::LoadTexture(const char* a_pfilename, int skyboxOffs
 		{
 			//load in new texture
 			Texture* pTexture = new Texture();
-			if (pTexture->Load(a_pfilename,skyboxOffset))
+			if (pTexture->Load(a_pfilename))
 			{
 				TextureRef texRef = { pTexture, 1 };
 				m_TextureMap[a_pfilename] = texRef;

@@ -49,7 +49,7 @@ bool RenderWindow::onCreate()
 	const char* SkyBoxFilenames[6]{ "Right","Left","Top","Bottom","Back","Front" };
 	for (int i = 0; i < 6; ++i) 
 	{
-		m_skyboxIDs[i] = pTexM->LoadTexture((path + skyboxName + '/' + SkyBoxFilenames[i] + skyboxType).c_str(), i);
+		m_skyboxIDs[i] = pTexM->LoadTexture((path + skyboxName + '/' + SkyBoxFilenames[i] + skyboxType).c_str());
 	}
 
 
@@ -276,20 +276,20 @@ void RenderWindow::Draw()
 	glDisableVertexAttribArray(1); //normal
 	glDisableVertexAttribArray(2); //uvcoord
 
-	//draw skybox
-	glDepthFunc(GL_LEQUAL); //skybox depth test
-	glUseProgram(m_skyboxProgram);
-	projectionViewMatrix = glm::mat4(glm::mat3(projectionViewMatrix)); //remove translation from view matrix when drawing skybox 
-	//get projection view matrix var location from shader file
-	 projectionViewMatrixUniformLocation = glGetUniformLocation(m_skyboxProgram, "ProjectionViewMatrix");
-	//send pointer to location of matrix 
-	glUniformMatrix4fv(projectionViewMatrixUniformLocation, 1, false, glm::value_ptr(projectionViewMatrix));
-	glBindVertexArray(m_skyboxVAO);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, m_skyboxIDs[0]);
-	glDrawArrays(GL_TRIANGLES,0,36);
-	glBindVertexArray(0);
-	glDepthFunc(GL_LESS); //revert to normal depth test
+	////draw skybox
+	//glDepthMask(GL_FALSE);
+	//glUseProgram(m_skyboxProgram);
+	//projectionViewMatrix = glm::mat4(glm::mat3(projectionViewMatrix)); //remove translation from view matrix when drawing skybox 
+	////get projection view matrix var location from shader file
+	// projectionViewMatrixUniformLocation = glGetUniformLocation(m_skyboxProgram, "ProjectionViewMatrix");
+	////send pointer to location of matrix 
+	//glUniformMatrix4fv(projectionViewMatrixUniformLocation, 1, false, glm::value_ptr(projectionViewMatrix));
+	//glBindVertexArray(m_skyboxVAO);
+	//glActiveTexture(GL_TEXTURE0);
+	//glBindTexture(GL_TEXTURE_CUBE_MAP,);
+	//glDrawArrays(GL_TRIANGLES,0,36);
+	//glBindVertexArray(0);
+	//glDepthMask(GL_TRUE);
 
 	//release program
 	glUseProgram(0);
