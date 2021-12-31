@@ -279,7 +279,7 @@ void RenderWindow::Draw()
 	glUniform1i(SkyboxTextureUniformLocation,0);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_CUBE_MAP,m_skyboxID);
-	glDrawArrays(GL_TRIANGLES, 0, 1000);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
 	glBindVertexArray(0);
 	glDepthFunc(GL_LESS);
 	//release program
