@@ -274,7 +274,7 @@ void RenderWindow::Draw()
 	glBindBuffer(GL_ARRAY_BUFFER, m_skyboxVBO);
 	glBindVertexArray(m_skyboxVAO);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0); //vec3 UVCoords in shader
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0); //vec3 UVCoords in shader
 	int SkyboxTextureUniformLocation = glGetUniformLocation(m_skyboxProgram, "skybox");
 	glUniform1i(SkyboxTextureUniformLocation,0);
 	glActiveTexture(GL_TEXTURE0);
