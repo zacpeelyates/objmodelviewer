@@ -16,7 +16,7 @@ protected:
 	virtual void Destroy();
 private:
 	//skybox
-	unsigned int m_skyboxIDs[6];
+	unsigned int m_skyboxID;
 	//matricies
 	glm::mat4 m_cameraMatrix;
 	glm::mat4 m_projectionMatrix;

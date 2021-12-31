@@ -43,6 +43,33 @@ bool Texture::Load(std::string a_inFilename)
 	return false;
 }
 
+bool Texture::LoadCubemap(std::string a_inFileDirectory) 
+{
+	std::string faces[6]{"Right","Left","Top","Bottom","Back","Front"}; //GL_TEXTURE_CUBEMAP expected order
+	std::string fileType = ".jpg"; //testing, should be var to support multiple types
+	int width = 0;
+	int height = 0;
+	int channels = 0;
+	stbi_set_flip_vertically_on_load(false);
+	glGenTextures(1, &m_textureID);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, m_textureID);
+	
+	for (int i = 0; i < 6; ++i) 
+	{
+		unsigned char* imageData = stbi_load((a_inFileDirectory + '/' + faces[i] + fileType).c_str(), & width, & height, & channels, 4);
+		if (imageData == nullptr) return false;
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, imageData);
+		stbi_image_free(imageData);
+	}
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	std::cout << "Loaded Cubemap at: " << a_inFileDirectory << std::endl;
+	return true;
+}
+
 
 void Texture::GetDimensions(unsigned int& a_uiWidth, unsigned int& a_uiHeight) const
 {

@@ -35,7 +35,7 @@ inline bool TextureManager::TextureExists(const char* a_pName)
 	return m_TextureMap.find(a_pName) != m_TextureMap.end();
 }
 
-unsigned int TextureManager::LoadTexture(const char* a_pfilename)
+unsigned int TextureManager::LoadTexture(const char* a_pfilename, bool bIsCubemap)
 {
 	if (a_pfilename != nullptr)
 	{
@@ -51,7 +51,7 @@ unsigned int TextureManager::LoadTexture(const char* a_pfilename)
 		{
 			//load in new texture
 			Texture* pTexture = new Texture();
-			if (pTexture->Load(a_pfilename))
+			if (bIsCubemap ? pTexture->LoadCubemap(a_pfilename) : pTexture->Load(a_pfilename))
 			{
 				TextureRef texRef = { pTexture, 1 };
 				m_TextureMap[a_pfilename] = texRef;
