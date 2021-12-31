@@ -102,7 +102,7 @@ bool RenderWindow::onCreate()
 	glBufferData(GL_ARRAY_BUFFER, m_lineSize * sizeof(Line), m_lines, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	//
+	//skybox
 	glGenVertexArrays(1, &m_skyboxVAO);
 	glBindVertexArray(m_skyboxVAO);
 	glGenBuffers(1, &m_skyboxVBO);
@@ -271,13 +271,15 @@ void RenderWindow::Draw()
 	glUseProgram(m_skyboxProgram);
 	projectionViewMatrix = glm::mat4(glm::mat3(projectionViewMatrix)); //remove translation
 	projectionViewMatrixUniformLocation = glGetUniformLocation(m_skyboxProgram, "ProjectionViewMatrix");
-	glBindVertexArray(m_skyboxVAO);
-	glBindTexture(GL_TEXTURE_CUBE_MAP,m_skyboxID);
 	glBindBuffer(GL_ARRAY_BUFFER, m_skyboxVBO);
-	glActiveTexture(GL_TEXTURE0);
+	glBindVertexArray(m_skyboxVAO);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0); //vec3 @ location (0) in shader
-	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0); //vec3 UVCoords in shader
+	int SkyboxTextureUniformLocation = glGetUniformLocation(m_skyboxProgram, "skybox");
+	glUniform1i(SkyboxTextureUniformLocation,0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP,m_skyboxID);
+	glDrawArrays(GL_TRIANGLES, 0, 1000);
 	glBindVertexArray(0);
 	glDepthFunc(GL_LESS);
 	//release program
