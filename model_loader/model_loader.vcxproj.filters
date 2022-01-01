@@ -62,7 +62,7 @@
     <ClCompile Include="source\TextureManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\Dispatcher.cpp">
+    <ClCompile Include="source\Event.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

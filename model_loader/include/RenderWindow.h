@@ -1,5 +1,4 @@
 #include "Application.h"
-#include "Event.h"
 #include <glm.hpp>
 #include <vector>
 
@@ -10,8 +9,6 @@ class RenderWindow : public Application
 public:
 	RenderWindow();
 	virtual ~RenderWindow();
-	//events
-	void onWindowResize(WindowResizeEvent* e);
 protected:
 	virtual bool onCreate();
 	virtual void Update(float deltaTime);
