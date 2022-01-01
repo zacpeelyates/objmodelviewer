@@ -15,11 +15,13 @@ RenderWindow::RenderWindow() {};
 RenderWindow::~RenderWindow() {}
 void RenderWindow::onWindowResize(WindowResizeEvent* e)
 {
-	std::cout << "Window Resize Event" << std::endl;
-	m_windowWidth = e->GetWidth();
-	m_windowHeight = e->GetHeight();
-	e->Handled();
-	m_projectionMatrix = glm::perspective(glm::pi<float>() * 0.25f, (float)(m_windowWidth / m_windowHeight), 0.1f, 1000.0f);
+	if (e->GetWidth() > 0 && e->GetHeight() > 0) { //fixed crash when making window tiny
+		m_windowWidth = e->GetWidth();
+		m_windowHeight = e->GetHeight();
+		e->Handled();
+		std::cout << "Window Resize Event" << std::endl << "w: " << m_windowWidth << " h: " << m_windowHeight << std::endl;
+		m_projectionMatrix = glm::perspective(glm::pi<float>() * 0.25f, (float)(m_windowWidth / m_windowHeight), 0.1f, 1000.0f);
+	}
 };
 
 
