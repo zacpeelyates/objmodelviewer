@@ -99,7 +99,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\Application.cpp" />
-    <ClCompile Include="source\Event.cpp" />
+    <ClCompile Include="source\Dispatcher.cpp" />
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\RenderWindow.cpp" />
     <ClCompile Include="source\ShaderManager.cpp" />
