@@ -1,6 +1,7 @@
 #include "Application.h"
 #include "Utilities.h"
 #include "ShaderManager.h"
+#include "Dispatcher.h"
 #include <glad\glad.h>
 #include <GLFW\glfw3.h>
 #include <iostream>
@@ -28,6 +29,17 @@ bool Application::Create(const char* a_appName, unsigned int a_windowWidth, unsi
 	//get version
 	std::cout << glGetString(GL_VERSION) << std::endl;
 	 
+	Dispatcher::CreateInstance();
+
+	//callbacks
+	glfwSetWindowSizeCallback(m_window, [](GLFWwindow*, int width, int height)
+		{
+			Dispatcher* dp = Dispatcher::GetInstance();
+			if (dp != nullptr)
+			{
+				dp->Publish(new WindowResizeEvent(width, height), true);
+			}
+		});
 
 	bool result = onCreate();
 	if (!result)
@@ -58,4 +70,5 @@ void Application::Run(const char* a_name, unsigned int a_width, unsigned int a_h
 	ShaderManager::DestroyInstance();
 	glfwDestroyWindow(m_window);
 	glfwTerminate();
+	Dispatcher::DestroyInstance();
 }
