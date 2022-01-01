@@ -120,6 +120,9 @@ bool RenderWindow::onCreate()
 	return true;
 }
 
+
+ 
+
 void RenderWindow::Update(float deltaTime)
 {
 	Utilities::FreeMovement(m_cameraMatrix,deltaTime);
