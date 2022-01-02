@@ -2,6 +2,7 @@
 #include "Event.h"
 #include <glm.hpp>
 #include <vector>
+#include <string>
 
 class OBJModel;
 
@@ -10,8 +11,11 @@ class RenderWindow : public Application
 public:
 	RenderWindow();
 	virtual ~RenderWindow();
+	bool OBJSetup(std::string a_filename);
 	//events
 	void onWindowResize(WindowResizeEvent* e);
+
+	
 protected:
 	virtual bool onCreate();
 	virtual void Update(float deltaTime);
@@ -70,6 +74,9 @@ private:
 	OBJModel* m_objModel;
 	Line* m_lines;
 	int m_lineSize;
+
+	//input handling
+	std::string m_input;
 
 	float m_skyboxVertices[108] = {
 		//positions          

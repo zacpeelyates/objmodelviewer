@@ -73,7 +73,7 @@ void Application::Run(const char* a_name, unsigned int a_width, unsigned int a_h
 			ImGui_ImplGlfw_NewFrame();
 			ImGui::NewFrame();
 
-			//ImGui Windows
+			//ImGui Info Window
 			showFrameData(true);
 
 			float deltaTime = Utilities::TimerTick();
@@ -100,7 +100,7 @@ void Application::Run(const char* a_name, unsigned int a_width, unsigned int a_h
 	Dispatcher::DestroyInstance();
 }
 
-#define IMGUI_FRAMEDATA_FLAGS ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav
+#define IMGUI_STATIC_INFO_FLAGS ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav
 
 
 void Application::showFrameData(bool bShow)
@@ -114,9 +114,8 @@ void Application::showFrameData(bool bShow)
 	ImGui::SetNextWindowPos(windowPos, ImGuiCond_Always, windowPivot);
 	ImGui::SetNextWindowBgAlpha(0.4f);
 
-	if (ImGui::Begin("Frame Data"), &bShow, IMGUI_FRAMEDATA_FLAGS)
+	if (ImGui::Begin("Frame Data", &bShow, IMGUI_STATIC_INFO_FLAGS))
 	{
-		ImGui::Separator();
 		ImGui::Text("FPS: %.1f (Frame Delay: %.3f ms)", io.Framerate, 1000/io.Framerate);
 		if (ImGui::IsMousePosValid())
 		{

@@ -45,7 +45,10 @@ bool Texture::Load(std::string a_inFilename)
 
 bool Texture::LoadCubemap(std::string a_inFileDirectory) 
 {
-	std::string faces[6]{"Right","Left","Top","Bottom","Back","Front"}; //GL_TEXTURE_CUBEMAP expected order
+	m_filename = a_inFileDirectory;
+	m_width = 0;
+	m_height = 0;
+	std::string faces[6]{"right","left","top","bottom","back","front"}; //GL_TEXTURE_CUBEMAP expected order
 	std::string fileType = ".jpg"; //testing, should be var to support multiple types
 	int width = 0;
 	int height = 0;
@@ -56,9 +59,12 @@ bool Texture::LoadCubemap(std::string a_inFileDirectory)
 	
 	for (int i = 0; i < 6; ++i) 
 	{
-		unsigned char* imageData = stbi_load((a_inFileDirectory + '/' + faces[i] + fileType).c_str(), & width, & height, & channels, 4);
+		std::string filepath = a_inFileDirectory + "/" + faces[i] + fileType;
+		unsigned char* imageData = stbi_load(filepath.c_str(), &width, &height, &channels, 0);
 		if (imageData == nullptr) return false;
 		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, imageData);
+		m_width += width;
+		m_height += height;
 		stbi_image_free(imageData);
 	}
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

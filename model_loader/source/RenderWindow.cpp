@@ -10,6 +10,8 @@
 #include <glm.hpp>
 #include <ext.hpp> //glm ext
 #include <iostream>
+#include <imgui.h>
+#include <imgui_stdlib.h>
 
 RenderWindow::RenderWindow() {};
 RenderWindow::~RenderWindow() {}
@@ -36,33 +38,10 @@ bool RenderWindow::onCreate()
 	}
 
 
-	// get filepath from user -- TODO::MOVE THIS!!!
-	std::string path;
-	bool comments = true;
-
-	std::cout << "Enter Filename: ";
-	std::getline(std::cin, path);
-	path = "./resource/obj_models/" + path;
-
-	m_objModel = OBJLoader::OBJProcess(path, comments);
-	if (m_objModel == nullptr) return false;
-
-	//handle textures
-	TextureManager* pTexM = TextureManager::CreateInstance();
-	for (unsigned int i = 0; i < m_objModel->GetMaterialCount(); ++i)
-	{
-		OBJMaterial* currentMaterial = m_objModel->GetMaterial(i);
-		for (int j = 0; j < OBJMaterial::TextureTypes_Count; ++j)
-		{
-			if (currentMaterial->textureFileNames[j].size() > 0)
-			{
-				currentMaterial->textureIDs[j] = pTexM->LoadTexture(currentMaterial->textureFileNames[j].c_str());
-			}
-		}
-	}
+	TextureManager* pTexM = TextureManager::GetInstance();
 
 	//handle skybox
-	path = "./resource/skyboxes/";
+	std::string path = "./resource/skyboxes/";
 	std::string skyboxName = "skybox_1"; //testing, should be variable
 	m_skyboxID = pTexM->LoadTexture((path + skyboxName).c_str(), true);
 
@@ -144,7 +123,51 @@ bool RenderWindow::onCreate()
 
 void RenderWindow::Update(float deltaTime)
 {
+	//Camera
 	Utilities::FreeMovement(m_cameraMatrix,deltaTime);
+	ImGuiIO& io = ImGui::GetIO();
+	//ImGUI
+	ImGui::SetNextWindowPos(ImVec2(io.DisplaySize.x / 2, io.DisplaySize.y / 2));
+	if (ImGui::Begin("Load Model"), true, ImGuiWindowFlags_AlwaysAutoResize)
+	{
+		std::string input;
+		ImGui::InputText("Filename", &input);
+		if (!input.empty()) 
+		{
+			m_input = input;
+		}
+
+		if (ImGui::Button("Load", ImVec2(100, 50)) )
+		{
+			OBJSetup(m_input);
+			m_input = "";
+		}
+	}
+	ImGui::End();
+	
+
+}
+
+bool RenderWindow::OBJSetup(std::string a_filename)
+{
+	bool comments = true;
+	a_filename = "./resource/obj_models/" + a_filename;
+	m_objModel = OBJLoader::OBJProcess(a_filename, comments);
+	if (m_objModel == nullptr) return false;
+
+	//handle textures
+	TextureManager* pTexM = TextureManager::CreateInstance();
+	for (unsigned int i = 0; i < m_objModel->GetMaterialCount(); ++i)
+	{
+		OBJMaterial* currentMaterial = m_objModel->GetMaterial(i);
+		for (int j = 0; j < OBJMaterial::TextureTypes_Count; ++j)
+		{
+			if (currentMaterial->textureFileNames[j].size() > 0)
+			{
+				currentMaterial->textureIDs[j] = pTexM->LoadTexture(currentMaterial->textureFileNames[j].c_str());
+			}
+		}
+	}
 }
 
 void RenderWindow::Draw() 
@@ -181,109 +204,112 @@ void RenderWindow::Draw()
 	lightPos.z = 10.0f;
 
 	//draw OBJ model
-	glUseProgram(m_objProgram);
-	projectionViewMatrixUniformLocation = glGetUniformLocation(m_objProgram, "ProjectionViewMatrix");
-	//send pointer to location of matrix 
-
-	glUniformMatrix4fv(projectionViewMatrixUniformLocation, 1, false, glm::value_ptr(projectionViewMatrix));
-	for (int i = 0; i < m_objModel->GetMeshCount(); ++i) 
+	if (m_objModel != nullptr)
 	{
-		int ModelMatrixUniformLocation = glGetUniformLocation(m_objProgram, "ModelMatrix");
-		glUniformMatrix4fv(ModelMatrixUniformLocation, 1, false, glm::value_ptr(m_objModel->GetWorldMatrix()));
+		glUseProgram(m_objProgram);
+		projectionViewMatrixUniformLocation = glGetUniformLocation(m_objProgram, "ProjectionViewMatrix");
+		//send pointer to location of matrix 
 
-		int cameraPositionUniformLocation = glGetUniformLocation(m_objProgram, "camPos");
-		glUniform3fv(cameraPositionUniformLocation, 1, glm::value_ptr(m_cameraMatrix[3]));
-		OBJMesh* currentMesh = m_objModel->GetMesh(i);
-		int kA_location = glGetUniformLocation(m_objProgram, "kA");
-		int kD_location = glGetUniformLocation(m_objProgram, "kD");
-		int kS_location = glGetUniformLocation(m_objProgram, "kS");
-		int nS_location = glGetUniformLocation(m_objProgram, "nS");
-		int lightPos_location = glGetUniformLocation(m_objProgram, "lightPos");
-		glUniform3fv(lightPos_location, 1, glm::value_ptr(lightPos));
-
-
-		OBJMaterial* currentMaterial = currentMesh->m_activeMaterial;
-		bool bUseNormal = false;
-		bool bUseSpecular = false;
-		bool bUseDiffuse = false;
-
-		if (currentMaterial != nullptr)
+		glUniformMatrix4fv(projectionViewMatrixUniformLocation, 1, false, glm::value_ptr(projectionViewMatrix));
+		for (int i = 0; i < m_objModel->GetMeshCount(); ++i)
 		{
-			glUniform3fv(kA_location, 1, glm::value_ptr(currentMaterial->GetAmbience()));
-			glUniform3fv(kD_location, 1, glm::value_ptr(currentMaterial->GetDiffuse()));
-			glUniform3fv(kS_location, 1, glm::value_ptr(currentMaterial->GetSpecular()));
-			glUniform1f(nS_location, currentMaterial->GetSpecularExponent());
+			int ModelMatrixUniformLocation = glGetUniformLocation(m_objProgram, "ModelMatrix");
+			glUniformMatrix4fv(ModelMatrixUniformLocation, 1, false, glm::value_ptr(m_objModel->GetWorldMatrix()));
+
+			int cameraPositionUniformLocation = glGetUniformLocation(m_objProgram, "camPos");
+			glUniform3fv(cameraPositionUniformLocation, 1, glm::value_ptr(m_cameraMatrix[3]));
+			OBJMesh* currentMesh = m_objModel->GetMesh(i);
+			int kA_location = glGetUniformLocation(m_objProgram, "kA");
+			int kD_location = glGetUniformLocation(m_objProgram, "kD");
+			int kS_location = glGetUniformLocation(m_objProgram, "kS");
+			int nS_location = glGetUniformLocation(m_objProgram, "nS");
+			int lightPos_location = glGetUniformLocation(m_objProgram, "lightPos");
+			glUniform3fv(lightPos_location, 1, glm::value_ptr(lightPos));
 
 
-			//textures
-			int TextureUniformLocation;
-			if (!currentMaterial->textureFileNames[OBJMaterial::DiffuseTexture].empty()) {
-				//diffuse
-				bUseDiffuse = true;
-				TextureUniformLocation = glGetUniformLocation(m_objProgram, "DiffuseTexture");
-				glUniform1i(TextureUniformLocation, 0);
-				glActiveTexture(GL_TEXTURE0);
-				glBindTexture(GL_TEXTURE_2D, currentMaterial->textureIDs[OBJMaterial::DiffuseTexture]);
+			OBJMaterial* currentMaterial = currentMesh->m_activeMaterial;
+			bool bUseNormal = false;
+			bool bUseSpecular = false;
+			bool bUseDiffuse = false;
+
+			if (currentMaterial != nullptr)
+			{
+				glUniform3fv(kA_location, 1, glm::value_ptr(currentMaterial->GetAmbience()));
+				glUniform3fv(kD_location, 1, glm::value_ptr(currentMaterial->GetDiffuse()));
+				glUniform3fv(kS_location, 1, glm::value_ptr(currentMaterial->GetSpecular()));
+				glUniform1f(nS_location, currentMaterial->GetSpecularExponent());
+
+
+				//textures
+				int TextureUniformLocation;
+				if (!currentMaterial->textureFileNames[OBJMaterial::DiffuseTexture].empty()) {
+					//diffuse
+					bUseDiffuse = true;
+					TextureUniformLocation = glGetUniformLocation(m_objProgram, "DiffuseTexture");
+					glUniform1i(TextureUniformLocation, 0);
+					glActiveTexture(GL_TEXTURE0);
+					glBindTexture(GL_TEXTURE_2D, currentMaterial->textureIDs[OBJMaterial::DiffuseTexture]);
+				}
+
+				if (!currentMaterial->textureFileNames[OBJMaterial::SpecularTexture].empty()) {
+					//specular
+					bUseSpecular = true;
+					TextureUniformLocation = glGetUniformLocation(m_objProgram, "SpecularTexture");
+					glUniform1i(TextureUniformLocation, 1);
+					glActiveTexture(GL_TEXTURE1);
+					glBindTexture(GL_TEXTURE_2D, currentMaterial->textureIDs[OBJMaterial::SpecularTexture]);
+				}
+
+				if (!currentMaterial->textureFileNames[OBJMaterial::NormalTexture].empty()) {
+					//normal
+					bUseNormal = true;
+					TextureUniformLocation = glGetUniformLocation(m_objProgram, "NormalTexture");
+					glUniform1i(TextureUniformLocation, 2);
+					glActiveTexture(GL_TEXTURE2);
+					glBindTexture(GL_TEXTURE_2D, currentMaterial->textureIDs[OBJMaterial::NormalTexture]);
+				}
+
 			}
-
-			if (!currentMaterial->textureFileNames[OBJMaterial::SpecularTexture].empty()) {
-				//specular
-				bUseSpecular = true;
-				TextureUniformLocation = glGetUniformLocation(m_objProgram, "SpecularTexture");
-				glUniform1i(TextureUniformLocation, 1);
-				glActiveTexture(GL_TEXTURE1);
-				glBindTexture(GL_TEXTURE_2D, currentMaterial->textureIDs[OBJMaterial::SpecularTexture]);
+			else
+			{
+				//use default lighting
+				glUniform3fv(kA_location, 1, glm::value_ptr(glm::vec3(0.25f)));
+				glUniform3fv(kD_location, 1, glm::value_ptr(glm::vec3(0.25f)));
+				glUniform3fv(kS_location, 1, glm::value_ptr(glm::vec3(0.25f)));
+				glUniform1f(nS_location, 1.0f);
 			}
+			int TextureCheckUniformLocation = glGetUniformLocation(m_objProgram, "useNormal");
+			glUniform1i(TextureCheckUniformLocation, bUseNormal);
+			TextureCheckUniformLocation = glGetUniformLocation(m_objProgram, "useSpecular");
+			glUniform1i(TextureCheckUniformLocation, bUseSpecular);
+			TextureCheckUniformLocation = glGetUniformLocation(m_objProgram, "useDiffuse");
+			glUniform1i(TextureCheckUniformLocation, bUseDiffuse);
 
-			if (!currentMaterial->textureFileNames[OBJMaterial::NormalTexture].empty()) {
-				//normal
-				bUseNormal = true;
-				TextureUniformLocation = glGetUniformLocation(m_objProgram, "NormalTexture");
-				glUniform1i(TextureUniformLocation, 2);
-				glActiveTexture(GL_TEXTURE2);
-				glBindTexture(GL_TEXTURE_2D, currentMaterial->textureIDs[OBJMaterial::NormalTexture]);
-			}
+			//bind buffers
+			glBindBuffer(GL_ARRAY_BUFFER, m_objModelBuffer[0]);
+			glBufferData(GL_ARRAY_BUFFER, currentMesh->m_verts.size() * sizeof(OBJVertex), currentMesh->m_verts.data(), GL_STATIC_DRAW);
+
+			glEnableVertexAttribArray(0); //position
+			glEnableVertexAttribArray(1); //normal
+			glEnableVertexAttribArray(2); //UVs
+
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(OBJVertex), ((char*)0) + OBJVertex::Offsets::POS); //vec3 pos
+			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(OBJVertex), ((char*)0) + OBJVertex::Offsets::NORMAL); //vec3 normal
+			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(OBJVertex), ((char*)0) + OBJVertex::Offsets::UVCOORD); //vec2 UVs
+
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_objModelBuffer[1]);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, currentMesh->m_indicies.size() * sizeof(unsigned int), currentMesh->m_indicies.data(), GL_STATIC_DRAW);
+			glDrawElements(GL_TRIANGLES, currentMesh->m_indicies.size(), GL_UNSIGNED_INT, 0);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 		}
-		else
-		{
-			//use default lighting
-			glUniform3fv(kA_location, 1, glm::value_ptr(glm::vec3(0.25f)));
-			glUniform3fv(kD_location, 1, glm::value_ptr(glm::vec3(0.25f)));
-			glUniform3fv(kS_location, 1, glm::value_ptr(glm::vec3(0.25f)));
-			glUniform1f(nS_location, 1.0f);
-		}
-		int TextureCheckUniformLocation = glGetUniformLocation(m_objProgram, "useNormal");
-		glUniform1i(TextureCheckUniformLocation, bUseNormal);
-		TextureCheckUniformLocation = glGetUniformLocation(m_objProgram, "useSpecular");
-		glUniform1i(TextureCheckUniformLocation, bUseSpecular);
-		TextureCheckUniformLocation = glGetUniformLocation(m_objProgram, "useDiffuse");
-		glUniform1i(TextureCheckUniformLocation, bUseDiffuse);
 
-		//bind buffers
-		glBindBuffer(GL_ARRAY_BUFFER, m_objModelBuffer[0]);
-		glBufferData(GL_ARRAY_BUFFER, currentMesh->m_verts.size() * sizeof(OBJVertex), currentMesh->m_verts.data(), GL_STATIC_DRAW);
-
-		glEnableVertexAttribArray(0); //position
-		glEnableVertexAttribArray(1); //normal
-		glEnableVertexAttribArray(2); //UVs
-
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(OBJVertex), ((char*)0) + OBJVertex::Offsets::POS); //vec3 pos
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(OBJVertex), ((char*)0) + OBJVertex::Offsets::NORMAL); //vec3 normal
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(OBJVertex), ((char*)0) + OBJVertex::Offsets::UVCOORD); //vec2 UVs
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_objModelBuffer[1]);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, currentMesh->m_indicies.size() * sizeof(unsigned int), currentMesh->m_indicies.data(), GL_STATIC_DRAW);
-		glDrawElements(GL_TRIANGLES, currentMesh->m_indicies.size(), GL_UNSIGNED_INT, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-
+		//unbind buffer/arrays 
+		glDisableVertexAttribArray(0); //position
+		glDisableVertexAttribArray(1); //normal
+		glDisableVertexAttribArray(2); //uvcoord
 	}
-
-	//unbind buffer/arrays 
-	glDisableVertexAttribArray(0); //position
-	glDisableVertexAttribArray(1); //normal
-	glDisableVertexAttribArray(2); //uvcoord
 
 	//draw skybox
 	glDepthFunc(GL_LEQUAL);

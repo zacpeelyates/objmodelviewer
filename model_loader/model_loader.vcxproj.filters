@@ -74,6 +74,9 @@
     <ClCompile Include="..\deps\imgui\backends\imgui_impl_opengl3.cpp">
       <Filter>ImGUI</Filter>
     </ClCompile>
+    <ClCompile Include="..\deps\imgui\misc\cpp\imgui_stdlib.cpp">
+      <Filter>ImGUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="resource\shaders\obj_vertex.glsl">
