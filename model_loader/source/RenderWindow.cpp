@@ -105,7 +105,7 @@ bool RenderWindow::onCreate()
 	glBindVertexArray(m_skyboxVAO);
 	glGenBuffers(1, &m_skyboxVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, m_skyboxVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(m_skyboxVertices), m_skyboxVertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(m_skyboxVertices), &m_skyboxVertices, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER,0);
 
 	//model
