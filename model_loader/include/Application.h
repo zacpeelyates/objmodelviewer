@@ -14,7 +14,6 @@ protected:
 	virtual void Update(float deltaTime) = 0;
 	virtual void Draw() = 0;
 	virtual void Destroy() = 0;
-	void showFrameData(bool bShow);
 
 	GLFWwindow* m_window;
 	unsigned int m_windowWidth;

@@ -91,6 +91,7 @@
     <ClInclude Include="include\Application.h" />
     <ClInclude Include="include\Dispatcher.h" />
     <ClInclude Include="include\Event.h" />
+    <ClInclude Include="include\GUIManager.h" />
     <ClInclude Include="include\RenderWindow.h" />
     <ClInclude Include="include\ShaderManager.h" />
     <ClInclude Include="include\Texture.h" />
@@ -103,6 +104,7 @@
     <ClCompile Include="..\deps\imgui\misc\cpp\imgui_stdlib.cpp" />
     <ClCompile Include="source\Application.cpp" />
     <ClCompile Include="source\Dispatcher.cpp" />
+    <ClCompile Include="source\GUIManager.cpp" />
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\RenderWindow.cpp" />
     <ClCompile Include="source\ShaderManager.cpp" />

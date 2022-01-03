@@ -42,6 +42,9 @@
     <ClInclude Include="include\Dispatcher.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\GUIManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\Application.cpp">
@@ -76,6 +79,9 @@
     </ClCompile>
     <ClCompile Include="..\deps\imgui\misc\cpp\imgui_stdlib.cpp">
       <Filter>ImGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="source\GUIManager.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

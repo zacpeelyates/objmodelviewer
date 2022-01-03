@@ -4,17 +4,18 @@
 #include "obj_Loader.h"
 #include "TextureManager.h"
 #include "Dispatcher.h"
+#include "GUIManager.h"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm.hpp>
 #include <ext.hpp> //glm ext
 #include <iostream>
-#include <imgui.h>
-#include <imgui_stdlib.h>
+
 
 RenderWindow::RenderWindow() {};
 RenderWindow::~RenderWindow() {}
+
 void RenderWindow::onWindowResize(WindowResizeEvent* e)
 {
 	if (e->GetWidth() > 0 && e->GetHeight() > 0) { //fixed crash when making window tiny
@@ -125,26 +126,38 @@ void RenderWindow::Update(float deltaTime)
 {
 	//Camera
 	Utilities::FreeMovement(m_cameraMatrix,deltaTime);
-	ImGuiIO& io = ImGui::GetIO();
-	//ImGUI
-	ImGui::SetNextWindowPos(ImVec2(io.DisplaySize.x / 2, io.DisplaySize.y / 2));
-	if (ImGui::Begin("Load Model"), true, ImGuiWindowFlags_AlwaysAutoResize)
-	{
-		std::string input;
-		ImGui::InputText("Filename", &input);
-		if (!input.empty()) 
-		{
-			m_input = input;
-		}
 
-		if (ImGui::Button("Load", ImVec2(100, 50)) )
+	//GUI
+	GUIManager* gui = GUIManager::GetInstance();
+	std::string filename;
+
+	if (gui->ShowFileLoader(filename))
+	{
+		auto iter = m_modelMap.find(filename);
+		if (iter == m_modelMap.end())
 		{
-			OBJSetup(m_input);
-			m_input = "";
+			if (OBJSetup(filename)) 
+			{
+				m_modelMap.emplace(filename, m_objModel);
+			}
+		}
+		else 
+		{
+			m_objModel = iter->second;
 		}
 	}
-	ImGui::End();
-	
+	std::vector<std::string> keys;
+	for (auto const& iter : m_modelMap) 
+	{
+		keys.push_back(iter.first);
+	}
+	if (!keys.empty()) {
+		if (gui->ShowLoadedFileList(keys, filename))
+		{
+			m_objModel = m_modelMap.find(filename)->second;
+		}
+	}
+
 
 }
 

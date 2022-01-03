@@ -3,6 +3,7 @@
 #include <glm.hpp>
 #include <vector>
 #include <string>
+#include <map>
 
 class OBJModel;
 
@@ -74,6 +75,7 @@ private:
 	OBJModel* m_objModel;
 	Line* m_lines;
 	int m_lineSize;
+	std::map<std::string,OBJModel*> m_modelMap;
 
 	//input handling
 	std::string m_input;
