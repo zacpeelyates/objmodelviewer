@@ -104,7 +104,7 @@ bool GUIManager::ShowFileLoader(std::string& input)
 	bool b = false;
 	ImGuiIO& io = ImGui::GetIO();
 	SetupNextWindow();
-	if (ImGui::Begin("Load Model"), true, ImGuiWindowFlags_AlwaysAutoResize)
+	if (ImGui::Begin("Load Model", &m_bShow, ImGuiWindowFlags_AlwaysAutoResize))
 	{
 		ImGui::InputText("Filename", &m_buffer);
 		if (!m_buffer.empty())
@@ -125,7 +125,7 @@ bool GUIManager::ShowLoadedFileList(std::vector<std::string> loadedFiles, std::s
 	bool b = false;
 	ImGuiIO& io = ImGui::GetIO();
 	SetupNextWindow();
-	if (ImGui::Begin("Loaded Files"), true, IMGUI_STATIC_INFO_FLAGS)
+	if (ImGui::Begin("Loaded Files", &m_bShow, IMGUI_STATIC_INFO_FLAGS))
 	{
 		for (int i = 0; i < loadedFiles.size(); ++i) 
 		{
@@ -145,5 +145,19 @@ bool GUIManager::ShowLoadedFileList(std::vector<std::string> loadedFiles, std::s
 	return b;
 	
 }
+
+bool GUIManager::ShowColorEditor(float* firstElement, std::string title, bool alpha)
+{
+	bool b = false;
+	SetupNextWindow();
+	if (ImGui::Begin(title.c_str(),&m_bShow, IMGUI_STATIC_INFO_FLAGS))
+	{	
+		b = alpha ? ImGui::ColorEdit4(title.c_str(), firstElement) : ImGui::ColorEdit3(title.c_str(), firstElement);
+		m_yOffset += PADDING + ImGui::GetWindowHeight();
+	}
+	ImGui::End();
+	return b;
+}
+
 
 

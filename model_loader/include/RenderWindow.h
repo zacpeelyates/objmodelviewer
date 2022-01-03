@@ -76,6 +76,8 @@ private:
 	Line* m_lines;
 	int m_lineSize;
 	std::map<std::string,OBJModel*> m_modelMap;
+	glm::vec3 m_clearColor;
+	glm::vec4 m_lightColor;
 
 	//input handling
 	std::string m_input;

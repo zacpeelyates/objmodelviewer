@@ -10,6 +10,7 @@ uniform vec3 kA;
 uniform vec3 kD;
 uniform vec3 kS;
 uniform vec3 lightPos;
+uniform vec4 lightColor;
 
 uniform bool useNormal;
 uniform bool useSpecular;
@@ -48,7 +49,6 @@ void main()
 
 	float SpecTerm = pow(max(0.0f,dot(R,E)),nS);
 	vec3 Specular = kS * iS * SpecTerm * specularData;
-	outputColor = vec4((Ambient + Diffuse + Specular), 1.0f);
-
+	outputColor = vec4((Ambient + Diffuse + Specular), 1.0f) * lightColor;
 }
 

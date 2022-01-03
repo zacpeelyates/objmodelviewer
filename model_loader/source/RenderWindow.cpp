@@ -47,7 +47,8 @@ bool RenderWindow::onCreate()
 	m_skyboxID = pTexM->LoadTexture((path + skyboxName).c_str(), true);
 
 	//setup clear color, depth test, culling
-	glClearColor(0.95f, 0.45f, 0.75f, 1.0f);
+	m_clearColor = glm::vec3(0.95f, 0.45f, 0.75f);
+	glClearColor(m_clearColor.x,m_clearColor.y,m_clearColor.z,1.0f);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glClearDepth(1.0f);
@@ -59,11 +60,15 @@ bool RenderWindow::onCreate()
 	m_cameraMatrix = glm::inverse(glm::lookAt(glm::vec3(10, 10, 10), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)));
 	m_projectionMatrix = glm::perspective(glm::pi<float>() * 0.25f, (float)(m_windowWidth / m_windowHeight), 0.1f, 1000.0f);
 
+
+	//lighting
+	m_lightColor = glm::vec4(1, 1, 1,1);
 	//set shader programs
 	//obj
 	GLuint vertexShader = ShaderManager::LoadShader("resource/shaders/obj_vertex.glsl", GL_VERTEX_SHADER);
 	GLuint fragmentShader = ShaderManager::LoadShader("resource/shaders/obj_fragment.glsl", GL_FRAGMENT_SHADER);
 	m_objProgram = ShaderManager::CreateProgram(vertexShader, fragmentShader);
+	
 	//skybox
 	vertexShader = ShaderManager::LoadShader("resource/shaders/skybox_vertex.glsl", GL_VERTEX_SHADER);
     fragmentShader = ShaderManager::LoadShader("resource/shaders/skybox_fragment.glsl", GL_FRAGMENT_SHADER);
@@ -106,7 +111,7 @@ bool RenderWindow::onCreate()
 	glBindVertexArray(m_skyboxVAO);
 	glGenBuffers(1, &m_skyboxVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, m_skyboxVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(m_skyboxVertices), &m_skyboxVertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(m_skyboxVertices), m_skyboxVertices, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER,0);
 
 	//model
@@ -157,6 +162,13 @@ void RenderWindow::Update(float deltaTime)
 			m_objModel = m_modelMap.find(filename)->second;
 		}
 	}
+
+	if (gui->ShowColorEditor(&m_clearColor.x, "Clear Color"))
+	{
+		glClearColor(m_clearColor.x, m_clearColor.y, m_clearColor.z, 1.0f);
+	}
+	
+	gui->ShowColorEditor(&m_lightColor.x, "Light Color",true);
 
 
 }
@@ -238,6 +250,8 @@ void RenderWindow::Draw()
 			int nS_location = glGetUniformLocation(m_objProgram, "nS");
 			int lightPos_location = glGetUniformLocation(m_objProgram, "lightPos");
 			glUniform3fv(lightPos_location, 1, glm::value_ptr(lightPos));
+			int lightColor_location = glGetUniformLocation(m_objProgram, "lightColor");
+			glUniform4fv(lightColor_location, 1, glm::value_ptr(m_lightColor));
 
 
 			OBJMaterial* currentMaterial = currentMesh->m_activeMaterial;
@@ -337,9 +351,9 @@ void RenderWindow::Draw()
 	glUniform1i(SkyboxTextureUniformLocation,0);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_CUBE_MAP,m_skyboxID);
-	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glDrawArrays(GL_TRIANGLES, 0, 36); //108 floats in skyboxverticies/3 (each vertex is 3 floats)
 	glBindVertexArray(0);
-	glDepthFunc(GL_LESS);
+	glDepthFunc(GL_LESS); //set to default depth test
 	//release program
 	glUseProgram(0);
 }

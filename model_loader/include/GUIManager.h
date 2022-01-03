@@ -19,6 +19,7 @@ public:
 	void SetupNextWindow();
 	bool ShowFileLoader(std::string& input);
 	bool ShowLoadedFileList(std::vector<std::string> loadedFiles, std::string& selectedFile);
+	bool ShowColorEditor(float* firstElement, std::string title = "ColorEditor", bool alpha = false);
 	
 	
 
