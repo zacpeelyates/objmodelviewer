@@ -170,6 +170,15 @@ void RenderWindow::Update(float deltaTime)
 	
 	gui->ShowColorEditor(&m_lightColor.x, "Light Color",true);
 
+	if (m_objModel != nullptr) 
+	{
+		float* pModelMatrix = (float*)glm::value_ptr(m_objModel->GetWorldMatrix()); //get model matrix
+		if (gui->ShowMatrixEditor(pModelMatrix, (const float*)glm::value_ptr(m_viewMatrix), (const float*)glm::value_ptr(m_projectionMatrix))) //edit model matrix
+		{
+			m_objModel->SetWorldMatrix(glm::make_mat4<float>(pModelMatrix)); //set new model matrix
+		}
+	}
+
 
 }
 
@@ -202,8 +211,8 @@ void RenderWindow::Draw()
 	//enable shaders
 	glUseProgram(m_uiProgram);
 	//get view matrix from camera matrix in world space
-	glm::mat4 viewMatrix = glm::inverse(m_cameraMatrix);
-	glm::mat4 projectionViewMatrix = m_projectionMatrix * viewMatrix;
+	m_viewMatrix = glm::inverse(m_cameraMatrix);
+	glm::mat4 projectionViewMatrix = m_projectionMatrix * m_viewMatrix;
 	//get projection view matrix var location from shader file
 	int projectionViewMatrixUniformLocation = glGetUniformLocation(m_uiProgram, "ProjectionViewMatrix");
 	//send pointer to location of matrix 
@@ -238,12 +247,15 @@ void RenderWindow::Draw()
 		glUniformMatrix4fv(projectionViewMatrixUniformLocation, 1, false, glm::value_ptr(projectionViewMatrix));
 		for (int i = 0; i < m_objModel->GetMeshCount(); ++i)
 		{
+			
+
 			int ModelMatrixUniformLocation = glGetUniformLocation(m_objProgram, "ModelMatrix");
 			glUniformMatrix4fv(ModelMatrixUniformLocation, 1, false, glm::value_ptr(m_objModel->GetWorldMatrix()));
 
 			int cameraPositionUniformLocation = glGetUniformLocation(m_objProgram, "camPos");
 			glUniform3fv(cameraPositionUniformLocation, 1, glm::value_ptr(m_cameraMatrix[3]));
 			OBJMesh* currentMesh = m_objModel->GetMesh(i);
+
 			int kA_location = glGetUniformLocation(m_objProgram, "kA");
 			int kD_location = glGetUniformLocation(m_objProgram, "kD");
 			int kS_location = glGetUniformLocation(m_objProgram, "kS");

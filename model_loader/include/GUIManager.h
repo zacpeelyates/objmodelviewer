@@ -4,6 +4,7 @@
 #include <imgui_impl_glfw.h>
 #include <string>
 #include <vector>
+#include <ImGuizmo.h> //https://github.com/CedricGuillemet/ImGuizmo -- extentions for ImGUI
 
 class GUIManager 
 {
@@ -20,6 +21,11 @@ public:
 	bool ShowFileLoader(std::string& input);
 	bool ShowLoadedFileList(std::vector<std::string> loadedFiles, std::string& selectedFile);
 	bool ShowColorEditor(float* firstElement, std::string title = "ColorEditor", bool alpha = false);
+
+	bool ShowSlider(float* valueToEdit, float a_min, float a_max, std::string title);
+
+	bool ShowMatrixEditor(float matrixToEdit[16], const float viewMatrix[16], const float projectionMatrix[16]);
+
 	
 	
 
@@ -31,8 +37,11 @@ private:
 	int m_yOffset;
 	int m_corner;
 	bool m_bShow;
-	std::string m_buffer;
+
+	std::string m_inputBuffer;
 	
+	static ImGuizmo::OPERATION m_operation;
+	static ImGuizmo::MODE m_mode;
 
 };
 

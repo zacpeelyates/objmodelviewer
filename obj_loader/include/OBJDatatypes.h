@@ -108,7 +108,7 @@ struct OBJGroup
 class OBJModel
 {
 public:
-	OBJModel() :m_worldMatrix(glm::mat4(1.0f)) {};
+	OBJModel() : m_worldMatrix(glm::mat4(1.0f)) {};
 	~OBJModel() {};
 	bool AddGroup(OBJGroup* ao_groupIn);
 	bool AddMaterial(OBJMaterial* a_oInMaterial);
@@ -118,10 +118,12 @@ public:
 	OBJMaterial* GetMaterial(std::string a_name);
 	OBJMaterial* GetMaterial(unsigned int index);
 	unsigned int GetMaterialCount();
-	const glm::mat4 GetWorldMatrix();
+    glm::mat4 GetWorldMatrix();
+
+	void SetWorldMatrix(glm::mat4 a_inMatrix);
 
 private:
-	std::vector<OBJMesh*> m_meshes; //can't get this one to work in a map for some reason, will look into it once other stuff is working
+	std::vector<OBJMesh*> m_meshes;
 	std::map<std::string, OBJGroup*> m_groupMap;
 	std::map<std::string, OBJMaterial*> m_matMap;
 	glm::mat4 m_worldMatrix;

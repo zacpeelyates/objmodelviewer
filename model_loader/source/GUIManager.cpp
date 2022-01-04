@@ -2,8 +2,11 @@
 #include <imgui_stdlib.h>
 
 
+
 const int GUIManager::PADDING = 10;
 GUIManager* GUIManager::m_instance = nullptr;
+ImGuizmo::OPERATION GUIManager::m_operation = ImGuizmo::ROTATE;
+ImGuizmo::MODE GUIManager::m_mode = ImGuizmo::WORLD;
 
 GUIManager* GUIManager::GetInstance()
 {
@@ -58,14 +61,16 @@ void GUIManager::NewFrame()
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
+	//new ImGuizmo frame
+	ImGuizmo::BeginFrame();
 	m_yOffset = PADDING;
 }
 
 void GUIManager::Render()
 {
-	//IMUI render
-	ImGui::Render();
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+//IMUI render
+ImGui::Render();
+ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
 void GUIManager::ShowFrameData()
@@ -88,7 +93,7 @@ void GUIManager::ShowFrameData()
 	ImGui::End();
 }
 
-void GUIManager::SetupNextWindow() 
+void GUIManager::SetupNextWindow()
 {
 	ImGuiIO& io = ImGui::GetIO();
 	ImVec2 windowPos = ImVec2((m_corner & 1) ? io.DisplaySize.x - PADDING : PADDING, (m_corner & 2) ? io.DisplaySize.y - m_yOffset : m_yOffset);
@@ -99,22 +104,22 @@ void GUIManager::SetupNextWindow()
 
 
 
-bool GUIManager::ShowFileLoader(std::string& input) 
+bool GUIManager::ShowFileLoader(std::string& input)
 {
 	bool b = false;
 	ImGuiIO& io = ImGui::GetIO();
 	SetupNextWindow();
 	if (ImGui::Begin("Load Model", &m_bShow, ImGuiWindowFlags_AlwaysAutoResize))
 	{
-		ImGui::InputText("Filename", &m_buffer);
-		if (!m_buffer.empty())
+		ImGui::InputText("Filename", &m_inputBuffer);
+		if (!m_inputBuffer.empty())
 		{
-			input = m_buffer;
+			input = m_inputBuffer;
 		}
 
 		b = ImGui::Button("Load"), ImVec2(50, 75);
 		m_yOffset += PADDING + ImGui::GetWindowHeight();
-		
+
 	}
 	ImGui::End();
 	return b;
@@ -127,12 +132,12 @@ bool GUIManager::ShowLoadedFileList(std::vector<std::string> loadedFiles, std::s
 	SetupNextWindow();
 	if (ImGui::Begin("Loaded Files", &m_bShow, IMGUI_STATIC_INFO_FLAGS))
 	{
-		for (int i = 0; i < loadedFiles.size(); ++i) 
+		for (int i = 0; i < loadedFiles.size(); ++i)
 		{
 			bool selected = false;
-			if (ImGui::Selectable(loadedFiles[i].c_str(), &selected, ImGuiSelectableFlags_DontClosePopups,ImVec2(200,15))) 
+			if (ImGui::Selectable(loadedFiles[i].c_str(), &selected, ImGuiSelectableFlags_DontClosePopups, ImVec2(200, 15)))
 			{
-				if (selected) 
+				if (selected)
 				{
 					selectedFile = loadedFiles[i];
 					b = true;
@@ -143,19 +148,71 @@ bool GUIManager::ShowLoadedFileList(std::vector<std::string> loadedFiles, std::s
 	}
 	ImGui::End();
 	return b;
-	
+
 }
 
 bool GUIManager::ShowColorEditor(float* firstElement, std::string title, bool alpha)
 {
 	bool b = false;
 	SetupNextWindow();
-	if (ImGui::Begin(title.c_str(),&m_bShow, IMGUI_STATIC_INFO_FLAGS))
-	{	
+	if (ImGui::Begin(title.c_str(), &m_bShow, IMGUI_STATIC_INFO_FLAGS))
+	{
 		b = alpha ? ImGui::ColorEdit4(title.c_str(), firstElement) : ImGui::ColorEdit3(title.c_str(), firstElement);
 		m_yOffset += PADDING + ImGui::GetWindowHeight();
 	}
 	ImGui::End();
+	return b;
+}
+
+bool GUIManager::ShowSlider(float* valueToEdit, float a_min, float a_max, std::string title)
+{
+	bool b = false;
+	SetupNextWindow();
+	if (ImGui::Begin(title.c_str(), &m_bShow, IMGUI_STATIC_INFO_FLAGS))
+	{
+		b = ImGui::SliderFloat3(title.c_str(), valueToEdit, a_min, a_max);
+		m_yOffset += PADDING + ImGui::GetWindowHeight();
+	}
+	ImGui::End();
+	return b;
+}
+
+bool GUIManager::ShowMatrixEditor(float matrixToEdit[16],const float viewMatrix[16],const float projectionMatrix[16])
+{
+	bool b = false;
+	SetupNextWindow();
+	if (ImGui::Begin("Matrix Editor", &m_bShow, IMGUI_STATIC_INFO_FLAGS))
+	{
+		float translation[3];
+		float rotation[3];
+		float scale[3];
+		ImGuizmo::DecomposeMatrixToComponents(matrixToEdit,translation,rotation,scale);
+		
+		if (ImGui::InputFloat3("Translation", translation,"%.1f", ImGuiInputTextFlags_EnterReturnsTrue))
+		{
+			b = true;
+			m_operation = ImGuizmo::TRANSLATE;
+			
+		}
+		if (ImGui::InputFloat3("Rotation", rotation, "%.1f", ImGuiInputTextFlags_EnterReturnsTrue))
+		{
+			b = true;
+			m_operation = ImGuizmo::ROTATE;
+		}
+		if (ImGui::InputFloat3("Scale", scale, "%.1f", ImGuiInputTextFlags_EnterReturnsTrue))
+		{
+			b = true;
+			m_operation = ImGuizmo::SCALE;
+		}
+
+		if (b)
+		{
+			ImGuizmo::RecomposeMatrixFromComponents(translation, rotation, scale, matrixToEdit);
+			ImGuizmo::Manipulate(viewMatrix, projectionMatrix, m_operation, m_mode, matrixToEdit);
+		}
+
+		ImGui::End();
+	}
 	return b;
 }
 

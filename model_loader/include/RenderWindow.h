@@ -28,6 +28,7 @@ private:
 	//matricies
 	glm::mat4 m_cameraMatrix;
 	glm::mat4 m_projectionMatrix;
+	glm::mat4 m_viewMatrix;
 	//programs
 	unsigned int m_uiProgram;
 	unsigned int m_objProgram;
@@ -76,8 +77,11 @@ private:
 	Line* m_lines;
 	int m_lineSize;
 	std::map<std::string,OBJModel*> m_modelMap;
+	//editables
 	glm::vec3 m_clearColor;
 	glm::vec4 m_lightColor;
+	glm::vec3 m_posOffset;
+	
 
 	//input handling
 	std::string m_input;

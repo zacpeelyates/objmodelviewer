@@ -49,9 +49,14 @@ unsigned int OBJModel::GetMaterialCount()
 	return m_matMap.size();
 }
 
-const glm::mat4 OBJModel::GetWorldMatrix()
+glm::mat4 OBJModel::GetWorldMatrix()
 {
 	return m_worldMatrix;
+}
+
+void OBJModel::SetWorldMatrix(glm::mat4 a_inMatrix)
+{
+	m_worldMatrix = a_inMatrix;
 }
 
 bool OBJModel::AddMaterial(OBJMaterial* a_poInMaterial)
