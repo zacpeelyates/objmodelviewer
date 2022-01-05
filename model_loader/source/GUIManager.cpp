@@ -170,7 +170,7 @@ bool GUIManager::ShowSlider(float* valueToEdit, float a_min, float a_max, std::s
 	SetupNextWindow();
 	if (ImGui::Begin(title.c_str(), &m_bShow, IMGUI_STATIC_INFO_FLAGS))
 	{
-		b = ImGui::SliderFloat3(title.c_str(), valueToEdit, a_min, a_max);
+		b = ImGui::SliderFloat(title.c_str(), valueToEdit, a_min, a_max);
 		m_yOffset += PADDING + ImGui::GetWindowHeight();
 	}
 	ImGui::End();
@@ -187,7 +187,8 @@ bool GUIManager::ShowMatrixEditor(float matrixToEdit[16],const float viewMatrix[
 		float rotation[3];
 		float scale[3];
 		ImGuizmo::DecomposeMatrixToComponents(matrixToEdit,translation,rotation,scale);
-		
+		ImGui::Text("    X         Y         Z    "); //probably the worst possible way to do this but oh well
+
 		if (ImGui::InputFloat3("Translation", translation,"%.3f", ImGuiInputTextFlags_EnterReturnsTrue))
 		{
 			b = true;
@@ -210,7 +211,7 @@ bool GUIManager::ShowMatrixEditor(float matrixToEdit[16],const float viewMatrix[
 			ImGuizmo::RecomposeMatrixFromComponents(translation, rotation, scale, matrixToEdit);
 			ImGuizmo::Manipulate(viewMatrix, projectionMatrix, m_operation, m_mode, matrixToEdit);
 		}
-
+		m_yOffset += PADDING + ImGui::GetWindowHeight();
 		ImGui::End();
 	}
 	return b;

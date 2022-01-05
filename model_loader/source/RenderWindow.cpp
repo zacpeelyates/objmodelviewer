@@ -13,7 +13,7 @@
 #include <iostream>
 
 
-RenderWindow::RenderWindow() {};
+RenderWindow::RenderWindow() { m_fov = 60; };
 RenderWindow::~RenderWindow() {}
 
 void RenderWindow::onWindowResize(WindowResizeEvent* e)
@@ -23,7 +23,7 @@ void RenderWindow::onWindowResize(WindowResizeEvent* e)
 		m_windowHeight = e->GetHeight();
 		e->Handled();
 		std::cout << "Window Resize Event" << std::endl << "w: " << m_windowWidth << " h: " << m_windowHeight << std::endl;
-		m_projectionMatrix = glm::perspective(glm::pi<float>() * 0.25f, (float)(m_windowWidth / m_windowHeight), 0.1f, 1000.0f);
+		m_projectionMatrix = glm::perspective(glm::radians(m_fov), (float)(m_windowWidth / m_windowHeight), 0.1f, 1000.0f);
 		glViewport(0, 0, m_windowWidth, m_windowHeight);
 	}
 };
@@ -58,7 +58,7 @@ bool RenderWindow::onCreate()
 
 	//create matricies
 	m_cameraMatrix = glm::inverse(glm::lookAt(glm::vec3(10, 10, 10), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)));
-	m_projectionMatrix = glm::perspective(glm::pi<float>() * 0.25f, (float)(m_windowWidth / m_windowHeight), 0.1f, 1000.0f);
+	m_projectionMatrix = glm::perspective(glm::radians(m_fov), (float)(m_windowWidth / m_windowHeight), 0.1f, 1000.0f);
 
 
 	//lighting
@@ -123,8 +123,6 @@ bool RenderWindow::onCreate()
 
 	return true;
 }
-
-
  
 
 void RenderWindow::Update(float deltaTime)
@@ -177,6 +175,12 @@ void RenderWindow::Update(float deltaTime)
 		{
 			m_objModel->SetWorldMatrix(glm::make_mat4<float>(pModelMatrix)); //set new model matrix
 		}
+	}
+
+	if (gui->ShowSlider(&m_fov, 1, 179, "FOV")) 
+	{
+		m_projectionMatrix = glm::perspective(glm::radians(m_fov), (float)(m_windowWidth / m_windowHeight), 0.1f, 1000.0f);
+		glViewport(0, 0, m_windowWidth, m_windowHeight);
 	}
 
 
@@ -374,7 +378,11 @@ void RenderWindow::Draw()
 {
 	delete m_objModel;
 	delete[] m_lines;
+	glDeleteVertexArrays(1, &m_skyboxVAO);
 	glDeleteBuffers(1, &m_lineVBO);
+	glDeleteBuffers(1, &m_skyboxVBO);
+	glDeleteBuffers(2, &m_objModelBuffer[0]);
 	ShaderManager::DestroyInstance();
 	TextureManager::DestroyInstance();
+	glfwTerminate();
 }

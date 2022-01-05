@@ -81,6 +81,7 @@ private:
 	glm::vec3 m_clearColor;
 	glm::vec4 m_lightColor;
 	glm::vec3 m_posOffset;
+	float m_fov;
 	
 
 	//input handling

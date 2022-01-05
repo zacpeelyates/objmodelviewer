@@ -59,11 +59,11 @@ OBJModel* OBJLoader::OBJProcess(const std::string& a_strFilePath, const bool a_b
 					{
 						if (OBJProcessUtils::ParseStringToInt(value))
 						{
-							//std::cout << "smoothing group " << stoi(value) << std::endl;
+							std::cout << "smoothing group " << stoi(value) << std::endl;
 						}
 						else if (value == "off")
 						{
-							//std::cout << "disabling smoothing groups" << std::endl;
+							std::cout << "disabling smoothing groups" << std::endl;
 						}
 					}
 					else if (key == "v") 
@@ -169,12 +169,12 @@ OBJModel* OBJLoader::OBJProcess(const std::string& a_strFilePath, const bool a_b
 		}
 	}
 
-	float scale = 5;
+	float scale = 5.0f;
 	for (unsigned int i = 0; i < oLoadedData->GetMeshCount(); ++i)
 	{
 		for (OBJVertex& v : oLoadedData->GetMesh(i)->m_verts)
 		{
-			v.TranslatePosition(glm::vec3(0, -min.y, 0));//puts object at 0,0,0 world space
+			v.TranslatePosition(glm::vec3(0, -min.y, 0));//align base of object with Y axis
 			v.SetPosition(v.GetPosition() *= scale/(max - min));
 		}
 	}
