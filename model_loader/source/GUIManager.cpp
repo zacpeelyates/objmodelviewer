@@ -188,18 +188,18 @@ bool GUIManager::ShowMatrixEditor(float matrixToEdit[16],const float viewMatrix[
 		float scale[3];
 		ImGuizmo::DecomposeMatrixToComponents(matrixToEdit,translation,rotation,scale);
 		
-		if (ImGui::InputFloat3("Translation", translation,"%.1f", ImGuiInputTextFlags_EnterReturnsTrue))
+		if (ImGui::InputFloat3("Translation", translation,"%.3f", ImGuiInputTextFlags_EnterReturnsTrue))
 		{
 			b = true;
 			m_operation = ImGuizmo::TRANSLATE;
 			
 		}
-		if (ImGui::InputFloat3("Rotation", rotation, "%.1f", ImGuiInputTextFlags_EnterReturnsTrue))
+		if (ImGui::InputFloat3("Rotation", rotation, "%.3f", ImGuiInputTextFlags_EnterReturnsTrue))
 		{
 			b = true;
 			m_operation = ImGuizmo::ROTATE;
 		}
-		if (ImGui::InputFloat3("Scale", scale, "%.1f", ImGuiInputTextFlags_EnterReturnsTrue))
+		if (ImGui::InputFloat3("Scale", scale, "%.3f", ImGuiInputTextFlags_EnterReturnsTrue))
 		{
 			b = true;
 			m_operation = ImGuizmo::SCALE;

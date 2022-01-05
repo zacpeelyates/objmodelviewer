@@ -196,7 +196,7 @@ bool RenderWindow::OBJSetup(std::string a_filename)
 		OBJMaterial* currentMaterial = m_objModel->GetMaterial(i);
 		for (int j = 0; j < OBJMaterial::TextureTypes_Count; ++j)
 		{
-			if (currentMaterial->textureFileNames[j].size() > 0)
+			if (!currentMaterial->textureFileNames[j].empty())
 			{
 				currentMaterial->textureIDs[j] = pTexM->LoadTexture(currentMaterial->textureFileNames[j].c_str());
 			}
@@ -223,7 +223,7 @@ void RenderWindow::Draw()
 	glEnableVertexAttribArray(1);
 	//tell opengl where array is, no of element components, data type, normalization
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
-	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), ((char*)nullptr) + sizeof(float)*3); //x3 because vec3 used for position data
+	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (char*)nullptr + sizeof(float)*3); //x3 because vec3 used for position data
 	//draw line grid
 	glDrawArrays(GL_LINES, 0, (m_lineSize *2) + 10);
 
@@ -332,9 +332,9 @@ void RenderWindow::Draw()
 			glEnableVertexAttribArray(1); //normal
 			glEnableVertexAttribArray(2); //UVs
 
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(OBJVertex), ((char*)0) + OBJVertex::Offsets::POS); //vec3 pos
-			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(OBJVertex), ((char*)0) + OBJVertex::Offsets::NORMAL); //vec3 normal
-			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(OBJVertex), ((char*)0) + OBJVertex::Offsets::UVCOORD); //vec2 UVs
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(OBJVertex), (char*)0 + OBJVertex::Offsets::POS); //vec3 pos
+			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(OBJVertex), (char*)0 + OBJVertex::Offsets::NORMAL); //vec3 normal
+			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(OBJVertex), (char*)0 + OBJVertex::Offsets::UVCOORD); //vec2 UVs
 
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_objModelBuffer[1]);
 			glBufferData(GL_ELEMENT_ARRAY_BUFFER, currentMesh->m_indicies.size() * sizeof(unsigned int), currentMesh->m_indicies.data(), GL_STATIC_DRAW);

@@ -153,7 +153,7 @@ OBJModel* OBJLoader::OBJProcess(const std::string& a_strFilePath, const bool a_b
 	glm::vec3 min(std::numeric_limits<float>::max());
 	glm::vec3 max(std::numeric_limits<float>::min());
 	//get model bounding box 
-	for (int i = 0; i < oLoadedData->GetMeshCount(); ++i)
+	for (unsigned int i = 0; i < oLoadedData->GetMeshCount(); ++i)
 	{
 		for (OBJVertex v : oLoadedData->GetMesh(i)->m_verts) 
 		{
@@ -169,13 +169,12 @@ OBJModel* OBJLoader::OBJProcess(const std::string& a_strFilePath, const bool a_b
 		}
 	}
 
-	float scale = 10.0f;
-	//scale to new box size (10,10,10) | (scale,scale,scale)
-	for (int i = 0; i < oLoadedData->GetMeshCount(); ++i)
+	float scale = 5;
+	for (unsigned int i = 0; i < oLoadedData->GetMeshCount(); ++i)
 	{
 		for (OBJVertex& v : oLoadedData->GetMesh(i)->m_verts)
 		{
-			v.TranslatePosition(glm::vec3(0, -min.y, 0));
+			v.TranslatePosition(glm::vec3(0, -min.y, 0));//puts object at 0,0,0 world space
 			v.SetPosition(v.GetPosition() *= scale/(max - min));
 		}
 	}
