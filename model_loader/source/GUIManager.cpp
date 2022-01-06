@@ -217,5 +217,14 @@ bool GUIManager::ShowMatrixEditor(float matrixToEdit[16],const float viewMatrix[
 	return b;
 }
 
+void GUIManager::ShowViewEditor(float* viewMatrix,float a_length)
+{
+	int corner = 1;
+	ImGuiIO& io = ImGui::GetIO();
+	ImVec2 size = ImVec2(100, 100);
+	ImVec2 windowPos = ImVec2((corner & 1) ? io.DisplaySize.x - (PADDING + size.x)  : PADDING + size.x, (corner & 2) ? io.DisplaySize.y - (PADDING + size.y) : PADDING + size.y);
+	ImGuizmo::ViewManipulate(viewMatrix, a_length, windowPos, size, ImColor(0.5f, 0.5f, 0.5f, 0.5f));
+}
+
 
 

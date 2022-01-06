@@ -18,5 +18,5 @@ void main()
 	vertUV = uvCoord;
 	vertNormal = normal;
 	vertPos = (ModelMatrix * pos4).xyz;
-	gl_Position = ProjectionViewMatrix * ModelMatrix * pos4;
+	gl_Position = (ProjectionViewMatrix * ModelMatrix) * pos4;
 }

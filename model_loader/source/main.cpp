@@ -12,7 +12,7 @@ int main(int argc, char* argv[])
 {
 	//Main entry point of application
 	RenderWindow* modelApp = new RenderWindow();
-	modelApp->Run("Model Loader",1920,1080,false);
+	modelApp->Run("Model Loader",1280,720,false);
 	delete modelApp;
 	return 0;
 }

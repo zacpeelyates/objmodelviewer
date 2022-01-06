@@ -49,6 +49,6 @@ void main()
 
 	float SpecTerm = pow(max(0.0f,dot(R,E)),nS);
 	vec3 Specular = kS * iS * SpecTerm * specularData;
-	outputColor = vec4((Ambient + Diffuse + Specular), 1.0f) * lightColor;
+	outputColor = vec4((Ambient + Diffuse + Specular), 1.0f) + lightColor;
 }
 

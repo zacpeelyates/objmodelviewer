@@ -62,7 +62,7 @@ bool RenderWindow::onCreate()
 
 
 	//lighting
-	m_lightColor = glm::vec4(1, 1, 1,1);
+	m_lightColor = glm::vec4(0);
 	//set shader programs
 	//obj
 	GLuint vertexShader = ShaderManager::LoadShader("resource/shaders/obj_vertex.glsl", GL_VERTEX_SHADER);
@@ -112,7 +112,8 @@ bool RenderWindow::onCreate()
 	glGenBuffers(1, &m_skyboxVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, m_skyboxVBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(m_skyboxVertices), m_skyboxVertices, GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER,0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
 
 	//model
 	glGenBuffers(2, m_objModelBuffer);
@@ -120,6 +121,10 @@ bool RenderWindow::onCreate()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_objModelBuffer[1]);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	//enable guizmo
+	ImGuizmo::Enable(true);
+	ImGuizmo::SetImGuiContext(ImGui::GetCurrentContext());
 
 	return true;
 }
@@ -166,7 +171,7 @@ void RenderWindow::Update(float deltaTime)
 		glClearColor(m_clearColor.x, m_clearColor.y, m_clearColor.z, 1.0f);
 	}
 	
-	gui->ShowColorEditor(&m_lightColor.x, "Light Color",true);
+	gui->ShowColorEditor(&m_lightColor.x, "Light Color");
 
 	if (m_objModel != nullptr) 
 	{
@@ -182,6 +187,10 @@ void RenderWindow::Update(float deltaTime)
 		m_projectionMatrix = glm::perspective(glm::radians(m_fov), (float)(m_windowWidth / m_windowHeight), 0.1f, 1000.0f);
 		glViewport(0, 0, m_windowWidth, m_windowHeight);
 	}
+
+	float* pCameraMatrix = (float*)glm::value_ptr(m_cameraMatrix);
+	gui->ShowViewEditor(pCameraMatrix, 0.1f);
+	m_cameraMatrix = glm::make_mat4<float>(pCameraMatrix);
 
 
 }
@@ -214,7 +223,7 @@ void RenderWindow::Draw()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	//enable shaders
 	glUseProgram(m_uiProgram);
-	//get view matrix from camera matrix in world space
+	//get view matrix from camera matrix in world space 
 	m_viewMatrix = glm::inverse(m_cameraMatrix);
 	glm::mat4 projectionViewMatrix = m_projectionMatrix * m_viewMatrix;
 	//get projection view matrix var location from shader file

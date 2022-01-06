@@ -60,9 +60,11 @@ void Application::Run(const char* a_name, unsigned int a_width, unsigned int a_h
 	{
 		Utilities::TimerReset();
 		m_running = true;
+		glfwSetWindowAspectRatio(m_window, 16, 9);
+		GUIManager* gui = GUIManager::GetInstance();
 		do
 		{
-			GUIManager* gui = GUIManager::GetInstance();
+			
 			gui->NewFrame();
 
 			//ImGui Info Window

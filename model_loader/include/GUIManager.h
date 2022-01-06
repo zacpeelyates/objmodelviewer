@@ -26,6 +26,8 @@ public:
 
 	bool ShowMatrixEditor(float matrixToEdit[16], const float viewMatrix[16], const float projectionMatrix[16]);
 
+	void ShowViewEditor(float* viewMatrix, float a_length);
+
 	
 	
 
