@@ -72,7 +72,7 @@ bool Texture::LoadCubemap(std::string a_inFileDirectory)
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_CUBE_MAP_SEAMLESS, GL_TRUE);
+	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 	std::cout << "Loaded Cubemap at: " << a_inFileDirectory << std::endl;
 	return true;
 }
