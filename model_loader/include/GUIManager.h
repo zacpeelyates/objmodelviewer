@@ -24,9 +24,11 @@ public:
 
 	bool ShowSlider(float* valueToEdit, float a_min, float a_max, std::string title);
 
-	bool ShowMatrixEditor(float matrixToEdit[16], const float viewMatrix[16], const float projectionMatrix[16]);
+	bool ShowMatrixEditWindow(float matrixToEdit[16], const float viewMatrix[16], const float projectionMatrix[16]);
 
-	void ShowViewEditor(float* viewMatrix, float a_length);
+	bool ShowMatrixEditGizmo(float matrixToEdit[16], const float viewMatrix[16], const float projectionMatrix[16]);
+
+	void ShowViewEditGizmo(float* viewMatrix, float a_length);
 
 	
 	

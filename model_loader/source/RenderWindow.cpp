@@ -175,11 +175,15 @@ void RenderWindow::Update(float deltaTime)
 
 	if (m_objModel != nullptr) 
 	{
+		//GUI elements that require a model to be loaded
 		float* pModelMatrix = (float*)glm::value_ptr(m_objModel->GetWorldMatrix()); //get model matrix
-		if (gui->ShowMatrixEditor(pModelMatrix, (const float*)glm::value_ptr(m_viewMatrix), (const float*)glm::value_ptr(m_projectionMatrix))) //edit model matrix
+		if (gui->ShowMatrixEditWindow(pModelMatrix, (const float*)glm::value_ptr(m_viewMatrix), (const float*)glm::value_ptr(m_projectionMatrix)) //manual input window
+		 || gui->ShowMatrixEditGizmo(pModelMatrix, (const float*)glm::value_ptr(m_viewMatrix), (const float*)glm::value_ptr(m_projectionMatrix))) //click-drag gizmo
 		{
+			//change model matrix if it was edited in any way 
 			m_objModel->SetWorldMatrix(glm::make_mat4<float>(pModelMatrix)); //set new model matrix
 		}
+		
 	}
 
 	if (gui->ShowSlider(&m_fov, 1, 179, "FOV")) 
@@ -189,7 +193,7 @@ void RenderWindow::Update(float deltaTime)
 	}
 
 	float* pCameraMatrix = (float*)glm::value_ptr(m_cameraMatrix);
-	gui->ShowViewEditor(pCameraMatrix, 0.1f);
+	gui->ShowViewEditGizmo(pCameraMatrix, 0.1f);
 	m_cameraMatrix = glm::make_mat4<float>(pCameraMatrix);
 
 
