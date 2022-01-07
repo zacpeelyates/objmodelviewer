@@ -107,6 +107,7 @@ bool RenderWindow::onCreate()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	//skybox
+
 	glGenVertexArrays(1, &m_skyboxVAO);
 	glBindVertexArray(m_skyboxVAO);
 	glGenBuffers(1, &m_skyboxVBO);
@@ -368,21 +369,22 @@ void RenderWindow::Draw()
 	}
 
 	//draw skybox
-	glDepthFunc(GL_LEQUAL);
 	glUseProgram(m_skyboxProgram);
 	projectionViewMatrix = glm::mat4(glm::mat3(projectionViewMatrix)); //remove translation
 	projectionViewMatrixUniformLocation = glGetUniformLocation(m_skyboxProgram, "ProjectionViewMatrix");
+	glUniformMatrix4fv(projectionViewMatrixUniformLocation, 1,GL_FALSE, glm::value_ptr(projectionViewMatrix));
 	glBindBuffer(GL_ARRAY_BUFFER, m_skyboxVBO);
 	glBindVertexArray(m_skyboxVAO);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0); //vec3 UVCoords in shader
-	int SkyboxTextureUniformLocation = glGetUniformLocation(m_skyboxProgram, "skybox");
-	glUniform1i(SkyboxTextureUniformLocation,0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float)*3, (void*)0);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_CUBE_MAP,m_skyboxID);
+	glDepthFunc(GL_LEQUAL);
+	glFrontFace(GL_CW);
 	glDrawArrays(GL_TRIANGLES, 0, 36); //108 floats in skyboxverticies/3 (each vertex is 3 floats)
+	glFrontFace(GL_CCW);
+	glDepthFunc(GL_LESS);
 	glBindVertexArray(0);
-	glDepthFunc(GL_LESS); //set to default depth test
 	//release program
 	glUseProgram(0);
 }

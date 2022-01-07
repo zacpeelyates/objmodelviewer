@@ -60,7 +60,7 @@ bool Texture::LoadCubemap(std::string a_inFileDirectory)
 	for (int i = 0; i < 6; ++i) 
 	{
 		std::string filepath = a_inFileDirectory + "/" + faces[i] + fileType;
-		unsigned char* imageData = stbi_load(filepath.c_str(), &width, &height, &channels, 0);
+		unsigned char* imageData = stbi_load(filepath.c_str(), &width, &height, &channels, 3);
 		if (imageData == nullptr) return false;
 		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, imageData);
 		m_width += width;
