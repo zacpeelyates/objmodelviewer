@@ -1,7 +1,10 @@
-#include <glm.hpp>
-#include <vector>
-#include <string>
+#ifndef OBJDATATYPES_H
+#define OBJDATATYPES_H
+
+#include "glm.hpp"
 #include <map>
+#include <string>
+#include <vector>
 
 
 
@@ -128,3 +131,4 @@ private:
 	std::map<std::string, OBJMaterial*> m_matMap;
 	glm::mat4 m_worldMatrix;
 };
+#endif // OBJDATATYPES_H

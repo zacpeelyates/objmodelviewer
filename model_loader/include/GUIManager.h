@@ -1,10 +1,10 @@
-#pragma once
-#include <imgui.h>
-#include <imgui_impl_opengl3.h>
-#include <imgui_impl_glfw.h>
+
+#ifndef GUIMANAGER_H
+#define GUIMANAGER_H
 #include <string>
 #include <vector>
-#include <ImGuizmo.h> //https://github.com/CedricGuillemet/ImGuizmo -- extentions for ImGUI
+#include "ImGuizmo.h" //https://github.com/CedricGuillemet/ImGuizmo -- extentions for ImGUI
+#include "imgui_impl_glfw.h"
 
 class GUIManager 
 {
@@ -50,3 +50,4 @@ private:
 };
 
 #define IMGUI_STATIC_INFO_FLAGS ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav
+#endif // GUIMANAGER_H

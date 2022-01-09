@@ -1,6 +1,12 @@
 #include "OBJProcessUtils.h"
 #include <sstream>
-
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// File:	OBJProcessUtils.cpp
+// Author: Zac Peel-Yates (s1703955)
+// Date Created: 30/09/21
+// Last Edited:  01/01/21
+// Brief: Helper functions for processing obj files
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 std::vector<std::string> OBJProcessUtils::SplitStringAtChar(std::string a_strData, char a_cDelimiter)
 {
 	//Splits a string at give char and returns a vector of all the parts 

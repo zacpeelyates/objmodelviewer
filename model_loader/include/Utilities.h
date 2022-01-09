@@ -27,11 +27,6 @@ public:
 	static char* FileToBuffer(const std::string a_strFilePath);
 	static char* FileToBuffer(const std::string a_strFilePath, std::streamsize& a_rFileSize);
 
-	//utilities for file handling
-	static std::string GetFileDirectory(const std::string a_strFilePath);
-	static std::string GetFileName(const std::string a_strFilePath);
-	static std::string GetFileType(const std::string a_strFilePath);
-
 	//camera movement utiltiy
 	static void FreeMovement(glm::mat4& a_m4Transform, float a_fDeltaTime = 1.0f / 60.0f, float a_fSpeed = 2.0f, const glm::vec3& a_v3Up = { 0,1,0 });
 };

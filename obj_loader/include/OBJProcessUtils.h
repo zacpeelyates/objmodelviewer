@@ -1,5 +1,8 @@
-#include <vector>
+
+#ifndef OBJPROCESSUTILS_H
+#define OBJPROCESSUTILS_H
 #include <string>
+#include <vector>
 class OBJProcessUtils {
 public:
 	static std::vector<std::string> SplitStringAtChar(std::string a_strData, char a_cDelimiter);
@@ -8,3 +11,4 @@ public:
 	static std::string GetFileType(const std::string a_strFilePath);
 	static std::string GetFileName(const std::string a_strFilePath);
 };
+#endif // OBJPROCESSUTILS_H

@@ -1,4 +1,6 @@
-#pragma once
+
+#ifndef TEXTURE_H
+#define TEXTURE_H
 #include <string>
 
 class Texture 
@@ -20,3 +22,4 @@ private:
 	unsigned int m_textureID;
 };
 
+#endif // TEXTURE_H

@@ -1,9 +1,11 @@
+#ifndef RENDERWINDOW_H
+#define RENDERWINDOW_H
+#include <map>
+#include <string>
+#include <vector>
 #include "Application.h"
 #include "Event.h"
-#include <glm.hpp>
-#include <vector>
-#include <string>
-#include <map>
+#include "glm.hpp"
 
 class OBJModel;
 
@@ -140,3 +142,4 @@ private:
 	};
 
 };
+#endif // RENDERWINDOW_H

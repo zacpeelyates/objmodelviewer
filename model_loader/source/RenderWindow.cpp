@@ -12,8 +12,15 @@
 #include <ext.hpp> //glm ext
 #include <iostream>
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// File:	RenderWindow.cpp
+// Author: Zac Peel-Yates (s1703955)
+// Date Created: 4/11/21
+// Last Edited:  09/01/22
+// Brief: Inherits from Application base class, facilitates drawing of scene. 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-RenderWindow::RenderWindow() { m_fov = 60; };
+RenderWindow::RenderWindow() { m_fov = 90; }; //default fov 90
 RenderWindow::~RenderWindow() {}
 
 void RenderWindow::onWindowResize(WindowResizeEvent* e)
@@ -51,12 +58,12 @@ bool RenderWindow::onCreate()
 	glClearColor(m_clearColor.x,m_clearColor.y,m_clearColor.z,1.0f);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
-	glClearDepth(1.0f);
+	glClearDepth(1.0);
 
 	//set viewport
 	glViewport(0, 0, m_windowWidth, m_windowHeight);
 
-	//create matricies
+	//create camera and projection matrix
 	m_cameraMatrix = glm::inverse(glm::lookAt(glm::vec3(10, 10, 10), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)));
 	m_projectionMatrix = glm::perspective(glm::radians(m_fov), (float)(m_windowWidth / m_windowHeight), 0.1f, 1000.0f);
 

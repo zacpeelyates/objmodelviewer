@@ -1,7 +1,9 @@
-#pragma once
 
 
 //base event class
+#ifndef EVENT_H
+#define EVENT_H
+
 class Event 
 {
 public:
@@ -30,3 +32,4 @@ private:
 	unsigned int m_height;
 
 };
+#endif // EVENT_H

@@ -1,4 +1,6 @@
 
+#ifndef APPLICATION_H
+#define APPLICATION_H
 struct GLFWwindow;
 class Application
 {
@@ -21,3 +23,4 @@ protected:
 	bool m_running;
 
 };
+#endif // APPLICATION_H

@@ -3,13 +3,12 @@
 // File: Utilities.cpp
 // Author: Zac Peel-Yates (s1703955)
 // Date Created: 30/09/21
-// Last Edited:  04/10/21
+// Last Edited:  09/01/22
 // Brief: Collection of useful function implementations used across the project that don't have a home anywhere else :( 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #include "Utilities.h"
 #include <sstream>
 #include <fstream>
-#include <iostream>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -24,6 +23,7 @@ static float  s_deltaTime = 0;
 
 void Utilities::TimerReset()
 {
+	//reset timer statics
 	s_prevTime = glfwGetTime();
 	s_totalTime = 0;
 	s_deltaTime = 0;
@@ -31,6 +31,7 @@ void Utilities::TimerReset()
 
 float Utilities::TimerTick()
 {
+	//incrememnt totaltime, return new deltatime
 	double currentTime = glfwGetTime();
 	s_deltaTime = (float)(currentTime - s_prevTime);
 	s_totalTime += s_deltaTime;
@@ -59,67 +60,28 @@ char* Utilities::FileToBuffer(const std::string a_strFilePath)
 
 char* Utilities::FileToBuffer(const std::string a_strFilePath, std::streamsize& a_rFileSize)
 {
+	//load file into char* buffer
 	std::fstream file;
 	file.open(a_strFilePath, std::ios_base::in | std::ios_base::binary);
 	if (file.is_open())
 	{
 		file.ignore(std::numeric_limits<std::streamsize>::max());
-		a_rFileSize = file.gcount();
+		a_rFileSize = file.gcount(); //store filesize in passed buffer
 		file.clear();
 		file.seekg(0, std::ios_base::beg);
 		if (a_rFileSize == 0)
 		{
+			//early exit if file is empty
 			file.close();
 			return nullptr;
 		}
-		char* databuffer = new char[a_rFileSize + 1];
+		char* databuffer = new char[a_rFileSize + 1]; //create appropriately-sized buffer
 		memset(databuffer, 0, a_rFileSize + 1); //clear buffer
-		file.read(databuffer, a_rFileSize);
+		file.read(databuffer, a_rFileSize); //read data into buffer
 		file.close();
 		return databuffer;
 	}
 	return nullptr;
-}
-
-//file information utility definitions
-std::string Utilities::GetFileName(const std::string a_strFilePath)
-{
-	//returns the file name with no preceeding path or extention
-	return a_strFilePath.substr(a_strFilePath.rfind('/') + 1, a_strFilePath.rfind('.'));
-}
-
-std::string Utilities::GetFileType(const std::string a_strFilePath)
-{
-	//returns the file extention with no preceeding name or path
-	return a_strFilePath.substr(a_strFilePath.rfind('.') + 1);
-}
-
-std::string Utilities::GetFileDirectory(const std::string a_strFilePath)
-{
-	//returns directory the file is contained in
-	return a_strFilePath.substr(0, a_strFilePath.rfind('/') + 1);
-}
-
-
-//parsing function definitions
-std::vector<std::string> Utilities::SplitStringAtChar(std::string a_strData, char a_cDelimiter)
-{
-	//Splits a string at give char and returns a vector of all the parts 
-	std::vector<std::string> outVec;
-	std::stringstream ss(a_strData);
-	std::string segment;
-	while (std::getline(ss, segment, a_cDelimiter))
-	{
-		outVec.push_back(segment);
-	}
-	return outVec;
-}
-
-bool Utilities::ParseStringToInt(std::string& a_rStrIn)
-{
-	//Checks if given string can be parsed to an integer
-	if (a_rStrIn.empty()) return false;
-	return std::find_if(a_rStrIn.begin(), a_rStrIn.end(), [](unsigned char c) {return !std::isdigit(c); }) == a_rStrIn.end();
 }
 
 //camera function
@@ -137,7 +99,7 @@ void Utilities::FreeMovement(glm::mat4& a_m4Transform, float a_fDeltaTime, float
 	float defactoSpeed = a_fDeltaTime * a_fSpeed;
 	float framespeed = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS ? defactoSpeed * 2.0f : defactoSpeed;
 
-
+	//movement / translationm
 	if (glfwGetKey(window, 'W') == GLFW_PRESS)
 	{
 		v4Translation -= v4Forward * framespeed;
@@ -176,7 +138,7 @@ void Utilities::FreeMovement(glm::mat4& a_m4Transform, float a_fDeltaTime, float
 			sbMouse2ButtonDown = true;
 			glfwGetCursorPos(window, &sdPrevMouseX, &sdPrevMouseY);
 		}
-
+		//get mouse movement delta 
 		double mouseX, mouseY;
 		glfwGetCursorPos(window, &mouseX, &mouseY);
 
@@ -205,7 +167,7 @@ void Utilities::FreeMovement(glm::mat4& a_m4Transform, float a_fDeltaTime, float
 			v4Up = m4Temp * v4Up;
 			v4Forward = m4Temp * v4Forward;
 		}
-
+		//assign new values to transformed matrix 
 		a_m4Transform[0] = v4Right;
 		a_m4Transform[1] = v4Up;
 		a_m4Transform[2] = v4Forward;

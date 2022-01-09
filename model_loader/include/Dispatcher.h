@@ -1,11 +1,11 @@
-#pragma once
-#include "Event.h"
-#include <map>
+
+#ifndef DISPATCHER_H
+#define DISPATCHER_H
 #include <list>
-#include <functional>
-#include <typeinfo>
+#include <map>
 #include <typeindex>
-#include <algorithm>
+#include <typeinfo>
+#include "Event.h"
 
 class Observer
 {
@@ -110,3 +110,4 @@ protected:
 		static Dispatcher* m_instance;
 
 };
+#endif // DISPATCHER_H

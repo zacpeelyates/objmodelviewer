@@ -5,6 +5,14 @@
 #include <iostream>
 #include <glm.hpp>
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// File:	obj_Loader.cpp
+// Author: Zac Peel-Yates (s1703955)
+// Date Created: 30/09/21
+// Last Edited:  01/01/21
+// Brief: Parses an .obj file (and any .mtl files it refs) and returns an OBJModel object
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 //declare these here as they're only needed in this cpp file.
 glm::vec4 OBJGetVectorFromValue(const std::string a_strValue);
 bool OBJGetKeyValuePairFromLine(const std::string& a_rStrLine, std::string& a_rStrOutKey, std::string& a_rStrOutValue);
@@ -13,15 +21,18 @@ OBJModel* OBJLoader::OBJProcess(const std::string& a_strFilePath, const bool a_b
 {
 	if (OBJProcessUtils::GetFileType(a_strFilePath) != "obj") 
 	{
+		//if we aren't looking at an OBJ file return nullptr
 		std::cout << "File Type Incompatible!" << std::endl;
 		return nullptr;
 	}
+	//setup
 	OBJModel* oLoadedData = new OBJModel();
 	std::string line,key,value;
 	OBJMesh* currentMesh = nullptr;
 	std::vector<glm::vec3> vertexData, normalData;
 	std::vector<glm::vec2> textureData;
 	std::fstream file;
+	//open file 
 	file.open(a_strFilePath, std::ios_base::in | std::ios_base::binary);
 	if (!file.is_open()) 
 	{
@@ -30,20 +41,20 @@ OBJModel* OBJLoader::OBJProcess(const std::string& a_strFilePath, const bool a_b
 	}
 	while (!file.eof())
 	{
-		if (std::getline(file, line))
+		if (std::getline(file, line)) //read each line fo file 
 		{
-			if (line.size() > 0) 
+			if (!line.empty()) //check line has content before processing
 			{
 				if (OBJGetKeyValuePairFromLine(line, key, value)) 
 				{
-					if (key[0] == '#')
+					if (key[0] == '#') //comment
 					{
 						if (a_bPrintComments)
 						{
 							std::cout << value << std::endl;
 						}
 					}
-					else if (key == "g" || key == "o")
+					else if (key == "g" || key == "o") //group/object, Blender treats them as identical so I will also
 					{
 						OBJGroup* g = new OBJGroup();
 						g->name = value;
@@ -55,7 +66,7 @@ OBJModel* OBJLoader::OBJProcess(const std::string& a_strFilePath, const bool a_b
 						if (oLoadedData->AddGroup(g)) std::cout << "added group" << value << std::endl;
 						else std::cout << "failed to add group " << value << std::endl;
 					}
-					else if (key == "s")
+					else if (key == "s") //smoothing group (not used currently)
 					{
 						if (OBJProcessUtils::ParseStringToInt(value))
 						{
@@ -66,19 +77,19 @@ OBJModel* OBJLoader::OBJProcess(const std::string& a_strFilePath, const bool a_b
 							std::cout << "disabling smoothing groups" << std::endl;
 						}
 					}
-					else if (key == "v") 
+					else if (key == "v")  //vertex data
 					{
 						vertexData.push_back(OBJGetVectorFromValue(value));
 					}
-					else if (key == "vn")
+					else if (key == "vn") //normal data
 					{
 						normalData.push_back(OBJGetVectorFromValue(value));
 					}
-					else if (key == "vt")
+					else if (key == "vt") //texture data
 					{
 						textureData.push_back(OBJGetVectorFromValue(value));
 					}
-					else if (key == "usemtl")
+					else if (key == "usemtl") //use loaded material file
 					{
 						OBJMaterial* m = nullptr;
 						if (currentMesh == nullptr)
@@ -97,11 +108,11 @@ OBJModel* OBJLoader::OBJProcess(const std::string& a_strFilePath, const bool a_b
 						}					
 						
 					}
-					else if (key == "mtllib") 
+					else if (key == "mtllib") //load a new material file
 					{
 						OBJLoadMaterials(OBJProcessUtils::GetFileDirectory(a_strFilePath) + value,*oLoadedData,a_bPrintComments);
 					}
-					else if (key == "f") 
+					else if (key == "f") //face data
 					{										
 						if (currentMesh == nullptr)
 						{
@@ -121,6 +132,7 @@ OBJModel* OBJLoader::OBJProcess(const std::string& a_strFilePath, const bool a_b
 						bool hasNormals = !normalData.empty();
 						for (unsigned int offset = 1; offset < (faceComponents.size() - 1); ++offset)
 						{
+							//add normal data
 							currentMesh->m_indicies.push_back(ci);
 							currentMesh->m_indicies.push_back(ci + offset);
 							currentMesh->m_indicies.push_back(ci + offset + 1);
@@ -174,7 +186,7 @@ OBJModel* OBJLoader::OBJProcess(const std::string& a_strFilePath, const bool a_b
 	{
 		for (OBJVertex& v : oLoadedData->GetMesh(i)->m_verts)
 		{
-			v.TranslatePosition(glm::vec3(0, -min.y, 0));//align base of object with Y axis
+			v.TranslatePosition(glm::vec3(0, -min.y, 0));//align base of object with Y axis ((translate each vertex down by minY)
 			v.SetPosition(v.GetPosition() *= scale/(max - min));
 		}
 	}
@@ -188,6 +200,7 @@ OBJModel* OBJLoader::OBJProcess(const std::string& a_strFilePath, const bool a_b
 
 bool OBJLoader::OBJLoadMaterials(const std::string& a_strFilePath, OBJModel& a_roLoadedData, const bool a_bPrintComments)
 {
+	//take in and process .mtl file, similar structure to OBJProcess, but different keys are used.
 	std::fstream file;
 	file.open(a_strFilePath, std::ios_base::in | std::ios_base::binary);
 	if (!file.is_open())
@@ -201,7 +214,7 @@ bool OBJLoader::OBJLoadMaterials(const std::string& a_strFilePath, OBJModel& a_r
 		{
 			if (std::getline(file, line))
 			{
-				if (line.size() > 0) {
+				if (!line.empty()) {
 					std::string key;
 					std::string value;
 
@@ -281,6 +294,11 @@ bool OBJLoader::OBJLoadMaterials(const std::string& a_strFilePath, OBJModel& a_r
 
 							std::cout << "Texture file at: " << textureFileName << " type: " << mapType << std::endl;
 
+							if(currentMaterial == nullptr)
+							{
+								currentMaterial = new OBJMaterial();
+							}
+
 							if (mapType == "Kd") //diffuse map
 							{
 								currentMaterial->textureFileNames[OBJMaterial::DiffuseTexture] = textureFileName;
@@ -347,7 +365,7 @@ glm::vec4 OBJGetVectorFromValue(const std::string ac_strValue)
 {
 	//parses given string into a vec4 -- this vector is implicity cast to the correct size when assigned (dangerous,scary)
 	std::stringstream ss(ac_strValue);
-	glm::vec4 outVertex;
+	glm::vec4 outVertex = {0,0,0,0};
 	int i = 0;
 	for (std::string s; ss >> s; ++i)
 	{

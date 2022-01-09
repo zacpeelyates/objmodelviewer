@@ -1,6 +1,16 @@
 
 #include "OBJDatatypes.h"
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// File:	OBJDatatypes.cpp
+// Author: Zac Peel-Yates (s1703955)
+// Date Created: 30/09/21
+// Last Edited:  01/01/21
+// Brief: Function implementations for various OBJ data classes
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//OBJmodel
+
 bool OBJModel::AddGroup(OBJGroup* ao_groupIn)
 {
 	if (m_groupMap.find(ao_groupIn->name) == m_groupMap.end()) 
@@ -74,6 +84,8 @@ void OBJModel::AddMesh(OBJMesh* a_InMesh)
 	m_meshes.push_back(a_InMesh);
 }
 
+//OBJVertex
+
 glm::vec3 OBJVertex::GetPosition()
 {
 	return m_pos;
@@ -120,6 +132,8 @@ bool OBJVertex::operator<(const OBJVertex& a_oOther) const
 	return memcmp(this, &a_oOther, sizeof(OBJVertex)) < 0;
 }
 
+//OBJMesh
+
 glm::vec3 OBJMesh::calculateFaceNormal(const unsigned int& a_indexA, const unsigned int& a_indexB, const unsigned int& a_indexC)
 {
 	glm::vec3 a = m_verts[a_indexA].GetPosition();
@@ -138,6 +152,8 @@ void OBJMesh::CalculateUnassignedFaceNormals()
 		m_verts[i+2].SetNormal(n);
 	}
 }
+
+//OBJMaterial
 
 glm::vec3 OBJMaterial::GetAmbience()
 {
@@ -163,6 +179,7 @@ float OBJMaterial::GetTransparency()
 {
 	return transparency;
 }
+
 void OBJMaterial::SetAmbience(glm::vec3 a_inv3)
 {
 	ambience = a_inv3;

@@ -1,5 +1,6 @@
+#ifndef OBJ_LOADER_H
+#define OBJ_LOADER_H
 #include "OBJDatatypes.h"
-#include <fstream>
 class OBJLoader {
 	public:
 
@@ -13,3 +14,4 @@ class OBJLoader {
 		static std::map<std::string, OBJModel*> m_modelMap;
 	
 };
+#endif // OBJ_LOADER_H

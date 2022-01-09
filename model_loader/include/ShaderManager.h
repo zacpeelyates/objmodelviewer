@@ -1,7 +1,6 @@
 
-#ifndef __SHADER_UTILITIES_H__
-#define __SHADER_UTILITIES_H__
-#include <glad/glad.h>
+#ifndef SHADERMANAGER_H
+#define SHADERMANAGER_H
 #include <string>
 #include <map>
 class ShaderManager {
@@ -32,5 +31,6 @@ private:
 	void DeleteProgramInternal(unsigned int a_uiProgramID);
 	
 };
-#endif // !__SHADER_UTILITIES_H__
 
+
+#endif // SHADERMANAGER_H
