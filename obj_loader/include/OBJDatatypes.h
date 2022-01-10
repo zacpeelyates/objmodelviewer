@@ -1,3 +1,13 @@
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// File:	OBJDatatypes.cpp
+// Author: Zac Peel-Yates (s1703955)
+// Date Created: 30/09/21
+// Last Edited:  01/01/21
+// Brief: Function definitions for various OBJ data classes
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 #ifndef OBJDATATYPES_H
 #define OBJDATATYPES_H
 
@@ -7,7 +17,7 @@
 #include <vector>
 
 
-
+//OBJFace
 struct OBJFace
 {
 	unsigned int posIndex = 0;
@@ -15,6 +25,7 @@ struct OBJFace
 	unsigned int uvIndex = 0;
 };
 
+//OBJVertex
 class OBJVertex
 {
 
@@ -46,13 +57,11 @@ public:
 private:
 	glm::vec3 m_pos, m_normal;
 	glm::vec2 m_uvCoord;
-	unsigned int m_smoothingIndex;
-
 };
 inline OBJVertex::OBJVertex() {};
 inline OBJVertex::~OBJVertex() {};
 
-
+//OBJMaterial
 struct OBJMaterial
 {
 public:
@@ -85,6 +94,7 @@ private:
 
 };
 
+//OBJMesh
 struct OBJMesh
 {
 	OBJMesh();
@@ -100,14 +110,14 @@ inline OBJMesh::~OBJMesh() {}
 
 
 
-
+//OBJGroup
 struct OBJGroup
 {
 	std::string name;
 	std::vector<OBJMesh*> meshes;
 };
 
-
+//OBJModel
 class OBJModel
 {
 public:

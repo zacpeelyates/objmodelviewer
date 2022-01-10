@@ -1,8 +1,10 @@
 #include "ShaderManager.h"
 #include "Utilities.h"
+#include "glad/glad.h"
 #include <sstream>
 #include <fstream>
 #include <iostream>
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // File:	ShaderManager.cpp

@@ -1,4 +1,12 @@
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// File:	Dispatcher.h
+// Author: Zac Peel-Yates (s1703955)
+// Date Created: 01/01/22
+// Last Edited:  01/01/22
+// Brief: Observer classes & Dispatcher class definitions and implementations. Used for handling events (see Event.h)
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 #ifndef DISPATCHER_H
 #define DISPATCHER_H
 #include <list>
@@ -7,19 +15,25 @@
 #include <typeinfo>
 #include "Event.h"
 
+//virtual observer base class
 class Observer
 {
 public:
+	//remove unwanted behaviours 
 	Observer() = default;
 	virtual ~Observer() = default;
 	Observer(const Observer&) = delete;
 	Observer(const Observer&&) = delete;
+	//public execute event
 	inline void Exec(Event* e) { Call(e); }
 	virtual void* Instance() = 0;
 private:
+		//private event handling
 		virtual void Call(Event* e) = 0;
 };
 
+
+// member function event observer
 template<typename T, typename ConcreteEvent>
 class MemberObserver : public Observer 
 {
@@ -34,6 +48,7 @@ private:
 	T* m_instance;
 };
 
+//global function event observer
 template<typename ConcreteEvent>
 class GlobalObserver : public Observer
 {
@@ -47,6 +62,7 @@ private:
 	Function m_function;
 };
 
+//Event dispatcher, handles event subscriptions and sending event notifications
 class Dispatcher
 {
 public:

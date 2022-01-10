@@ -1,3 +1,11 @@
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// File:	RenderWindow.cpp
+// Author: Zac Peel-Yates (s1703955)
+// Date Created: 4/11/21
+// Last Edited:  09/01/22
+// Brief: Function defenitions for RenderWindow (overrides Applications). Handles tracking and drawing model data with OpenGL
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 #ifndef RENDERWINDOW_H
 #define RENDERWINDOW_H
 #include <map>
@@ -20,10 +28,10 @@ public:
 
 	
 protected:
-	virtual bool onCreate();
-	virtual void Update(float deltaTime);
-	virtual void Draw();
-	virtual void Destroy();
+	bool onCreate() override;
+	void Update(float deltaTime) override;
+	void Draw() override;
+	void Destroy() override;
 private:
 	//skybox
 	unsigned int m_skyboxID;

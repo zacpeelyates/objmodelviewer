@@ -1,10 +1,19 @@
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// File:	GUIManager.cpp
+// Author: Zac Peel-Yates (s1703955)
+// Date Created: 03/01/22
+// Last Edited:  07/01/22
+// Brief: function definitions for IMGUI/IMGUIZMO wrapper class. Handles displaying UI elements and ensuring they don't overlap
+// allows for needed UI elements to simply be called in one line instead of filling everything with IMGUI boilerplate code.
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #ifndef GUIMANAGER_H
 #define GUIMANAGER_H
 #include <string>
 #include <vector>
-#include "ImGuizmo.h" //https://github.com/CedricGuillemet/ImGuizmo -- extentions for ImGUI
 #include "imgui_impl_glfw.h"
+#include "ImGuizmo.h" //https://github.com/CedricGuillemet/ImGuizmo -- extentions for ImGUI
+
 
 class GUIManager 
 {
